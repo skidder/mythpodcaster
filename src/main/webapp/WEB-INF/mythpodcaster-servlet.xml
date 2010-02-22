@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+            <property name="location">
+                    <value>file:///${mythpodcaster.prop.dir}mythpodcaster.properties</value>
+            </property>
+    </bean>
+
+	<bean name="/programs.htm" class="net.urlgrey.mythpodcaster.web.ProgramsController">
+		<property name="successView" value="programs" />
+		<property name="recordingsDao" ref="recordingsDao" />
+		<property name="subscriptionsDao" ref="subscriptionsDao" />
+		<property name="applicationURL" value="${static.content.url}" />
+		<property name="feedFileExtension" value="${feed.file.extension}" />
+	</bean>
+
+	<bean name="/subscriptions.htm" class="net.urlgrey.mythpodcaster.web.SeriesSubscriptionController">
+		<property name="successView" value="programs.htm" />
+		<property name="recordingsDao" ref="recordingsDao" />
+		<property name="subscriptionsDao" ref="subscriptionsDao" />
+		<property name="transcoders" ref="transcoders" />
+	</bean>
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+</beans>

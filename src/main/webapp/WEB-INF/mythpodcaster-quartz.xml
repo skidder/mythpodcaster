@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+            <property name="location">
+                    <value>file:///${mythpodcaster.prop.dir}mythpodcaster.properties</value>
+            </property>
+    </bean>
+
+	<bean id="feedFileAccessor" class="net.urlgrey.mythpodcaster.transcode.FeedFileAccessorImpl">
+		<property name="applicationURL" value="${static.content.url}" />
+		<property name="feedFilePath" value="${static.content.path}" />
+		<property name="transcoders" ref="transcoders" />
+		<property name="clipLocator" ref="clipLocator" />
+		<property name="feedFileExtension" value="${feed.file.extension}" />
+	</bean>
+
+	<bean id="transcoders" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<entry>
+					<key>
+						<value>Audio Only - MP3</value>
+					</key>
+					<ref bean="transcoder-mp3" />
+				</entry>
+				<entry>
+					<key>
+						<value>Audio Only - AAC</value>
+					</key>
+					<ref bean="transcoder-aac" />
+				</entry>
+				<entry>
+					<key>
+						<value>Video - iRiver U10 Widescreen</value>
+					</key>
+					<ref bean="transcoder-ffmpeg-iriver-wide" />
+				</entry>
+				<entry>
+					<key>
+						<value>Video - iRiver U10 4x3</value>
+					</key>
+					<ref bean="transcoder-ffmpeg-iriver" />
+				</entry>
+				<entry>
+					<key>
+						<value>Video - iPhone/iPod Touch</value>
+					</key>
+					<ref bean="transcoder-ffmpeg-ipod-touch" />
+				</entry>
+				<entry>
+					<key>
+						<value>Video - iPod</value>
+					</key>
+					<ref bean="transcoder-ffmpeg-ipod" />
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<bean id="transcoder-mp3" class="net.urlgrey.mythpodcaster.transcode.FFMpegTranscoderImpl">
+		<property name="ffmpegLocation" value="${ffmpeg.location}"></property>
+		<property name="timeout" value="${ffmpeg.timeout}"></property>
+		<property name="niceness" value="${ffmpeg.niceness}"></property>
+		<property name="ffmpegArguments" value="-vn -acodec libmp3lame -ar 44100 -ab 128k -ac 2 -threads 0 -y"></property>
+		<property name="encodingFileExtension" value=".mp3" />
+		<property name="encodingMimeType" value="audio/mpeg" />
+	</bean>
+
+	<bean id="transcoder-aac" class="net.urlgrey.mythpodcaster.transcode.FFMpegTranscoderImpl">
+		<property name="ffmpegLocation" value="${ffmpeg.location}"></property>
+		<property name="timeout" value="${ffmpeg.timeout}"></property>
+		<property name="niceness" value="${ffmpeg.niceness}"></property>
+		<property name="ffmpegArguments" value="-vn -acodec libfaac -ar 44100 -ab 128k -ac 2 -threads 0 -y"></property>
+		<property name="encodingFileExtension" value=".m4a" />
+		<property name="encodingMimeType" value="audio/x-m4a" />
+	</bean>
+
+	<bean id="transcoder-ffmpeg-iriver-wide" class="net.urlgrey.mythpodcaster.transcode.FFMpegTranscoderImpl">
+		<property name="ffmpegLocation" value="${ffmpeg.location}"></property>
+		<property name="timeout" value="${ffmpeg.timeout}"></property>
+		<property name="niceness" value="${ffmpeg.niceness}"></property>
+		<property name="ffmpegArguments" value="-r 15 -s 320x180 -padtop 30 -padbottom 30 -vcodec mpeg4 -vtag XVID -qscale 6 -deinterlace -ar 44100 -ab 128k -acodec libmp3lame -ac 2 -y"></property>
+		<property name="encodingFileExtension" value=".avi" />
+		<property name="encodingMimeType" value="video/x-msvideo" />
+	</bean>
+
+	<bean id="transcoder-ffmpeg-iriver" class="net.urlgrey.mythpodcaster.transcode.FFMpegTranscoderImpl">
+		<property name="ffmpegLocation" value="${ffmpeg.location}"></property>
+		<property name="timeout" value="${ffmpeg.timeout}"></property>
+		<property name="niceness" value="${ffmpeg.niceness}"></property>
+		<property name="ffmpegArguments" value="-r 15 -s 320x240 -vcodec mpeg4 -vtag XVID -qscale 6 -deinterlace -ar 44100 -ab 128k -acodec libmp3lame -ac 2 -y"></property>
+		<property name="encodingFileExtension" value=".avi" />
+		<property name="encodingMimeType" value="video/x-msvideo" />
+	</bean>
+
+	<bean id="transcoder-ffmpeg-ipod-touch" class="net.urlgrey.mythpodcaster.transcode.FFMpegTranscoderImpl">
+		<property name="ffmpegLocation" value="${ffmpeg.location}"></property>
+		<property name="timeout" value="${ffmpeg.timeout}"></property>
+		<property name="niceness" value="${ffmpeg.niceness}"></property>
+		<property name="ffmpegArguments" value="-vcodec libx264 -vpre hq -vpre ipod640 -b 500k -acodec libfaac -ab 128k -ac 2 -ar 48000 -s 480x320 -threads 0 -f ipod -y"></property>
+		<property name="encodingFileExtension" value=".m4v" />
+		<property name="encodingMimeType" value="video/x-m4v" />
+	</bean>
+
+	<bean id="transcoder-ffmpeg-ipod" class="net.urlgrey.mythpodcaster.transcode.FFMpegTranscoderImpl">
+		<property name="ffmpegLocation" value="${ffmpeg.location}"></property>
+		<property name="timeout" value="${ffmpeg.timeout}"></property>
+		<property name="niceness" value="${ffmpeg.niceness}"></property>
+		<property name="ffmpegArguments" value="-vcodec libx264 -vpre hq -vpre ipod320 -b 300k -acodec libfaac -ab 128k -ac 2 -ar 48000 -s 320x240 -threads 0 -f ipod -y"></property>
+		<property name="encodingFileExtension" value=".m4v" />
+		<property name="encodingMimeType" value="video/x-m4v" />
+	</bean>
+
+	<bean id="clipLocator" class="net.urlgrey.mythpodcaster.transcode.ClipLocatorImpl">
+		<property name="contentPaths" value="${content.source.paths}"></property>
+	</bean>
+
+	<bean id="transcodeJob" class="net.urlgrey.mythpodcaster.transcode.TranscodeAndCleanupJob">
+		<property name="recordingsDao" ref="recordingsDao" />
+		<property name="subscriptionsDao" ref="subscriptionsDao" />
+		<property name="feedFileAccessor" ref="feedFileAccessor" />
+		<property name="feedFilePath" value="${static.content.path}" />
+		<property name="feedFileExtension" value="${feed.file.extension}" />
+	</bean>
+
+	<bean id="rssJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	  <property name="targetObject" ref="transcodeJob" />
+	  <property name="targetMethod" value="execute" />
+	  <property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="cronRssTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="rssJob" />
+		<property name="cronExpression" value="${rss.cron}" />
+	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="cronRssTrigger"/>
+			</list>
+		</property>
+	</bean>
+
+</beans>
