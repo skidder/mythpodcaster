@@ -30,10 +30,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.Channel;
 import net.urlgrey.mythpodcaster.domain.RecordedProgram;
+import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -55,29 +56,39 @@ import com.sun.syndication.io.SyndFeedOutput;
  */
 public class FeedFileAccessorImpl implements FeedFileAccessor {
 
+	private static final String PATH_SEPARATOR = "/";
+
 	static final Logger LOGGER = Logger.getLogger(FeedFileAccessorImpl.class);
 
 	private String feedFilePath;
-	private Map <String,Transcoder> transcoders;
 	private URL applicationURL;
 	private ClipLocator clipLocator;
 	private String feedFileExtension;
+	private TranscodingController transcodingController;
+	private TranscodingProfilesDAO transcodingProfilesDao;
 
 	/**
 	 * @param feedFile
 	 * @param seriesId
 	 * @param title
+	 * @param transcodingProfileId 
 	 * @return 
 	 */
 	public SyndFeed createFeed(File feedFile, String seriesId,
-			String title) {
+			String title, String transcodingProfileId) {
 		final SyndFeed defaultFeed = new SyndFeedImpl();
 		defaultFeed.setFeedType("rss_2.0");
 		defaultFeed.setTitle(title);
-		defaultFeed.setLink(this.applicationURL + "/" + seriesId + feedFileExtension);
+		defaultFeed.setLink(this.applicationURL + PATH_SEPARATOR + transcodingProfileId + PATH_SEPARATOR + seriesId + feedFileExtension);
 		defaultFeed.setDescription("Feed for the MythTV recordings of this program");
 
 		try {
+			final File feedDirectory = feedFile.getParentFile();
+			if (!feedDirectory.exists()) {
+				feedDirectory.mkdirs();
+				LOGGER.info("Created feed directory: " + feedDirectory.getPath());
+			}
+
 			FileWriter writer = new FileWriter(feedFile);
 			SyndFeedOutput output = new SyndFeedOutput();
 			output.output(defaultFeed, writer);
@@ -99,10 +110,12 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 
 	/**
 	 * @param seriesId
+	 * @param transcodingProfileId
 	 * @param feed 
 	 */
-	public void purgeFeed(String seriesId, SyndFeed feed) {
-		File feedFile = new File(feedFilePath, seriesId + feedFileExtension);
+	public void purgeFeed(String seriesId, String transcodingProfileId, SyndFeed feed) {
+		File encodingDirectory = new File(feedFilePath, transcodingProfileId);
+		File feedFile = new File(encodingDirectory, seriesId + feedFileExtension);
 		if (feedFile.canWrite()) {
 			feedFile.delete();
 		}
@@ -120,13 +133,8 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 						String encUrl = enclosure.getUrl();
 						encUrl = encUrl.substring(encUrl.lastIndexOf('/')+1);
 
-						final File encodingFile = new File(this.feedFilePath, encUrl);
-						if (encodingFile.canWrite()) {
-							LOGGER.debug("Deleting encoding: " + encodingFile.getPath());
-							encodingFile.delete();
-						} else {
-							LOGGER.debug("Skipping encoding, non-writable or non-existent: " + encodingFile.getPath());
-						}
+						final TranscodingProfile profile = transcodingProfilesDao.findAllProfiles().get(transcodingProfileId);
+						profile.deleteEncoding(this.feedFilePath, enclosure.getUrl(), entry.getUri());
 					}
 				} else {
 					LOGGER.info("No enclosures specified in the entry, continuing");
@@ -140,10 +148,11 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 	 * @param seriesId
 	 * @throws IOException 
 	 */
-	public SyndFeed readFeed(String seriesId, String title) throws IOException {
-		File feedFile = new File(feedFilePath, seriesId + feedFileExtension);
+	public SyndFeed readFeed(String seriesId, String transcodingProfileId, String title) throws IOException {
+		File encodingDirectory = new File(feedFilePath, transcodingProfileId);
+		File feedFile = new File(encodingDirectory, seriesId + feedFileExtension);
 		if (feedFile.exists() == false) {
-			SyndFeed feed = this.createFeed(feedFile, seriesId, title);
+			SyndFeed feed = this.createFeed(feedFile, seriesId, title, transcodingProfileId);
 			if (feed == null) {
 				throw new IOException("Unable to create feed for new subscription");
 			}
@@ -170,8 +179,8 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 	 * @param channel
 	 * @param entries
 	 */
-	public void addProgramToFeed(RecordedProgram program, Channel channel, SyndFeed feed, String transcoderProfile) {
-		LOGGER.debug("Transcoding new feed entry: programId[" + program.getProgramId() + "], key[" +  program.getKey() + "], channel[" + (channel != null ? channel.getName() : "") + "]");
+	public void addProgramToFeed(RecordedProgram program, Channel channel, SyndFeed feed, String transcodingProfileId) {
+		LOGGER.debug("Transcoding new feed entry: programId[" + program.getProgramId() + "], key[" +  program.getKey() + "], channel[" + (channel != null ? channel.getName() : "") + "], transcodingProfileId[" + transcodingProfileId + "]");
 		 final SyndEntryImpl entry = new SyndEntryImpl();
 		 entry.setUri(program.getKey());
 		 entry.setPublishedDate(program.getStartTime());
@@ -196,35 +205,43 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 		 // transcode
 		 final File originalClip = clipLocator.locateOriginalClip(program.getFilename());
 		 if (originalClip !=null && originalClip.canRead()) {
-		     final Transcoder transcoder = transcoders.get(transcoderProfile);
-		     final File outputFile = new File(this.feedFilePath, program.getKey() + transcoder.getEncodingFileExtension());
-		     try {
-				transcoder.transcode(originalClip, outputFile);
-				if (outputFile.canRead()) {
-					// get the file-size in bytes
-					FileInputStream in = new FileInputStream(outputFile);
-					final int fileSize = in.available();
-					in.close();
-
-					final String link = this.applicationURL.toExternalForm() +"/" + outputFile.getName();
-					final SyndEnclosure enclosure = new SyndEnclosureImpl();
-					enclosure.setUrl(link);
-					enclosure.setType(transcoder.getEncodingMimeType());
-					enclosure.setLength(fileSize);
-					final List enclosures = new ArrayList();
-					enclosures.add(enclosure);
-					entry.setEnclosures(enclosures);
-				} else {
-					LOGGER.warn("Transcoded output file cannot be read, setting link to null: path[" + outputFile.getAbsolutePath() + "]");
+			final TranscodingProfile profile = transcodingProfilesDao.findAllProfiles().get(transcodingProfileId);
+			if (profile != null) {
+				
+				 final File outputFile = profile.generateOutputFilePath(feedFilePath, program.getKey());
+			     try {
+			    	 
+			    	transcodingController.transcode(profile, originalClip, outputFile);
+					if (outputFile.canRead()) {
+						// get the file-size in bytes
+						FileInputStream in = new FileInputStream(outputFile);
+						final int fileSize = in.available();
+						in.close();
+	
+						final String link = profile.generateOutputFileURL(this.applicationURL, outputFile);						
+						final SyndEnclosure enclosure = new SyndEnclosureImpl();
+						enclosure.setUrl(link);
+						enclosure.setType(profile.getEncodingMimeType());
+						enclosure.setLength(fileSize);
+						final List enclosures = new ArrayList();
+						enclosures.add(enclosure);
+						entry.setEnclosures(enclosures);
+					} else {
+						LOGGER.warn("Transcoded output file cannot be read, setting link to null: path[" + outputFile.getAbsolutePath() + "]");
+						entry.setLink(null);
+					}
+				} catch (Exception e) {
+					LOGGER.error("Error while transcoding, setting link to null", e);
 					entry.setLink(null);
+					if (outputFile != null && outputFile.canWrite()) {
+						outputFile.delete();
+					}
 				}
-			} catch (Exception e) {
-				LOGGER.error("Error while transcoding, setting link to null", e);
-				entry.setLink(null);
-				if (outputFile != null && outputFile.canWrite()) {
-					outputFile.delete();
-				}
-			}
+		     } else {
+		    	final String msg = "Unable to locate transcoding profile with given id: ["
+						+ transcodingProfileId + "]";
+				LOGGER.error(msg);
+		     }
 		 } else {
 			 if (originalClip != null) {
 				 LOGGER.warn("Original clip does not exist or cannot be read: " + originalClip.getAbsolutePath());
@@ -248,11 +265,6 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 	}
 
 	@Required
-	public void setTranscoders(Map <String,Transcoder> transcoders) {
-		this.transcoders = transcoders;
-	}
-
-	@Required
 	public void setClipLocator(ClipLocator clipLocator) {
 		this.clipLocator = clipLocator;
 	}
@@ -260,5 +272,16 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 	@Required
 	public void setFeedFileExtension(String feedFileExtension) {
 		this.feedFileExtension = feedFileExtension;
+	}
+
+	@Required
+	public void setTranscodingController(TranscodingController transcodingController) {
+		this.transcodingController = transcodingController;
+	}
+
+	@Required
+	public void setTranscodingProfilesDao(
+			TranscodingProfilesDAO transcodingProfilesDao) {
+		this.transcodingProfilesDao = transcodingProfilesDao;
 	}
 }

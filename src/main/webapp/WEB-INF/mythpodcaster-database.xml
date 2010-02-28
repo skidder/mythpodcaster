@@ -64,6 +64,10 @@
 	<bean id="recordingsDao" class="net.urlgrey.mythpodcaster.dao.MythRecordingsDAOImpl">
 	</bean>
 
+	<bean id="transcodingProfilesDao" class="net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAOImpl">
+		<property name="transcodingProfilesFilePath" value="${subscriptions.config.path}/transcoding_profiles.xml"></property>
+	</bean>
+
 	<bean id="subscriptionsDao" class="net.urlgrey.mythpodcaster.dao.SubscriptionsDAOImpl">
 		<property name="feedFileAccessor" ref="feedFileAccessor" />
 		<property name="subscriptionsFilePath" value="${subscriptions.config.path}/subscriptions.xml"></property>

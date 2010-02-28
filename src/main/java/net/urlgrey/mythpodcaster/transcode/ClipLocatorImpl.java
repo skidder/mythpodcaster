@@ -23,6 +23,9 @@
 package net.urlgrey.mythpodcaster.transcode;
 
 import java.io.File;
+import java.util.List;
+
+import net.urlgrey.mythpodcaster.dao.MythRecordingsDAO;
 
 import org.springframework.beans.factory.annotation.Required;
 
@@ -32,15 +35,20 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public class ClipLocatorImpl implements ClipLocator {
 
-	String contentPaths;
-	private String[] parsedPaths;
-
+	private MythRecordingsDAO recordingsDao;
+	
 	/**
 	 * @param filename
 	 * @return
 	 */
 	public File locateOriginalClip(String filename) {
-		for (String directory : parsedPaths) {
+		
+		final List<String> recordingDirectories = recordingsDao.findRecordingDirectories();
+		if (recordingDirectories == null || recordingDirectories.size() == 0) {
+			return null;
+		}
+
+		for (String directory : recordingDirectories) {
 			File clipLocation = new File(directory, filename);
 			if (clipLocation.canRead()) {
 				return clipLocation;
@@ -50,8 +58,7 @@ public class ClipLocatorImpl implements ClipLocator {
 	}
 
 	@Required
-	public void setContentPaths(String contentPaths) {
-		this.contentPaths = contentPaths;
-		this.parsedPaths = contentPaths.split(" ");
+	public void setRecordingsDao(MythRecordingsDAO recordingsDao) {
+		this.recordingsDao = recordingsDao;
 	}
 }

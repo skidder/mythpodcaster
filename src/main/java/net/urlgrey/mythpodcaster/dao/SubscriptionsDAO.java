@@ -22,18 +22,10 @@
  */
 package net.urlgrey.mythpodcaster.dao;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
 import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
-import net.urlgrey.mythpodcaster.dto.FeedSubscriptions;
 
 /**
  * @author scott

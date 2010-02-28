@@ -36,8 +36,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.urlgrey.mythpodcaster.dao.MythRecordingsDAO;
 import net.urlgrey.mythpodcaster.dao.SubscriptionsDAO;
+import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
+import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -56,6 +58,7 @@ public class ProgramsController implements Controller {
 	private SubscriptionsDAO subscriptionsDao;
 	private String applicationURL;
 	private String feedFileExtension;
+	private TranscodingProfilesDAO transcodingProfilesDao;
 
 	/*
 	 * (non-Javadoc)
@@ -111,6 +114,12 @@ public class ProgramsController implements Controller {
 	@Required
 	public void setSubscriptionsDao(SubscriptionsDAO subscriptionsDao) {
 		this.subscriptionsDao = subscriptionsDao;
+	}
+
+	@Required
+	public void setTranscodingProfilesDao(
+			TranscodingProfilesDAO transcodingProfilesDao) {
+		this.transcodingProfilesDao = transcodingProfilesDao;
 	}
 
 	@Required

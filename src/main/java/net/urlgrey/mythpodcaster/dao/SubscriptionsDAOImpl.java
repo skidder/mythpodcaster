@@ -23,16 +23,12 @@
 package net.urlgrey.mythpodcaster.dao;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
@@ -43,15 +39,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.feed.synd.SyndFeedImpl;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedOutput;
 
 /**
  * @author scott
  *
  */
-public class SubscriptionsDAOImpl implements SubscriptionsDAO {
+public class SubscriptionsDAOImpl extends AbstractFileBasedDAO implements SubscriptionsDAO {
 
     protected static final Logger LOGGER = Logger.getLogger(SubscriptionsDAOImpl.class);
 
@@ -80,7 +73,7 @@ public class SubscriptionsDAOImpl implements SubscriptionsDAO {
 	 */
 	@Override
 	public List<FeedSubscriptionItem> findSubscriptions() {
-		FeedSubscriptions subscriptionsDocument = loadSubscriptionDocument();
+		final FeedSubscriptions subscriptionsDocument = loadSubscriptionDocument();
 		
 		if (subscriptionsDocument != null && subscriptionsDocument.getSubscriptions() != null) {
 			LOGGER.debug("Subscriptions size: " + subscriptionsDocument.getSubscriptions().size());
@@ -94,7 +87,7 @@ public class SubscriptionsDAOImpl implements SubscriptionsDAO {
 	public synchronized void addSubscription(FeedSubscriptionItem item) throws IOException {
 		final String seriesId = item.getSeriesId();
 		LOGGER.debug("Adding subscription: seriesId [" + seriesId + "]");
-		FeedSubscriptions subscriptionsDocument = loadSubscriptionDocument();
+		final FeedSubscriptions subscriptionsDocument = loadSubscriptionDocument();
 		
 		final List<FeedSubscriptionItem> subscriptions = subscriptionsDocument.getSubscriptions();
 		if (subscriptions.contains(item)) {
@@ -105,10 +98,11 @@ public class SubscriptionsDAOImpl implements SubscriptionsDAO {
 			subscriptions.add(item);
 		}
 		
-		File feedFile = new File(feedFilePath, seriesId + RSS_FILE_EXTENSION);
+		final File encodingDirectory = new File(feedFilePath, item.getTranscodeProfile());
+		final File feedFile = new File(encodingDirectory, seriesId + RSS_FILE_EXTENSION);
 		if (feedFile.exists() == false) {
 			final String title = item.getTitle();
-			SyndFeed feed = feedFileAccessor.createFeed(feedFile, seriesId, title);
+			SyndFeed feed = feedFileAccessor.createFeed(feedFile, seriesId, title, item.getTranscodeProfile());
 			if (feed == null) {
 				throw new IOException("Unable to create feed for new subscription");
 			}
@@ -124,18 +118,7 @@ public class SubscriptionsDAOImpl implements SubscriptionsDAO {
 	 */
 	private void storeSubscriptionDocument(FeedSubscriptions subscriptionsDocument) {
 		Collections.sort(subscriptionsDocument.getSubscriptions());
-		final File subscriptionsFile = new File(subscriptionsFilePath);
-		try {
-			final Marshaller marshaller = jaxbContext.createMarshaller();
-			FileOutputStream os = new FileOutputStream(subscriptionsFile);
-			marshaller.marshal(subscriptionsDocument, os);
-		} catch (FileNotFoundException e) {
-			LOGGER.error("Unable to write subscriptions to file", e);
-			return;
-		} catch (JAXBException e) {
-			LOGGER.error("Unable to write subscriptions to file", e);
-			return;
-		}
+		storeDocument(subscriptionsFilePath, jaxbContext, subscriptionsDocument);
 	}
 
 

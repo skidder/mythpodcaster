@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,8 +33,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.urlgrey.mythpodcaster.dao.MythRecordingsDAO;
 import net.urlgrey.mythpodcaster.dao.SubscriptionsDAO;
+import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
+import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -53,8 +54,7 @@ public class SeriesSubscriptionController implements Controller {
 	private String successView = null;
 	private SubscriptionsDAO subscriptionsDao;
 	private MythRecordingsDAO recordingsDao;
-	private Map <String, Object> transcoders;
-	
+	private TranscodingProfilesDAO transcodingProfilesDao;
 
 	/* (non-Javadoc)
 	 * @see org.springframework.web.servlet.mvc.Controller#handleRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -78,16 +78,17 @@ public class SeriesSubscriptionController implements Controller {
 
 		try {
 			if ("subscribe".equalsIgnoreCase(action)) {
-				String transcodeProfile = request.getParameter("transcodeProfile");
-				List <String> transList = new ArrayList<String>(transcoders.keySet());
+				String transcodeProfileId = request.getParameter("transcodeProfile");
+				final Map<String, TranscodingProfile> transcodeProfiles = transcodingProfilesDao.findAllProfiles();
+				ArrayList<TranscodingProfile> transList = new ArrayList<TranscodingProfile>(transcodeProfiles.values());
 				if(transList.size() > 1)
 				{
-					if( transcodeProfile == null 
-					     || !transcoders.containsKey(transcodeProfile))
+					if( transcodeProfileId == null 
+					     || !transcodeProfiles.containsKey(transcodeProfileId))
 					{
 					    //Output a page
 					    Map<String, Object> model = new HashMap <String, Object>();
-					    Collections.sort(transList, String.CASE_INSENSITIVE_ORDER);
+					    Collections.sort(transList);
 					    model.put("", seriesId);
 					    model.put("action", action);
 					    model.put("transcoders", transList);
@@ -96,7 +97,7 @@ public class SeriesSubscriptionController implements Controller {
 				}
 				else
 				{
-					transcodeProfile = transList.get(0);
+					transcodeProfileId = transList.get(0).getId();
 				}
 				final RecordedSeries seriesInfo = recordingsDao.findRecordedSeries(seriesId);
 				if (seriesInfo == null) {
@@ -108,7 +109,7 @@ public class SeriesSubscriptionController implements Controller {
 				item.setDateAdded(new Date());
 				item.setSeriesId(seriesId);
 				item.setTitle(seriesInfo.getTitle());
-				item.setTranscodeProfile(transcodeProfile);
+				item.setTranscodeProfile(transcodeProfileId);
 
 				subscriptionsDao.addSubscription(item);
 			} else if ("unsubscribe".equalsIgnoreCase(action)) {
@@ -137,8 +138,9 @@ public class SeriesSubscriptionController implements Controller {
 	}
 
 	@Required
-	public void setTranscoders(Map <String, Object> transcoders) {
-		this.transcoders = transcoders;
+	public void setTranscodingProfilesDao(
+			TranscodingProfilesDAO transcodingProfilesDao) {
+		this.transcodingProfilesDao = transcodingProfilesDao;
 	}
 
 

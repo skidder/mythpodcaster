@@ -37,4 +37,6 @@ public interface MythRecordingsDAO {
 	RecordedSeries findRecordedSeries(String seriesId);
 	
 	Channel findChannel(int channelId);
+
+	List<String> findRecordingDirectories();
 }

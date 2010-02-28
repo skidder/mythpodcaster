@@ -31,7 +31,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import net.urlgrey.mythpodcaster.domain.Channel;
-import net.urlgrey.mythpodcaster.domain.RecordedProgram;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 
 import org.apache.log4j.Logger;
@@ -81,6 +80,18 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
     @Transactional(readOnly=true)
 	public Channel findChannel(int channelId) {
 		return entityManager.find(Channel.class, Integer.valueOf(channelId));
+	}
+
+	/* (non-Javadoc)
+	 * @see net.urlgrey.mythpodcaster.dao.MythRecordingsDAO#findRecordingDirectories()
+	 */
+	@Override
+	public List<String> findRecordingDirectories() {
+    	final Query nativeQuery = entityManager.createNativeQuery("SELECT DISTINCT dirname FROM storagegroup");
+    	nativeQuery.setHint("org.hibernate.comment", "MythPodcaster: findRecordingDirectories");
+
+    	final List<String> resultsList = nativeQuery.getResultList();
+		return resultsList;
 	}
 
 	public void setEntityManager(EntityManager entityManager) {

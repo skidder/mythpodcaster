@@ -16,7 +16,7 @@
     <table border="1">
       <tr><td><b>Title</b></td><td><b>Profile</b></td><td><b>Actions</b></td><td><b>Feed</b></td></tr>
       <c:forEach items="${mythpodcaster_series_subscriptions}" var="series">
-       	<tr><td><c:out value="${series.title}"/></td><td><c:out value="${series.transcodeProfile}" /></td><td align="right"><a href="subscriptions.htm?action=unsubscribe&seriesId=${series.seriesId}"/>Unsubscribe</a></td><td align="right"><a href="${applicationURL}/${series.seriesId}${feedFileExtension}"/>Feed</a></td></tr>
+       	<tr><td><c:out value="${series.title}"/></td><td><c:out value="${series.transcodeProfile}" /></td><td align="right"><a href="subscriptions.htm?action=unsubscribe&seriesId=${series.seriesId}"/>Unsubscribe</a></td><td align="right"><a href="${applicationURL}/${series.transcodeProfile}/${series.seriesId}${feedFileExtension}"/>Feed</a></td></tr>
       </c:forEach>
     </table>
    </c:if>

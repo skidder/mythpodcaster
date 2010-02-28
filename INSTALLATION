@@ -1,11 +1,12 @@
 MythPodcaster
 Author: Scott Kidder (scott@urlgrey.net)
 Additional Patches provided by Simon Hyde
-Release: 0.3
-Date: 13 December 2009
+Release: 0.4
+Date: 28 February 2010
 
 For details on how to install and configure MythPodcaster, please refer to:
 
+http://code.google.com/p/mythpodcaster/
 http://urlgrey.net/MythPodcaster/
 
 
@@ -21,55 +22,63 @@ Requirements
 
 Installation Steps
 
-   1.
-
-      Install a Java 6 SDK (http://java.sun.com/javase/downloads/index.jsp)
-   2.
-
-      Install the Apache Tomcat 6 Servlet Container (http://tomcat.apache.org/)
+   1. Install a Java 6 SDK (http://java.sun.com/javase/downloads/index.jsp)
+   2. Install the Apache Tomcat 6 Servlet Container (http://tomcat.apache.org/)
    3. Set the JAVA_HOME environment variable to the location where you installed the Java SDK
          1. Example: export JAVA_HOME=/usr/java/jdk6 
    4. Set the CATALINA_HOME environment variable to the location where you install Tomcat
          1. Example: export CATALINA_HOME=/home/foo/bin/tomcat/ 
-   5.
-
-      Set the JAVA_OPTS environment variable to specify the location of the MythPodcaster properties file
+   5. Set the JAVA_OPTS environment variable to specify the location of the MythPodcaster properties file
          1. Example: export JAVA_OPTS="-Dmythpodcaster.prop.dir=/home/foo/config/" 
    6. Start the Tomcat server
          1. Example: ${CATALINA_HOME}/bin/startup.sh 
    7. Verify that you can access the Tomcat server using a web browser
-         1.
-
-            Example: http://localhost:8080/ 
-   8. Copy the mythpodcaster.properties file to the location configuration earlier:
-         1. cp mythpodcaster.properties /home/foo/config/ 
+         1. Example: http://localhost:8080/ 
+   8. Copy the mythpodcaster.properties file to the location configured earlier:
+         1. cp mythpodcaster.properties /home/foo/config/
+   8. Copy the transcoding_profiles.xml file to the location configured earlier:
+         1. cp transcoding_profiles.xml /home/foo/config/
    9. Edit the mythpodcaster.properties file to meet your requirements.
          1. vi /home/foo/config/mythpodcaster.properties 
-  10.
-
-      Copy the MythPodcaster WAR file to the Tomcat webapps directory
-         1.
-
-            cp MythPodcaster.war ${CATALINA_HOME}/webapps/ 
-  11.
-
-      Monitor the MythPodcaster log file to verify that it deploys successfully
+  10. Copy the MythPodcaster WAR file to the Tomcat webapps directory
+         1. cp MythPodcaster.war ${CATALINA_HOME}/webapps/ 
+  11. Monitor the MythPodcaster log file to verify that it deploys successfully
          1. tail -f /tmp/mythpodcaster.log 
-  12.
-
-      Access the MythPodcaster web application to create your subscriptions.
-         1.
-
-            Example: http://localhost:8080/MythPodcaster/
+  12. Access the MythPodcaster web application to create your subscriptions.
+         1. Example: http://localhost:8080/MythPodcaster/
 
 
 Usage
 
-Once the application is installed, access the web application to manage your subscriptions. You can subscribe to any program that has at least one MythTV recording available. Upon subscribing to a series, you'll notice that there are not any entries immediately available in the Feed. This is because it takes time for the recording to be transcoded into an encoding appropriate for podcasts. MythTV recordings range in size from 4GB/hour to 9 GB/hour depending on the quality of the source. The transcoding process will create a copy of the original recording in a much smaller resolution and higher compression. You may adjust the encoding parameters in the mythpodcaster.properties file to meet your requirements.
+Once the application is installed, access the web application to manage your 
+subscriptions. You can subscribe to any program that has at least one MythTV 
+recording available. Upon subscribing to a series, you'll notice that there 
+are not any entries immediately available in the Feed. This is because it takes 
+time for the recording to be transcoded into an encoding appropriate for  
+podcasts. MythTV recordings range in size from 4GB/hour to 9 GB/hour 
+depending on the quality of the source. The transcoding process will create 
+a copy of the original recording in a much smaller resolution and higher 
+compression. You may adjust the encoding parameters in the 
+mythpodcaster.properties file to meet your requirements.
 
-The Transcoder will run at 5 minutes intervals by default. When it runs, it looks for new episodes of programs series that are subscribed to. If new episodes are found, then they will be transcoded and added to the feed. If episodes in the feed are no longer in the MythTV database because they've been deleted or expired, then the transcoded files will be deleted and the feed entries removed. If a clip is unable to be transcoded, then an entry will be added to the feed, but the entry will not contain a link to content. I've not had any difficulty transcoding MythTV recordings; transcoding failure is typically due to incorrect FFMPEG encoding options.
+The Transcoder will run at 5 minutes intervals by default. When it runs, it 
+looks for new episodes of programs series that are subscribed to. If new 
+episodes are found, then they will be transcoded and added to the feed. If 
+episodes in the feed are no longer in the MythTV database because they've been 
+deleted or expired, then the transcoded files will be deleted and the feed 
+entries removed. If a clip is unable to be transcoded, then an entry will be 
+added to the feed, but the entry will not contain a link to content. I've not 
+had any difficulty transcoding MythTV recordings; transcoding failure is 
+typically due to incorrect FFMPEG encoding options.
 
-Once transcoding has completed, the entries will be added to the feed file (RSS file). You can access the RSS file using your web-browser of choice (Firefox, Safari, IE, etc) and with feed aggregators like iTunes. iTunes is capable of downloading the media files referenced in the feed. You can then view the media files within iTunes or transfer them to a media player, such as the iPod Touch or iPhone.
+Once transcoding has completed, the entries will be added to the feed file 
+(RSS file). You can access the RSS file using your web-browser of choice 
+(Firefox, Safari, IE, etc) and with feed aggregators like iTunes. iTunes is 
+capable of downloading the media files referenced in the feed. You can then 
+view the media files within iTunes or transfer them to a media player, such 
+as the iPod Touch or iPhone.
 
-The MythPodcaster application writes log files to the /tmp/mythpodcaster.log by default. It is recommended that you refer to this log file for troubleshooting the application. 
+The MythPodcaster application writes log files to the /tmp/mythpodcaster.log 
+by default. It is recommended that you refer to this log file for 
+troubleshooting the application. 
 

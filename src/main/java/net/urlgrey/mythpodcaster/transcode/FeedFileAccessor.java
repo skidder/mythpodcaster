@@ -36,7 +36,15 @@ import com.sun.syndication.feed.synd.SyndFeed;
  */
 public interface FeedFileAccessor {
 
-	SyndFeed createFeed(File feedFile, String seriesId, String title);
+	/**
+	 * 
+	 * @param feedFile
+	 * @param seriesId
+	 * @param title
+	 * @param transcodingProfileId
+	 * @return
+	 */
+	SyndFeed createFeed(File feedFile, String seriesId, String title, String transcodingProfileId);
 
 	/**
 	 * @param program
@@ -44,17 +52,20 @@ public interface FeedFileAccessor {
 	 * @param feed
 	 * @param transcoderProfile
 	 */
-	public void addProgramToFeed(RecordedProgram program, Channel channel, SyndFeed feed, String transcoderProfile);
+	void addProgramToFeed(RecordedProgram program, Channel channel, SyndFeed feed, String transcodingProfileId);
 
 	/**
 	 * @param seriesId
+	 * @param transcodingProfileId
 	 * @param feed 
 	 */
-	public void purgeFeed(String seriesId, SyndFeed feed);
+	void purgeFeed(String seriesId, String transcodingProfileId, SyndFeed feed);
 
 	/**
 	 * @param seriesId
+	 * @param transcodingProfileId
+	 * @param title
 	 * @throws IOException 
 	 */
-	public SyndFeed readFeed(String seriesId, String title) throws IOException;
+	SyndFeed readFeed(String seriesId, String transcodingProfileId, String title) throws IOException;
 }

@@ -14,10 +14,11 @@
 
   <form method="POST">
       <c:forEach items="${transcoders}" var="transcoder">
-      	<input type="radio" name="transcodeProfile" value="<c:out value="${transcoder}" />"><c:out value="${transcoder}" /><br/>
+      	<input type="radio" name="transcodeProfile" value="<c:out value="${transcoder.id}" />"><c:out value="${transcoder.displayName}" /><br/>
       </c:forEach>
     <input type="hidden" name="seriesId" value="<c:out value="${seriesId}" />" />
     <input type="hidden" name="action" value="<c:out value="${action}" />" />
+	<p>
     <input type="submit">
   </form>
 

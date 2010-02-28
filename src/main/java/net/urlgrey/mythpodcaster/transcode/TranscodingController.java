@@ -1,9 +1,9 @@
 /*
- * Transcoder.java
+ * TranscodingController.java
  *
- * Created: Oct 9, 2009 9:24:26 AM
+ * Created: Feb 19, 2010
  *
- * Copyright (C) 2009 Scott Kidder
+ * Copyright (C) 2010 Scott Kidder
  * 
  * This file is part of MythPodcaster
  * 
@@ -24,14 +24,14 @@ package net.urlgrey.mythpodcaster.transcode;
 
 import java.io.File;
 
-import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 
 /**
- * @author scott
+ * @author scottkidder
  *
  */
-public interface Transcoder {
+public interface TranscodingController {
 
-	void transcode(File workingDirectory, TranscoderConfigurationItem config, File inputFile, File outputFile) throws Exception;
+	void transcode(TranscodingProfile profile, File inputFile, File outputFile) throws Exception;
 
 }

@@ -1,0 +1,20 @@
+Release Notes
+--------------------------
+
+0.0.4 (2010-02-28):
+ * Added support for HTTP Segmented Audio & Video encoding profiles.  This is 
+   standard that's being encouraged by Apple for streaming playback of live & 
+   on-demand audio & video all of their platforms (iPod, iPhone, Mac OS X).
+ * Moved the transcoding profiles out to a file named trancoding_profiles.xml.
+   The profiles in the file can be edited without restarting the application; 
+   however, modifying an existing profile does not automatically retranscode
+   all existing content to use the new encoding settings.
+ * All output encodings will be grouped by encoding-id (i.e. ipod_video, audio_aac).
+   This means that you'll need to re-encode all existing subscriptions (suggested) or 
+   manually move them.
+ * The subscriptions file stores the encoding preference by the encoding-id 
+   (i.e. ipod_video) rather than by the display name of the encoding (i.e. iPod Video)
+ * No longer need to configure the recording base directories; these are determined
+   from the MythTV database.
+ * Other minor refactorings.
+ 

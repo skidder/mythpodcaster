@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name="feed-subscription-item")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FeedSubscriptionItem implements Comparable {
+public class FeedSubscriptionItem implements Comparable<FeedSubscriptionItem> {
 
 	private String title;
 	private String seriesId;
@@ -97,16 +97,10 @@ public class FeedSubscriptionItem implements Comparable {
 			return false;
 		return true;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
+
 	@Override
-	public int compareTo(Object o) {
-		if (o instanceof FeedSubscriptionItem) {
-			return this.getTitle().compareTo(((FeedSubscriptionItem)o).getTitle());
-		}
-		
-		return 1;
+	public int compareTo(FeedSubscriptionItem o) {
+		return this.getTitle().compareTo(o.getTitle());
 	}
 	
 	

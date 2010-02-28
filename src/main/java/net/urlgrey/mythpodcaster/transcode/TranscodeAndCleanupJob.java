@@ -32,14 +32,17 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.urlgrey.mythpodcaster.dao.MythRecordingsDAO;
 import net.urlgrey.mythpodcaster.dao.SubscriptionsDAO;
+import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.Channel;
 import net.urlgrey.mythpodcaster.domain.RecordedProgram;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
+import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -63,6 +66,7 @@ public class TranscodeAndCleanupJob {
 	private String feedFilePath;
 	private Comparator<SyndEntry> entryComparator = new FeedEntryComparator();
 	private String feedFileExtension;
+	private TranscodingProfilesDAO transcodingProfilesDao;
 
 
 	public void execute() {
@@ -90,7 +94,7 @@ public class TranscodeAndCleanupJob {
 			// parse the XML-encoded RSS Feed into a Java object
 			SyndFeed feed;
 			try {
-				feed = feedFileAccessor.readFeed(subscription.getSeriesId(), subscription.getTitle());
+				feed = feedFileAccessor.readFeed(subscription.getSeriesId(), subscription.getTranscodeProfile(), subscription.getTitle());
 			} catch (IOException e) {
 				LOGGER.error("Continuing, error reading feed for recordId[" + subscription.getSeriesId() + "]", e);
 				continue;
@@ -104,7 +108,7 @@ public class TranscodeAndCleanupJob {
 
 			if (subscription.isActive() == false) {
 				// if the series is inactive, then delete the feed, it's transcoded files, and the subscription entry
-				feedFileAccessor.purgeFeed(subscription.getSeriesId(), feed);
+				feedFileAccessor.purgeFeed(subscription.getSeriesId(), subscription.getTranscodeProfile(), feed);
 				purgeList.add(subscription);
 			} else {
 				// identify series recordings not represented in the RSS Feed (transcode)
@@ -147,6 +151,7 @@ public class TranscodeAndCleanupJob {
 				// identify RSS Feed entries no longer in the database (delete)
 				if (entries != null && entries.size() > 0) {
 					LOGGER.debug("Identifying series recordings no longer in database but still in feed, recordId[" + subscription.getSeriesId() + "]");
+					final Map<String, TranscodingProfile> transcodingProfiles = transcodingProfilesDao.findAllProfiles();
 					Set <SyndEntry> entryRemovalSet = new HashSet<SyndEntry>();
 					final Iterator it = entries.iterator();
 					while (it.hasNext()) {
@@ -182,16 +187,8 @@ public class TranscodeAndCleanupJob {
 							if (enclosures.size() > 0) {
 								final SyndEnclosure enclosure = (SyndEnclosure) enclosures.get(0);
 
-								// delete the file 
-								String encodingFileName = enclosure.getUrl();
-								encodingFileName = encodingFileName.substring(encodingFileName.lastIndexOf('/')+1);
-								final File encodingFile = new File(this.feedFilePath, encodingFileName);
-								if (encodingFile.canWrite()) {
-									encodingFile.delete();
-									LOGGER.debug("Deleted encoding file no longer found in MythTV Database: " + encodingFile.getPath());
-								} else {
-									LOGGER.debug("Unable to delete file, not found on filesystem: " + encodingFile.getAbsolutePath());
-								}
+								final TranscodingProfile transcodingProfile = transcodingProfiles.get(subscription.getTranscodeProfile());
+								transcodingProfile.deleteEncoding(this.feedFilePath, enclosure.getUrl(), entry.getUri());
 							} else {
 								LOGGER.info("No enclosures specified in the entry, removing from feed and continuing");
 							}
@@ -204,7 +201,8 @@ public class TranscodeAndCleanupJob {
 
 				if (feedUpdated) {
 					// write the updated RSS feed for the series
-					File feedFile = new File(feedFilePath, subscription.getSeriesId() + feedFileExtension);
+					final File encodingDirectory = new File(feedFilePath, subscription.getTranscodeProfile());
+					final File feedFile = new File(encodingDirectory, subscription.getSeriesId() + feedFileExtension);
 					LOGGER.debug("Changes made to feed, updating feed file: path[" + feedFile.getAbsolutePath() + "]");
 
 					// sort the feed entries by published-date
@@ -263,6 +261,12 @@ public class TranscodeAndCleanupJob {
 	@Required
 	public void setRecordingsDao(MythRecordingsDAO recordingsDao) {
 		this.recordingsDao = recordingsDao;
+	}
+
+	@Required
+	public void setTranscodingProfilesDao(
+			TranscodingProfilesDAO transcodingProfilesDao) {
+		this.transcodingProfilesDao = transcodingProfilesDao;
 	}
 
 	@Required

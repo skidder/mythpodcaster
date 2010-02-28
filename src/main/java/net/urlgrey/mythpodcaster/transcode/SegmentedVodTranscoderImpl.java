@@ -1,9 +1,9 @@
 /*
- * FFMpegTranscoderImpl.java
+ * SegmentedVodTranscoderImpl.java
  *
- * Created: Oct 9, 2009 9:24:11 AM
+ * Created: Feb 19, 2010
  *
- * Copyright (C) 2009 Scott Kidder
+ * Copyright (C) 2010 Scott Kidder
  * 
  * This file is part of MythPodcaster
  * 
@@ -22,14 +22,9 @@
  */
 package net.urlgrey.mythpodcaster.transcode;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,72 +32,72 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import net.urlgrey.mythpodcaster.dto.FFMpegTranscoderConfigurationItem;
-import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
+import net.urlgrey.mythpodcaster.dto.SegmenterTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
+
 /**
- * @author scott
+ * @author scottkidder
  *
  */
-public class FFMpegTranscoderImpl extends AbstractTranscoderImpl implements Transcoder {
+public class SegmentedVodTranscoderImpl extends AbstractTranscoderImpl implements Transcoder {
 
-    static final Logger LOG = Logger.getLogger(FFMpegTranscoderImpl.class);
-	private String ffmpegLocation;
+	private String segmenterLocation;
     private String niceLocation = "nice";
-	
+
     static final ExecutorService pool = Executors.newCachedThreadPool();
+	private static final Logger LOG = Logger.getLogger(SegmentedVodTranscoderImpl.class);
 
 	public void transcode(File workingDirectory, TranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
 		LOG.debug("transcode started: inputFile [" + inputFile.getAbsolutePath() + "], outputFile [" + outputFile.getAbsolutePath() + "]");
 
-		FFMpegTranscoderConfigurationItem config = (FFMpegTranscoderConfigurationItem) genericConfig;
+		SegmenterTranscoderConfigurationItem config = (SegmenterTranscoderConfigurationItem) genericConfig;
 		List <String> commandList = new ArrayList<String>();
 		commandList.add(niceLocation);
 		commandList.add("-n");
 		commandList.add(Integer.toString(config.getNiceness()));
-		commandList.add(ffmpegLocation);
-		commandList.add("-i");
+		commandList.add(segmenterLocation);
 		commandList.add(inputFile.getAbsolutePath());
-		commandList.addAll(config.getParsedEncoderArguments());
-		commandList.add(outputFile.getAbsolutePath());
+		commandList.add(config.getSegmentDuration());
+		commandList.add(config.getSegmentFilePrefix());
+		commandList.add(config.getPlaylistFileName());
+		commandList.add(config.getHttpPrefix());
 		ProcessBuilder pb = new ProcessBuilder(commandList);
 
-        // Needed for ffmpeg
         pb.environment().put("LD_LIBRARY_PATH", "/usr/local/lib:");
         pb.redirectErrorStream(true);
-        pb.directory(workingDirectory);
+        pb.directory(outputFile.getParentFile());
         Process process = null;
 
         try {
-            // Get the ffmpeg process
+            // Get the segmenter process
             process = pb.start();
             // We give a couple of secs to complete task if needed
             Future<List<String>> stdout = pool.submit(new OutputMonitor(process.getInputStream()));
             List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
             process.waitFor();
             final int exitValue = process.exitValue();
-            LOG.debug("FFMPEG exit value: " + exitValue);
+            LOG.debug("Segmenter exit value: " + exitValue);
             if (exitValue != 0) {
                 for (String line : result) {
                     LOG.debug(line);
                 }
-                throw new Exception("FFMpeg return code indicated failure: " + exitValue);
+                throw new Exception("Segmenter return code indicated failure: " + exitValue);
             }
         } catch (InterruptedException e) {
-            throw new Exception("FFMpeg process interuppted by another thread",
+            throw new Exception("Segmenter process interuppted by another thread",
                     e);
         } catch (ExecutionException ee) {
-            throw new Exception("Something went wrong parsing FFMpeg output",
+            throw new Exception("Something went wrong parsing Segmenter output",
                     ee);
         } catch (TimeoutException te) {
             // We could not get the result before timeout
-            throw new Exception("FFMpeg process timed out", te);
+            throw new Exception("Segmenter process timed out", te);
         } catch (RuntimeException re) {
-            // Unexpected output from FFMpeg
-            throw new Exception("Something went wrong parsing FFMpeg output",
+            // Unexpected output from Segmenter
+            throw new Exception("Something went wrong parsing Segmenter output",
                     re);
         } finally {
             if (process != null) {
@@ -113,12 +108,13 @@ public class FFMpegTranscoderImpl extends AbstractTranscoderImpl implements Tran
         LOG.debug("transcoding finished");
     }
 
-    @Required
-	public void setFfmpegLocation(String ffmpegLocation) {
-		this.ffmpegLocation = ffmpegLocation;
+	@Required
+	public void setSegmenterLocation(String segmenterLocation) {
+		this.segmenterLocation = segmenterLocation;
 	}
 
 	public void setNiceLocation(String niceLocation) {
 		this.niceLocation = niceLocation;
 	}
+
 }

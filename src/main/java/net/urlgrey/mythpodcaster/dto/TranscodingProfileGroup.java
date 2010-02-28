@@ -1,9 +1,9 @@
 /*
- * Transcoder.java
+ * TranscodingProfileGroup.java
  *
- * Created: Oct 9, 2009 9:24:26 AM
+ * Created: Feb 17, 2010
  *
- * Copyright (C) 2009 Scott Kidder
+ * Copyright (C) 2010 Scott Kidder
  * 
  * This file is part of MythPodcaster
  * 
@@ -20,18 +20,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.urlgrey.mythpodcaster.transcode;
+package net.urlgrey.mythpodcaster.dto;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @author scott
+ * @author scottkidder
  *
  */
-public interface Transcoder {
+@XmlRootElement(name="transcoding-profiles")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class TranscodingProfileGroup {
 
-	void transcode(File workingDirectory, TranscoderConfigurationItem config, File inputFile, File outputFile) throws Exception;
+	private List<TranscodingProfile> profiles = new ArrayList<TranscodingProfile>();
 
+	public List<TranscodingProfile> getProfiles() {
+		return profiles;
+	}
+
+	public void setProfiles(List<TranscodingProfile> profiles) {
+		this.profiles = profiles;
+	}
 }
