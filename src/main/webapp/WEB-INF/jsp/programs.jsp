@@ -8,20 +8,27 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>MythPodcaster :: Programs</title>
 <link rel="stylesheet" href="styles/html.css" type="text/css">
+<script type="text/javascript">
+function confirmDelete(delUrl) {
+  if (confirm("Are you sure you want to unsubscribe?")) {
+    document.location = delUrl;
+  }
+}
+</script>
 </head>
 <body>
-<h1>Transcoded Series Subscriptions</h1>
+<h1>Current Series Subscriptions</h1>
 
 <c:if test="${not empty mythpodcaster_series_subscriptions}">
     <table border="1">
       <tr><td><b>Title</b></td><td><b>Profile</b></td><td><b>Actions</b></td><td><b>Feed</b></td></tr>
       <c:forEach items="${mythpodcaster_series_subscriptions}" var="series">
-       	<tr><td><c:out value="${series.title}"/></td><td><c:out value="${series.transcodeProfile}" /></td><td align="right"><a href="subscriptions.htm?action=unsubscribe&seriesId=${series.seriesId}"/>Unsubscribe</a></td><td align="right"><a href="${applicationURL}/${series.transcodeProfile}/${series.seriesId}${feedFileExtension}"/>Feed</a></td></tr>
+       	<tr><td><c:out value="${series.title}"/></td><td><c:out value="${series.transcodeProfile}" /></td><td align="right"><a href="javascript:confirmDelete('subscriptions.htm?action=unsubscribe&seriesId=${series.seriesId}&transcodeProfile=${series.transcodeProfile}')"/>Unsubscribe</a></td><td align="right"><a href="${applicationURL}/${series.transcodeProfile}/${series.seriesId}${feedFileExtension}"/>Feed</a></td></tr>
       </c:forEach>
     </table>
    </c:if>
 
-<h1>All Remaining Series</h1>
+<h1>All Available Series</h1>
 
 <c:if test="${not empty mythpodcaster_series}">
     <table border="1">

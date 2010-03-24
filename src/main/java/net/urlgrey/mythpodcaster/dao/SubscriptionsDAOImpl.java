@@ -86,9 +86,9 @@ public class SubscriptionsDAOImpl extends AbstractFileBasedDAO implements Subscr
 
 	public synchronized void addSubscription(FeedSubscriptionItem item) throws IOException {
 		final String seriesId = item.getSeriesId();
-		LOGGER.debug("Adding subscription: seriesId [" + seriesId + "]");
+		LOGGER.debug("Adding subscription: seriesId [" + seriesId + "], transcodeProfileId[" + item.getTranscodeProfile() + "]");
+
 		final FeedSubscriptions subscriptionsDocument = loadSubscriptionDocument();
-		
 		final List<FeedSubscriptionItem> subscriptions = subscriptionsDocument.getSubscriptions();
 		if (subscriptions.contains(item)) {
 			final int index = subscriptions.indexOf(item);
@@ -148,15 +148,17 @@ public class SubscriptionsDAOImpl extends AbstractFileBasedDAO implements Subscr
 
 
 	/* (non-Javadoc)
-	 * @see net.urlgrey.mythpodcaster.dao.SubscriptionsDAO#removeSubscription(java.lang.String)
+	 * @see net.urlgrey.mythpodcaster.dao.SubscriptionsDAO#removeSubscription(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void removeSubscription(String seriesId) {
-		LOGGER.debug("Removing subscription: seriesId [" + seriesId + "]");
+	public void removeSubscription(String seriesId, String transcodeProfileId) {
+		LOGGER.debug("Removing subscription: seriesId [" + seriesId + "], transcodeProfileId[" + transcodeProfileId + "]");
 		FeedSubscriptions subscriptionsDocument = loadSubscriptionDocument();
 		
 		FeedSubscriptionItem item = new FeedSubscriptionItem();
 		item.setSeriesId(seriesId);
+		item.setTranscodeProfile(transcodeProfileId);
+
 		final List<FeedSubscriptionItem> subscriptions = subscriptionsDocument.getSubscriptions();
 		if (!subscriptions.contains(item)) {
 			LOGGER.info("Item not found in subscriptions, returning");

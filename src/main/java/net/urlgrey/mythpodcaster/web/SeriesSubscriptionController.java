@@ -23,6 +23,7 @@
 package net.urlgrey.mythpodcaster.web;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -74,20 +75,28 @@ public class SeriesSubscriptionController implements Controller {
 			LOGGER.error("Request submitted without a action specified, aborting");
 			return new ModelAndView(new RedirectView(successView));
 		}
-		LOGGER.debug("Handling Request: seriesId=" + seriesId + ", action=" + action);
+		LOGGER.debug("Handling Request: seriesId[" + seriesId + "], action[" + action + "]");
 
 		try {
+			String transcodeProfileId = request.getParameter("transcodeProfile");
 			if ("subscribe".equalsIgnoreCase(action)) {
-				String transcodeProfileId = request.getParameter("transcodeProfile");
 				final Map<String, TranscodingProfile> transcodeProfiles = transcodingProfilesDao.findAllProfiles();
-				ArrayList<TranscodingProfile> transList = new ArrayList<TranscodingProfile>(transcodeProfiles.values());
-				if(transList.size() > 1)
+				if(transcodeProfiles.size() > 1)
 				{
 					if( transcodeProfileId == null 
 					     || !transcodeProfiles.containsKey(transcodeProfileId))
 					{
-					    //Output a page
-					    Map<String, Object> model = new HashMap <String, Object>();
+						// identify and remove those transcoding profiles already in use for this series
+						final List<FeedSubscriptionItem> currentSubscriptions = subscriptionsDao.findSubscriptions();
+						for (FeedSubscriptionItem sub : currentSubscriptions) {
+							if (sub.isActive() && sub.getSeriesId().equals(seriesId)) {
+								transcodeProfiles.remove(sub.getTranscodeProfile());
+							}
+						}
+
+						//Output a page
+						final Map<String, Object> model = new HashMap <String, Object>();
+						final ArrayList<TranscodingProfile> transList = new ArrayList<TranscodingProfile>(transcodeProfiles.values());
 					    Collections.sort(transList);
 					    model.put("", seriesId);
 					    model.put("action", action);
@@ -95,10 +104,12 @@ public class SeriesSubscriptionController implements Controller {
 					    return new ModelAndView("transcoder-selection", model);
 					}
 				}
-				else
+				else if (transcodeProfiles.size() == 1)
 				{
-					transcodeProfileId = transList.get(0).getId();
+					// if only one transcoding profile exists, then use it automatically
+					transcodeProfileId = transcodeProfiles.keySet().iterator().next();
 				}
+
 				final RecordedSeries seriesInfo = recordingsDao.findRecordedSeries(seriesId);
 				if (seriesInfo == null) {
 					LOGGER.error("Unable to find info for  [" + seriesId + "], aborting");
@@ -113,7 +124,7 @@ public class SeriesSubscriptionController implements Controller {
 
 				subscriptionsDao.addSubscription(item);
 			} else if ("unsubscribe".equalsIgnoreCase(action)) {
-				subscriptionsDao.removeSubscription(seriesId);
+				subscriptionsDao.removeSubscription(seriesId, transcodeProfileId);
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error while processing subscription action", e);

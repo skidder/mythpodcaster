@@ -79,6 +79,9 @@ public class FeedSubscriptionItem implements Comparable<FeedSubscriptionItem> {
 		int result = 1;
 		result = prime * result
 				+ ((seriesId == null) ? 0 : seriesId.hashCode());
+		result = prime
+				* result
+				+ ((transcodeProfile == null) ? 0 : transcodeProfile.hashCode());
 		return result;
 	}
 	@Override
@@ -95,12 +98,25 @@ public class FeedSubscriptionItem implements Comparable<FeedSubscriptionItem> {
 				return false;
 		} else if (!seriesId.equals(other.seriesId))
 			return false;
+		if (transcodeProfile == null) {
+			if (other.transcodeProfile != null)
+				return false;
+		} else if (!transcodeProfile.equals(other.transcodeProfile))
+			return false;
 		return true;
 	}
 
 	@Override
 	public int compareTo(FeedSubscriptionItem o) {
-		return this.getTitle().compareTo(o.getTitle());
+		int titleComparison = this.getTitle().compareTo(o.getTitle());
+		if (titleComparison != 0)
+			return titleComparison;
+		
+		int transcodingProfileComparison = this.getTranscodeProfile().compareTo(o.getTranscodeProfile());
+		if (transcodingProfileComparison != 0)
+			return transcodingProfileComparison;
+		
+		return 0;
 	}
 	
 	

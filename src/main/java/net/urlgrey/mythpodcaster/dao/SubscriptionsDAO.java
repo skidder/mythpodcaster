@@ -42,8 +42,9 @@ public interface SubscriptionsDAO {
 
 	/**
 	 * @param seriesId
+	 * @param transcodeProfileId 
 	 */
-	void removeSubscription(String seriesId);
+	void removeSubscription(String seriesId, String transcodeProfileId);
 
 	/**
 	 * @param purgeList
