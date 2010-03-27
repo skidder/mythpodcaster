@@ -99,12 +99,6 @@ public class TranscodeAndCleanupJob {
 				LOGGER.error("Continuing, error reading feed for recordId[" + subscription.getSeriesId() + "]", e);
 				continue;
 			}
-			final RecordedSeries seriesInfo = recordingsDao.findRecordedSeries(subscription.getSeriesId());
-
-			if (seriesInfo == null) {
-				// if not occurences of the recorded series are found, then continue
-				LOGGER.debug("No recordings found for recordId[" + subscription.getSeriesId() + "]");
-			}
 
 			if (subscription.isActive() == false) {
 				// if the series is inactive, then delete the feed, it's transcoded files, and the subscription entry
@@ -113,6 +107,13 @@ public class TranscodeAndCleanupJob {
 			} else {
 				// identify series recordings not represented in the RSS Feed (transcode)
 				final List entries = feed.getEntries();
+				final RecordedSeries seriesInfo = recordingsDao.findRecordedSeries(subscription.getSeriesId());
+
+				if (seriesInfo == null) {
+					// if not occurences of the recorded series are found, then continue
+					LOGGER.debug("No recordings found for recordId[" + subscription.getSeriesId() + "]");
+				}
+
 				if (seriesInfo != null) {
 				    for (RecordedProgram program : seriesInfo.getRecordedPrograms()) {
 						if (program.getEndTime() == null || program.getEndTime().after(new Date())) {
@@ -208,8 +209,8 @@ public class TranscodeAndCleanupJob {
 					// sort the feed entries by published-date
 					Collections.sort(entries, entryComparator);
 					
-			         try {
-			 			FileWriter writer = new FileWriter(feedFile); 
+					try {
+						FileWriter writer = new FileWriter(feedFile);
 						SyndFeedOutput output = new SyndFeedOutput();
 						output.output(feed, writer);
 					} catch (IOException e) {
