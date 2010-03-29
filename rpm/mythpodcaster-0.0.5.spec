@@ -45,10 +45,10 @@ for file in `find . -type f`; do\
 done
 
 mkdir -p $RPM_BUILD_ROOT/var/log/mythpodcaster
-mkdir -p $RPM_BUILD_ROOT/usr/share/mythpodcaster/rss
+mkdir -p $RPM_BUILD_ROOT/var/mythpodcaster/rss
 mkdir -p $RPM_BUILD_ROOT/var/www/html/mythpodcaster
 cd $RPM_BUILD_ROOT/var/www/html/mythpodcaster
-ln -s /usr/share/mythpodcaster/rss
+ln -s /var/mythpodcaster/rss
 
 %clean
 rm -rf $RPM_BUILD_ROOT
