@@ -45,6 +45,9 @@ done
 
 mkdir -p $RPM_BUILD_ROOT/var/log/mythpodcaster
 mkdir -p $RPM_BUILD_ROOT/usr/share/mythpodcaster/rss
+mkdir -p $RPM_BUILD_ROOT/var/www/html/mythpodcaster
+cd $RPM_BUILD_ROOT/var/www/html/mythpodcaster
+ln -s /usr/share/mythpodcaster/rss
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -64,6 +67,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir /var/log/mythpodcaster
 %{_datadir}/mythpodcaster
 %{_datadir}/tomcat6/webapps/MythPodcaster
+%{_localstatedir}/www/html/mythpodcaster/rss
 
 %doc
 
