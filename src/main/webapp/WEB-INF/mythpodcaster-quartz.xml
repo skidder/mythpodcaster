@@ -15,7 +15,7 @@
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
             <property name="location">
-                    <value>file:///${mythpodcaster.prop.dir}mythpodcaster.properties</value>
+                    <value>file:///etc/mythpodcaster/mythpodcaster.properties</value>
             </property>
     </bean>
 
