@@ -37,9 +37,11 @@ cd %{_topdir}/BUILD/%{name}-%{version}/src/main/conf/httpd
 install -D -m 664 mythpodcaster.conf $RPM_BUILD_ROOT/etc/httpd/conf.d/mythpodcaster.conf;
 
 mkdir -p $RPM_BUILD_ROOT/usr/share/tomcat6/webapps/MythPodcaster
-cd %{_topdir}/BUILD/%{name}-%{version}/target
-install -D -m 664 MythPodcaster-%{version}.war \
-	$RPM_BUILD_ROOT/usr/share/tomcat6/webapps/MythPodcaster.war
+cd %{_topdir}/BUILD/%{name}-%{version}/target/MythPodcaster-%{version}
+for file in `find . -type f`; do\
+  install -D -m 664 $file \
+       $RPM_BUILD_ROOT/usr/share/tomcat6/webapps/MythPodcaster/$file;\
+done
 
 mkdir -p $RPM_BUILD_ROOT/var/log/mythpodcaster
 mkdir -p $RPM_BUILD_ROOT/usr/share/mythpodcaster/rss
@@ -61,7 +63,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %dir /var/log/mythpodcaster
 %{_datadir}/mythpodcaster
-%{_datadir}/tomcat6/webapps/MythPodcaster.war
+%{_datadir}/tomcat6/webapps/MythPodcaster
 
 %doc
 
