@@ -83,7 +83,7 @@
         <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
             <niceness>19</niceness>
             <timeout>7200</timeout>
-            <encoderArguments>-v 1 -y -f mpegts -acodec libfaac -ar 48000 -ac 2 -ab 64k -s 480x320 -vtag mp4v -vcodec libx264 -b 300k -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -subq 5 -trellis 1 -refs 1 -coder 0 -me_range 16 -keyint_min 24 -sc_threshold 40 -i_qfactor 0.71 -bt 200k -maxrate 300k -bufsize 512k -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30 -g 30 -async 2</encoderArguments>
+            <encoderArguments>-v 1 -y -f mpegts -acodec libfaac -ar 48000 -ac 2 -ab 128k -s 480x320 -vtag mp4v -vcodec libx264 -b 300k -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -subq 5 -trellis 1 -refs 1 -coder 0 -me_range 16 -keyint_min 24 -sc_threshold 40 -i_qfactor 0.71 -bt 200k -maxrate 300k -bufsize 512k -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30 -g 30 -async 2</encoderArguments>
         </transcoderConfigurationItems>
         <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
             <niceness>19</niceness>

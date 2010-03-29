@@ -67,7 +67,7 @@ rm -rf $RPM_BUILD_ROOT
 %config /etc/mythpodcaster/log4j.xml
 
 %dir /var/log/mythpodcaster
-%{_datadir}/mythpodcaster
+%{_localstatedir}/mythpodcaster
 %{_datadir}/tomcat6/webapps/MythPodcaster
 %{_localstatedir}/www/html/mythpodcaster/rss
 
