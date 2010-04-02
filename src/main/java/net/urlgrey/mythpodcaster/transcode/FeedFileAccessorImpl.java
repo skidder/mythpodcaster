@@ -180,7 +180,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 	 * @param entries
 	 */
 	public void addProgramToFeed(RecordedProgram program, Channel channel, SyndFeed feed, String transcodingProfileId) {
-		LOGGER.debug("Transcoding new feed entry: programId[" + program.getProgramId() + "], key[" +  program.getKey() + "], channel[" + (channel != null ? channel.getName() : "") + "], transcodingProfileId[" + transcodingProfileId + "]");
+		LOGGER.info("Transcoding new feed entry: programId[" + program.getProgramId() + "], key[" +  program.getKey() + "], title[" + program.getTitle() + "], channel[" + (channel != null ? channel.getName() : "") + "], transcodingProfileId[" + transcodingProfileId + "]");
 		 final SyndEntryImpl entry = new SyndEntryImpl();
 		 entry.setUri(program.getKey());
 		 entry.setPublishedDate(program.getStartTime());

@@ -51,7 +51,7 @@ public class SegmentedVodTranscoderImpl extends AbstractTranscoderImpl implement
 	private static final Logger LOG = Logger.getLogger(SegmentedVodTranscoderImpl.class);
 
 	public void transcode(File workingDirectory, TranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
-		LOG.debug("transcode started: inputFile [" + inputFile.getAbsolutePath() + "], outputFile [" + outputFile.getAbsolutePath() + "]");
+		LOG.info("transcode started: inputFile [" + inputFile.getAbsolutePath() + "], outputFile [" + outputFile.getAbsolutePath() + "]");
 
 		SegmenterTranscoderConfigurationItem config = (SegmenterTranscoderConfigurationItem) genericConfig;
 		List <String> commandList = new ArrayList<String>();

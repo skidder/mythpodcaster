@@ -56,7 +56,7 @@ public class FFMpegTranscoderImpl extends AbstractTranscoderImpl implements Tran
     static final ExecutorService pool = Executors.newCachedThreadPool();
 
 	public void transcode(File workingDirectory, TranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
-		LOG.debug("transcode started: inputFile [" + inputFile.getAbsolutePath() + "], outputFile [" + outputFile.getAbsolutePath() + "]");
+		LOG.info("transcode started: inputFile [" + inputFile.getAbsolutePath() + "], outputFile [" + outputFile.getAbsolutePath() + "]");
 
 		FFMpegTranscoderConfigurationItem config = (FFMpegTranscoderConfigurationItem) genericConfig;
 		List <String> commandList = new ArrayList<String>();
