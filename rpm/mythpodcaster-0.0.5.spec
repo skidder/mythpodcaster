@@ -69,8 +69,16 @@ rm -rf $RPM_BUILD_ROOT
 %dir /var/log/mythpodcaster
 %{_localstatedir}/mythpodcaster
 %{_datadir}/tomcat6/webapps/MythPodcaster
-%{_localstatedir}/www/html/mythpodcaster/rss
+%{_localstatedir}/www/html/mythpodcaster
 
 %doc
 
 %changelog
+* Fri Apr 2 2010 <kidder.scott@gmail.com> - 0.0.5
+Bugfix:
+1: Include a Confirmation dialog when unsubscribing 
+2: Provide an RPM build for simplified installation 
+3: Allow multiple output encodings for a show 
+6: Segmented Encoding directory not deleted after failed encoding
+7: Move the log4j configuration to the configuration directory 
+8: Reduce the volume of application logs
