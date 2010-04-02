@@ -108,10 +108,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 			final TranscoderConfigurationItem segmentedVodConfig = profile.getTranscoderConfigurationItems().get(1);
 			segmentedVodTranscoder.transcode(workingDirectory, segmentedVodConfig, tempOutputFile, outputFile);
 		} catch (Exception e) {
-			if (outputFile.exists()) {
-				deleteDir(outputFile.getParentFile());
-			}
-
+			deleteDir(outputFile.getParentFile());
 			throw e;
 		} finally {
 			deleteDir(workingDirectory);
