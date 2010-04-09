@@ -36,4 +36,10 @@ public interface ClipLocator {
 	 */
 	File locateOriginalClip(String filename);
 
+	/**
+	 * 
+	 * @param filename
+	 * @return
+	 */
+	File locateThumbnailForOriginalClip(String filename);
 }

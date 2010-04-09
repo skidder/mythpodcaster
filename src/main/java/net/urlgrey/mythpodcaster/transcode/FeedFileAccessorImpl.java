@@ -46,6 +46,7 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
+import com.sun.syndication.feed.synd.SyndImageImpl;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.SyndFeedOutput;
@@ -55,6 +56,8 @@ import com.sun.syndication.io.SyndFeedOutput;
  *
  */
 public class FeedFileAccessorImpl implements FeedFileAccessor {
+
+	private static final String PNG_EXTENSION = ".png";
 
 	private static final String PATH_SEPARATOR = "/";
 
@@ -114,14 +117,22 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 	 * @param feed 
 	 */
 	public void purgeFeed(String seriesId, String transcodingProfileId, SyndFeed feed) {
-		File encodingDirectory = new File(feedFilePath, transcodingProfileId);
-		File feedFile = new File(encodingDirectory, seriesId + feedFileExtension);
+		final File encodingDirectory = new File(feedFilePath, transcodingProfileId);
+
+		// delete feed
+		final File feedFile = new File(encodingDirectory, seriesId + feedFileExtension);
 		if (feedFile.canWrite()) {
 			feedFile.delete();
 		}
-		
+
+		// delete feed thumbnail
+		final File feedThumbnail = new File(encodingDirectory, seriesId + PNG_EXTENSION);
+		if (feedThumbnail.canWrite()) {
+			feedThumbnail.delete();
+		}
+
 		if (feed != null) {
-			Iterator it = feed.getEntries().iterator();
+			final Iterator it = feed.getEntries().iterator();
 			while (it.hasNext()) {
 				SyndEntry entry = (SyndEntry) it.next();
 				final List enclosures = entry.getEnclosures();
@@ -137,7 +148,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 						profile.deleteEncoding(this.feedFilePath, enclosure.getUrl(), entry.getUri());
 					}
 				} else {
-					LOGGER.info("No enclosures specified in the entry, continuing");
+					LOGGER.debug("No enclosures specified in the entry, continuing");
 					continue;
 				}
 			}
@@ -156,18 +167,18 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 			if (feed == null) {
 				throw new IOException("Unable to create feed for new subscription");
 			}
-			
+
 			return feed;
 		}
 
 		SyndFeedInput input = new SyndFeedInput();
-        try {
-        	return input.build(feedFile);
-        } catch (IOException e) {
+		try {
+			return input.build(feedFile);
+		} catch (IOException e) {
 			LOGGER.error("Error rendering feed", e);
 			feedFile.delete();
 			throw new IOException("Unable to render feed");
-        } catch (FeedException e) {
+		} catch (FeedException e) {
 			LOGGER.error("Error rendering feed", e);
 			feedFile.delete();
 			throw new IOException("Unable to render feed");
@@ -181,43 +192,68 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 	 */
 	public void addProgramToFeed(RecordedProgram program, Channel channel, SyndFeed feed, String transcodingProfileId) {
 		LOGGER.info("Transcoding new feed entry: programId[" + program.getProgramId() + "], key[" +  program.getKey() + "], title[" + program.getTitle() + "], channel[" + (channel != null ? channel.getName() : "") + "], transcodingProfileId[" + transcodingProfileId + "]");
-		 final SyndEntryImpl entry = new SyndEntryImpl();
-		 entry.setUri(program.getKey());
-		 entry.setPublishedDate(program.getStartTime());
-		 
-		 // set author info from the channel if available
-		 if (channel != null) {
-			 entry.setAuthor(channel.getName());
-		 }
+		final SyndEntryImpl entry = new SyndEntryImpl();
+		entry.setUri(program.getKey());
+		entry.setPublishedDate(program.getStartTime());
 
-		 // Use the sub-title if no title can be found for the program
-		 if (program.getSubtitle() != null && program.getSubtitle().trim().length() > 0) {
-			 entry.setTitle(program.getSubtitle());
-		 } else {
-			 entry.setTitle(program.getTitle());
-		 }
+		// set author info from the channel if available
+		if (channel != null) {
+			entry.setAuthor(channel.getName());
+		}
 
-		 final SyndContentImpl description = new SyndContentImpl();
-		 description.setType("text/plain");
-		 description.setValue(program.getDescription());
-		 entry.setDescription(description);
-		 
-		 // transcode
-		 final File originalClip = clipLocator.locateOriginalClip(program.getFilename());
-		 if (originalClip !=null && originalClip.canRead()) {
+		// Use the sub-title if no title can be found for the program
+		if (program.getSubtitle() != null && program.getSubtitle().trim().length() > 0) {
+			entry.setTitle(program.getSubtitle());
+		} else {
+			entry.setTitle(program.getTitle());
+		}
+
+		final SyndContentImpl description = new SyndContentImpl();
+		description.setType("text/plain");
+		description.setValue(program.getDescription());
+		entry.setDescription(description);
+
+		// apply thumbnail for clip to the feed
+		final File originalClipThumbnail = clipLocator.locateThumbnailForOriginalClip(program.getFilename());
+		if (originalClipThumbnail != null) {
+			final String seriesId = program.getSeries().getSeriesId();
+			final File encodingDirectory = new File(feedFilePath, transcodingProfileId);
+			final File feedThumbnailFile = new File(encodingDirectory, seriesId + PNG_EXTENSION);
+
+			try {
+				FileOperations.copy(originalClipThumbnail, feedThumbnailFile);
+
+				final SyndImageImpl feedImage = new SyndImageImpl();
+				feedImage.setUrl(this.applicationURL + PATH_SEPARATOR + transcodingProfileId + PATH_SEPARATOR + seriesId + PNG_EXTENSION);
+				feed.setImage(feedImage);
+				LOGGER.info("Applied clip thumbnail to feed: thumbnail[" + feedThumbnailFile.getAbsolutePath() + "], url[" + feedImage.getUrl() + "]");
+			} catch (IOException e) {
+				if (feedThumbnailFile.canWrite()) {
+					feedThumbnailFile.delete();
+					feed.setImage(null);
+				}
+			}
+		}
+
+		// transcode
+		final File originalClip = clipLocator.locateOriginalClip(program.getFilename());
+		if (originalClip !=null) {
 			final TranscodingProfile profile = transcodingProfilesDao.findAllProfiles().get(transcodingProfileId);
 			if (profile != null) {
-				
-				 final File outputFile = profile.generateOutputFilePath(feedFilePath, program.getKey());
-			     try {
-			    	 
-			    	transcodingController.transcode(profile, originalClip, outputFile);
+
+				final File outputFile = profile.generateOutputFilePath(feedFilePath, program.getKey());
+				try {
+
+					LOGGER.info("Transcode STARTING: profile[" + profile.getId() + "]");
+					transcodingController.transcode(profile, originalClip, outputFile);
+					LOGGER.info("Transcode FINISHED: profile[" + profile.getId() + "]");
+
 					if (outputFile.canRead()) {
 						// get the file-size in bytes
 						FileInputStream in = new FileInputStream(outputFile);
 						final int fileSize = in.available();
 						in.close();
-	
+
 						final String link = profile.generateOutputFileURL(this.applicationURL, outputFile);						
 						final SyndEnclosure enclosure = new SyndEnclosureImpl();
 						enclosure.setUrl(link);
@@ -237,21 +273,21 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 						outputFile.delete();
 					}
 				}
-		     } else {
-		    	final String msg = "Unable to locate transcoding profile with given id: ["
-						+ transcodingProfileId + "]";
+			} else {
+				final String msg = "Unable to locate transcoding profile with given id: ["
+					+ transcodingProfileId + "]";
 				LOGGER.error(msg);
-		     }
-		 } else {
-			 if (originalClip != null) {
-				 LOGGER.warn("Original clip does not exist or cannot be read: " + originalClip.getAbsolutePath());
-			 } else {
-				 LOGGER.warn("Original clip could not be found in content paths");
-			 }
-			 entry.setLink(null);
-		 }
+			}
+		} else {
+			if (originalClip != null) {
+				LOGGER.warn("Original clip does not exist or cannot be read: " + originalClip.getAbsolutePath());
+			} else {
+				LOGGER.warn("Original clip could not be found in content paths");
+			}
+			entry.setLink(null);
+		}
 
-		 feed.getEntries().add(entry);
+		feed.getEntries().add(entry);
 	}
 
 	@Required

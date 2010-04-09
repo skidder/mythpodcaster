@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public class ClipLocatorImpl implements ClipLocator {
 
+	private static final String PNG_EXTENSION = ".png";
 	private MythRecordingsDAO recordingsDao;
 	
 	/**
@@ -54,6 +55,22 @@ public class ClipLocatorImpl implements ClipLocator {
 				return clipLocation;
 			}
 		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.urlgrey.mythpodcaster.transcode.ClipLocator#locateThumbnailForOriginalClip(java.lang.String)
+	 */
+	@Override
+	public File locateThumbnailForOriginalClip(String filename) {
+		final File clipFile = this.locateOriginalClip(filename);
+		if (clipFile != null) {
+			final File clipThumbnailFile = new File(clipFile.getParentFile(), clipFile.getName() + PNG_EXTENSION);
+			if (clipThumbnailFile.canRead()) {
+				return clipThumbnailFile;
+			}
+		}
+		
 		return null;
 	}
 
