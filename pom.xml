@@ -4,7 +4,7 @@
 	<groupId>net.urlgrey</groupId>
 	<artifactId>MythPodcaster</artifactId>
 	<packaging>war</packaging>
-	<version>0.0.5</version>
+	<version>0.0.6</version>
 	<dependencies>
 		<dependency>
 			<groupId>mysql</groupId>
