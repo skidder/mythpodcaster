@@ -225,6 +225,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 
 				final SyndImageImpl feedImage = new SyndImageImpl();
 				feedImage.setUrl(this.applicationURL + PATH_SEPARATOR + transcodingProfileId + PATH_SEPARATOR + seriesId + PNG_EXTENSION);
+				feedImage.setTitle(program.getSeries().getTitle());
 				feed.setImage(feedImage);
 				LOGGER.info("Applied clip thumbnail to feed: thumbnail[" + feedThumbnailFile.getAbsolutePath() + "], url[" + feedImage.getUrl() + "]");
 			} catch (IOException e) {
