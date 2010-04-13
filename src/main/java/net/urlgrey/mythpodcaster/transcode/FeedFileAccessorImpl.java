@@ -39,6 +39,7 @@ import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
+import com.sun.syndication.feed.module.Module;
 import com.sun.syndication.feed.module.itunes.EntryInformation;
 import com.sun.syndication.feed.module.itunes.EntryInformationImpl;
 import com.sun.syndication.feed.module.itunes.FeedInformation;
@@ -240,11 +241,16 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 				feed.setImage(feedImage);
 				
 				// include iTunes-specific metadata
-				final FeedInformation itunesFeedMetadata = new FeedInformationImpl();
+				final Module module = feed.getModule("http://www.itunes.com/dtds/podcast-1.0.dtd");
+				final FeedInformation itunesFeedMetadata;
+				if (module == null) {
+					itunesFeedMetadata = new FeedInformationImpl();
+					feed.getModules().add(itunesFeedMetadata);
+				} else {
+					itunesFeedMetadata = (FeedInformation) module;
+				}
+
 				itunesFeedMetadata.setImage(new URL(feedImageUrl));
-				final ArrayList feedModules = new ArrayList();
-				feedModules.add(itunesFeedMetadata);
-				feed.setModules(feedModules);
 
 				LOGGER.info("Applied clip thumbnail to feed: thumbnail[" + feedThumbnailFile.getAbsolutePath() + "], url[" + feedImage.getUrl() + "]");
 			} catch (IOException e) {
@@ -283,10 +289,14 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 						enclosures.add(enclosure);
 						entry.setEnclosures(enclosures);
 
-						// store iTunes-specific metadata for entry
-						final ArrayList modules = new ArrayList();
-						modules.add(itunesEntryMetadata);
-						entry.setModules(modules);
+						// include iTunes-specific metadata
+						final Module module = entry.getModule("http://www.itunes.com/dtds/podcast-1.0.dtd");
+						if (module == null) {
+							entry.getModules().add(itunesEntryMetadata);
+						} else {
+							entry.getModules().remove(module);
+							entry.getModules().add(itunesEntryMetadata);
+						}
 					} else {
 						LOGGER.warn("Transcoded output file cannot be read, setting link to null: path[" + outputFile.getAbsolutePath() + "]");
 						entry.setLink(null);
