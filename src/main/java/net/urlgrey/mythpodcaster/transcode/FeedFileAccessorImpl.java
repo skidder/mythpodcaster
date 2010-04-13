@@ -39,6 +39,11 @@ import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
+import com.sun.syndication.feed.module.itunes.EntryInformation;
+import com.sun.syndication.feed.module.itunes.EntryInformationImpl;
+import com.sun.syndication.feed.module.itunes.FeedInformation;
+import com.sun.syndication.feed.module.itunes.FeedInformationImpl;
+import com.sun.syndication.feed.module.itunes.types.Duration;
 import com.sun.syndication.feed.synd.SyndContentImpl;
 import com.sun.syndication.feed.synd.SyndEnclosure;
 import com.sun.syndication.feed.synd.SyndEnclosureImpl;
@@ -196,9 +201,14 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 		entry.setUri(program.getKey());
 		entry.setPublishedDate(program.getStartTime());
 
+		final EntryInformation itunesEntryMetadata = new EntryInformationImpl();
+		itunesEntryMetadata.setDuration(new Duration(program.getEndTime().getTime() - program.getStartTime().getTime()));
+		itunesEntryMetadata.setSummary(program.getDescription());
+
 		// set author info from the channel if available
 		if (channel != null) {
 			entry.setAuthor(channel.getName());
+			itunesEntryMetadata.setAuthor(channel.getName());
 		}
 
 		// Use the sub-title if no title can be found for the program
@@ -224,9 +234,18 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 				FileOperations.copy(originalClipThumbnail, feedThumbnailFile);
 
 				final SyndImageImpl feedImage = new SyndImageImpl();
-				feedImage.setUrl(this.applicationURL + PATH_SEPARATOR + transcodingProfileId + PATH_SEPARATOR + seriesId + PNG_EXTENSION);
+				final String feedImageUrl = this.applicationURL + PATH_SEPARATOR + transcodingProfileId + PATH_SEPARATOR + seriesId + PNG_EXTENSION;
+				feedImage.setUrl(feedImageUrl);
 				feedImage.setTitle(program.getSeries().getTitle());
 				feed.setImage(feedImage);
+				
+				// include iTunes-specific metadata
+				final FeedInformation itunesFeedMetadata = new FeedInformationImpl();
+				itunesFeedMetadata.setImage(new URL(feedImageUrl));
+				final ArrayList feedModules = new ArrayList();
+				feedModules.add(itunesFeedMetadata);
+				feed.setModules(feedModules);
+
 				LOGGER.info("Applied clip thumbnail to feed: thumbnail[" + feedThumbnailFile.getAbsolutePath() + "], url[" + feedImage.getUrl() + "]");
 			} catch (IOException e) {
 				if (feedThumbnailFile.canWrite()) {
@@ -263,6 +282,11 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 						final List enclosures = new ArrayList();
 						enclosures.add(enclosure);
 						entry.setEnclosures(enclosures);
+
+						// store iTunes-specific metadata for entry
+						final ArrayList modules = new ArrayList();
+						modules.add(itunesEntryMetadata);
+						entry.setModules(modules);
 					} else {
 						LOGGER.warn("Transcoded output file cannot be read, setting link to null: path[" + outputFile.getAbsolutePath() + "]");
 						entry.setLink(null);

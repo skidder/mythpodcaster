@@ -59,7 +59,12 @@
 		<dependency>
 			<groupId>rome</groupId>
 			<artifactId>rome</artifactId>
-			<version>0.8</version>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>rome</groupId>
+			<artifactId>modules</artifactId>
+			<version>0.3.2</version>
 		</dependency>
 		<dependency>
 		    <groupId>c3p0</groupId>
