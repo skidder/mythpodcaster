@@ -291,12 +291,10 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 
 						// include iTunes-specific metadata
 						final Module module = entry.getModule("http://www.itunes.com/dtds/podcast-1.0.dtd");
-						if (module == null) {
-							entry.getModules().add(itunesEntryMetadata);
-						} else {
+						if (module != null) {
 							entry.getModules().remove(module);
-							entry.getModules().add(itunesEntryMetadata);
 						}
+						entry.getModules().add(itunesEntryMetadata);
 					} else {
 						LOGGER.warn("Transcoded output file cannot be read, setting link to null: path[" + outputFile.getAbsolutePath() + "]");
 						entry.setLink(null);
