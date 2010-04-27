@@ -74,6 +74,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
+* Tue Apr 27 2010 <kidder.scott@gmail.com> - 0.0.6
+Bugfix:
+10: Support Feed Thumbnails from MythTV Thumbnails
+12: Support iTunes Podcast Feed Tags
+
 * Fri Apr 2 2010 <kidder.scott@gmail.com> - 0.0.5
 Bugfix:
 1: Include a Confirmation dialog when unsubscribing 
