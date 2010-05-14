@@ -39,8 +39,9 @@ import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 public class TranscodingControllerImpl implements TranscodingController {
 
 	private static final Logger LOGGER = Logger.getLogger(TranscodingControllerImpl.class);
-	private FFMpegTranscoderImpl ffmpegTranscoder;
-	private SegmentedVodTranscoderImpl segmentedVodTranscoder;
+	private Transcoder ffmpegTranscoder;
+	private Transcoder segmentedVodTranscoder;
+	private Transcoder fastStartVodTranscoder;
 
 
 	@Override
@@ -51,14 +52,45 @@ public class TranscodingControllerImpl implements TranscodingController {
 		case ONE_PASS:
 			encodeOnePass(profile, inputFile, outputFile);
 			break;
+		case ONE_PASS_FAST_START:
+			encodeOnePass(profile, inputFile, outputFile);
+			encodeFastStart(profile, inputFile);
+			break;
 		case TWO_PASS:
 			encodeTwoPass(profile, inputFile, outputFile);
+			break;
+		case TWO_PASS_FAST_START:
+			encodeTwoPass(profile, inputFile, outputFile);
+			encodeFastStart(profile, inputFile);
 			break;
 		case HTTP_SEGMENTED_VOD:
 			encodeSegmented(profile, inputFile, outputFile);
 			break;
 		default:
 			break;
+		}
+	}
+
+
+	private void encodeFastStart(TranscodingProfile profile, File inputFile) throws Exception {
+		LOGGER.info("Starting fast-start optimization of clip: inputFile[" + inputFile.getAbsolutePath() + "]");
+		File workingDirectory = this.createTempDir();
+		File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
+		try {
+			final TranscoderConfigurationItem config = profile.getTranscoderConfigurationItems().get(profile.getTranscoderConfigurationItems().size() - 1);
+			fastStartVodTranscoder.transcode(workingDirectory, config, inputFile, tempOutputFile);
+			
+			// replace the input-file with the fast-start optimized version
+			FileOperations.copy(tempOutputFile, inputFile);
+		} catch (Exception e) {
+			deleteDir(inputFile.getParentFile());
+			throw e;
+		} finally {
+			deleteDir(workingDirectory);
+
+			if (tempOutputFile.exists()) {
+				tempOutputFile.delete();
+			}
 		}
 	}
 
@@ -152,15 +184,20 @@ public class TranscodingControllerImpl implements TranscodingController {
     }
 
 	@Required
-	public void setFfmpegTranscoder(FFMpegTranscoderImpl ffmpegTranscoder) {
+	public void setFfmpegTranscoder(Transcoder ffmpegTranscoder) {
 		this.ffmpegTranscoder = ffmpegTranscoder;
 	}
 
 
 	@Required
 	public void setSegmentedVodTranscoder(
-			SegmentedVodTranscoderImpl segmentedVodTranscoder) {
+			Transcoder segmentedVodTranscoder) {
 		this.segmentedVodTranscoder = segmentedVodTranscoder;
 	}
 
+
+	@Required
+	public void setFastStartVodTranscoder(Transcoder fastStartTranscoder) {
+		this.fastStartVodTranscoder = fastStartTranscoder;
+	}
 }

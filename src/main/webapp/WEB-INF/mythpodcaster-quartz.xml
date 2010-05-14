@@ -36,6 +36,10 @@
 		<property name="segmenterLocation" value="${segmenter.location}"></property>
 	</bean>
 
+	<bean id="fastStartVodTranscoder" class="net.urlgrey.mythpodcaster.transcode.FastStartVodTranscoderImpl">
+		<property name="fastStartLocation" value="${faststart.location}"></property>
+	</bean>
+
 	<bean id="clipLocator" class="net.urlgrey.mythpodcaster.transcode.ClipLocatorImpl">
 		<property name="recordingsDao" ref="recordingsDao"></property>
 	</bean>
@@ -43,6 +47,7 @@
 	<bean id="transcodingController" class="net.urlgrey.mythpodcaster.transcode.TranscodingControllerImpl">
 		<property name="ffmpegTranscoder" ref="ffmpegTranscoder"/>
 		<property name="segmentedVodTranscoder" ref="segmentedVodTranscoder"/>
+		<property name="fastStartVodTranscoder" ref="fastStartVodTranscoder"/>
 	</bean>
 
 	<bean id="transcodeJob" class="net.urlgrey.mythpodcaster.transcode.TranscodeAndCleanupJob">

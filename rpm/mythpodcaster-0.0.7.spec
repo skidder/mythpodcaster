@@ -1,12 +1,12 @@
 Name:		mythpodcaster
-Version:	0.0.6
+Version:	0.0.7
 Release:	1%{?dist}
 Summary:	A Java web application that transcodes MythTV recordings and publishes them through RSS feeds.
 
 Group:		Applications/Multimedia
 License:	GPLv3
 URL:		http://code.google.com/p/mythpodcaster/
-Source0:	http://mythpodcaster.googlecode.com/files/mythpodcaster-0.0.6-src.tar.gz
+Source0:	http://mythpodcaster.googlecode.com/files/mythpodcaster-0.0.7-src.tar.gz
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #BuildRequires:		
@@ -74,6 +74,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
+* Fri May 14 2010 <kidder.scott@gmail.com> - 0.0.7
+Bugfix:
+14: Add encoding mode that invokes qt-faststart following FFMPEG encoding
+
 * Tue Apr 27 2010 <kidder.scott@gmail.com> - 0.0.6
 Bugfix:
 10: Support Feed Thumbnails from MythTV Thumbnails

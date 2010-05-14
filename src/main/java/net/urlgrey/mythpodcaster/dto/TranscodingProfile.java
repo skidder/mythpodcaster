@@ -45,7 +45,7 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 	 */
 	private static final String PATH_SEPARATOR = "/";
 
-	public enum TranscoderType{ ONE_PASS, TWO_PASS, HTTP_SEGMENTED_VOD }
+	public enum TranscoderType{ ONE_PASS, ONE_PASS_FAST_START, TWO_PASS, TWO_PASS_FAST_START, HTTP_SEGMENTED_VOD }
 
 	private static final Logger LOGGER = Logger.getLogger(TranscodingProfile.class);
 	
@@ -107,7 +107,9 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 
 		switch (mode) {
 		case ONE_PASS:
+		case ONE_PASS_FAST_START:
 		case TWO_PASS:
+		case TWO_PASS_FAST_START:
 			outputFile = new File(encodingDirectory, programKey + this.encodingFileExtension);
 			break;
 		case HTTP_SEGMENTED_VOD:

@@ -30,6 +30,22 @@
         <encodingMimeType>video/x-m4v</encodingMimeType>
     </profiles>
     <profiles>
+        <id>ipod_video_pgdl</id>
+        <displayName>Video - iPhone/iPod Touch (Progressive Download)</displayName>
+        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+            <niceness>19</niceness>
+            <timeout>7200</timeout>
+            <encoderArguments>-vcodec libx264 -vpre hq -vpre ipod640 -b 500k -acodec libfaac -ab 128k -ac 2 -ar 44100 -s 480x320 -threads 0 -f ipod -y</encoderArguments>
+        </transcoderConfigurationItems>
+        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="fastStartTranscoderConfigurationItem">
+            <niceness>19</niceness>
+            <timeout>1800</timeout>
+        </transcoderConfigurationItems>
+        <mode>ONE_PASS_FAST_START</mode>
+        <encodingFileExtension>.m4v</encodingFileExtension>
+        <encodingMimeType>video/x-m4v</encodingMimeType>
+    </profiles>
+    <profiles>
         <id>iriver_u10_widescreen_video</id>
         <displayName>Video - iRiver U10 Widescreen</displayName>
         <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
