@@ -1,5 +1,5 @@
 /*
- * FastStartTranscoderImpl.java
+ * FastStartVodTranscoderImpl.java
  *
  * Created: May 14, 2010
  *
@@ -42,13 +42,13 @@ import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
  * @author scottkidder
  *
  */
-public class FastStartTranscoderImpl extends AbstractTranscoderImpl implements Transcoder {
+public class FastStartVodTranscoderImpl extends AbstractTranscoderImpl implements Transcoder {
 
 	private String fastStartLocation;
     private String niceLocation = "nice";
 
     static final ExecutorService pool = Executors.newCachedThreadPool();
-	private static final Logger LOG = Logger.getLogger(FastStartTranscoderImpl.class);
+	private static final Logger LOG = Logger.getLogger(FastStartVodTranscoderImpl.class);
 
 	public void transcode(File workingDirectory, TranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
 		LOG.info("transcode started: inputFile [" + inputFile.getAbsolutePath() + "], outputFile [" + outputFile.getAbsolutePath() + "]");
