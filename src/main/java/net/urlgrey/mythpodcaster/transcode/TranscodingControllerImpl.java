@@ -54,14 +54,14 @@ public class TranscodingControllerImpl implements TranscodingController {
 			break;
 		case ONE_PASS_FAST_START:
 			encodeOnePass(profile, inputFile, outputFile);
-			encodeFastStart(profile, inputFile);
+			encodeFastStart(profile, outputFile);
 			break;
 		case TWO_PASS:
 			encodeTwoPass(profile, inputFile, outputFile);
 			break;
 		case TWO_PASS_FAST_START:
 			encodeTwoPass(profile, inputFile, outputFile);
-			encodeFastStart(profile, inputFile);
+			encodeFastStart(profile, outputFile);
 			break;
 		case HTTP_SEGMENTED_VOD:
 			encodeSegmented(profile, inputFile, outputFile);
