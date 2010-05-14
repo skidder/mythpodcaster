@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import net.urlgrey.mythpodcaster.dto.FFMpegTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.dto.FastStartTranscoderConfigurationItem;
 import net.urlgrey.mythpodcaster.dto.SegmenterTranscoderConfigurationItem;
 import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
 import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
@@ -54,7 +55,7 @@ public class TranscodingProfilesDAOImpl extends AbstractFileBasedDAO implements 
 
 	public TranscodingProfilesDAOImpl() {
 		 try {
-				jaxbContext = JAXBContext.newInstance(new Class[] {TranscodingProfile.class, TranscodingProfileGroup.class, FFMpegTranscoderConfigurationItem.class, TranscoderConfigurationItem.class, SegmenterTranscoderConfigurationItem.class} );
+				jaxbContext = JAXBContext.newInstance(new Class[] {TranscodingProfile.class, TranscodingProfileGroup.class, FFMpegTranscoderConfigurationItem.class, TranscoderConfigurationItem.class, SegmenterTranscoderConfigurationItem.class, FastStartTranscoderConfigurationItem.class} );
 			} catch (JAXBException e) {
 				LOGGER.fatal("Unable to create JAXB Context", e);
 				throw new IllegalStateException(e);
