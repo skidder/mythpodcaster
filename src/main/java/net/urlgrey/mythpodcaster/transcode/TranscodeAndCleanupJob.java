@@ -110,7 +110,7 @@ public class TranscodeAndCleanupJob implements ApplicationContextAware {
             executor.execute(task);
 		}
 		
-		if (executor.getActiveCount() > 0) {
+		while (executor.getActiveCount() > 0) {
 			try {
 				Thread.sleep(threadCompletionPollingFrequency * 1000);
 			} catch (InterruptedException e) {
