@@ -50,9 +50,28 @@
 		<property name="fastStartVodTranscoder" ref="fastStartVodTranscoder"/>
 	</bean>
 
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="${core.pool.size}" />
+		<property name="maxPoolSize" value="${max.pool.size}" />
+		<property name="queueCapacity" value="${task.queue.capacity}" />
+		<property name="threadNamePrefix" value="MythPodcasterTranscodingThread-" />
+		<property name="rejectedExecutionHandler">
+			<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
+		</property>
+	</bean>  
+
 	<bean id="transcodeJob" class="net.urlgrey.mythpodcaster.transcode.TranscodeAndCleanupJob">
-		<property name="recordingsDao" ref="recordingsDao" />
 		<property name="subscriptionsDao" ref="subscriptionsDao" />
+		<property name="feedFileAccessor" ref="feedFileAccessor" />
+		<property name="executor" ref="taskExecutor" />
+		<property name="threadCompletionPollingFrequency" value="${thread.completion.polling.frequency}" />
+	</bean>
+
+	<bean id="feedTranscodingTask"
+		class="net.urlgrey.mythpodcaster.transcode.FeedTranscodingTaskImpl"
+		scope="prototype">
+		<property name="recordingsDao" ref="recordingsDao" />
 		<property name="transcodingProfilesDao" ref="transcodingProfilesDao" />
 		<property name="feedFileAccessor" ref="feedFileAccessor" />
 		<property name="feedFilePath" value="${static.content.path}" />

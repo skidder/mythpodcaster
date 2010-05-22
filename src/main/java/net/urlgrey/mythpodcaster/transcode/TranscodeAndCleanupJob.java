@@ -22,51 +22,34 @@
  */
 package net.urlgrey.mythpodcaster.transcode;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ThreadPoolExecutor;
 
-import net.urlgrey.mythpodcaster.dao.MythRecordingsDAO;
 import net.urlgrey.mythpodcaster.dao.SubscriptionsDAO;
-import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
-import net.urlgrey.mythpodcaster.domain.Channel;
-import net.urlgrey.mythpodcaster.domain.RecordedProgram;
-import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
-import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-import com.sun.syndication.feed.synd.SyndEnclosure;
-import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedOutput;
 
 /**
  * @author scott
  *
  */
-public class TranscodeAndCleanupJob {
+public class TranscodeAndCleanupJob implements ApplicationContextAware {
 
 	private static final Logger LOGGER = Logger.getLogger(TranscodeAndCleanupJob.class);
 	private SubscriptionsDAO subscriptionsDao;
-	private MythRecordingsDAO recordingsDao;
 	private FeedFileAccessor feedFileAccessor;
-	private String feedFilePath;
-	private Comparator<SyndEntry> entryComparator = new FeedEntryComparator();
-	private String feedFileExtension;
-	private TranscodingProfilesDAO transcodingProfilesDao;
+	private ThreadPoolExecutor executor;
+    private ApplicationContext applicationContext;
+	private int threadCompletionPollingFrequency;
 
 
 	public void execute() {
@@ -84,15 +67,12 @@ public class TranscodeAndCleanupJob {
 		final List <FeedSubscriptionItem> purgeList = new ArrayList<FeedSubscriptionItem>();
 
 		// retrieve series subscriptions
-		final List<FeedSubscriptionItem> subscriptions = subscriptionsDao.findSubscriptions();
+		List<FeedSubscriptionItem> subscriptions = subscriptionsDao.findSubscriptions();
 
 		// iterate over each series
 		for (FeedSubscriptionItem subscription : subscriptions) {
-			LOGGER.debug("Processing feed subscription for recordId[" + subscription.getSeriesId() + "]");
-			boolean feedUpdated = false;
-
 			// parse the XML-encoded RSS Feed into a Java object
-			SyndFeed feed;
+			final SyndFeed feed;
 			try {
 				feed = feedFileAccessor.readFeed(subscription.getSeriesId(), subscription.getTranscodeProfile(), subscription.getTitle());
 			} catch (IOException e) {
@@ -104,148 +84,38 @@ public class TranscodeAndCleanupJob {
 				// if the series is inactive, then delete the feed, it's transcoded files, and the subscription entry
 				feedFileAccessor.purgeFeed(subscription.getSeriesId(), subscription.getTranscodeProfile(), feed);
 				purgeList.add(subscription);
-			} else {
-				// identify series recordings not represented in the RSS Feed (transcode)
-				final List entries = feed.getEntries();
-				final RecordedSeries seriesInfo = recordingsDao.findRecordedSeries(subscription.getSeriesId());
+			}			
+		}
 
-				if (seriesInfo == null) {
-					// if not occurences of the recorded series are found, then continue
-					LOGGER.debug("No recordings found for recordId[" + subscription.getSeriesId() + "]");
-				}
+		// purge those subscriptions marked for deletion
+		subscriptionsDao.purge(purgeList);
 
-				if (seriesInfo != null) {
-				    for (RecordedProgram program : seriesInfo.getRecordedPrograms()) {
-						if (program.getEndTime() == null || program.getEndTime().after(new Date())) {
-						    LOGGER.debug("Skipping recorded program, end-time is in future (still recording): programId[" + program.getProgramId() + "]");
-						    continue;
-						}
-						
-						boolean found = false;
-						LOGGER.debug("Locating program in existing feed entries: programId[" + program.getProgramId() + "], key[" + program.getKey() + "]");
-						if (entries != null && entries.size() > 0) {
-							final Iterator it = entries.iterator();
-							while (it.hasNext()) {
-								final SyndEntry entry = (SyndEntry) it.next();
-								if (entry.getUri() == null) {
-									continue;
-								}
-		
-								String entryKey = entry.getUri();
-								if (program.getKey().equalsIgnoreCase(entryKey)) {
-									found = true;
-									break;
-								}
-							}
-						}
-	
-						if (found) {
-							LOGGER.debug("Program was found in feed, continuing");
-						} else {
-							final Channel channel = this.recordingsDao.findChannel(program.getChannelId());
-							feedFileAccessor.addProgramToFeed(program, channel, feed, subscription.getTranscodeProfile());
-							feedUpdated = true;
-						}
-				    }	
-				}
+		// refresh the list of subscriptions
+		subscriptions = subscriptionsDao.findSubscriptions();
 
-				// identify RSS Feed entries no longer in the database (delete)
-				if (entries != null && entries.size() > 0) {
-					LOGGER.debug("Identifying series recordings no longer in database but still in feed, recordId[" + subscription.getSeriesId() + "]");
-					final Map<String, TranscodingProfile> transcodingProfiles = transcodingProfilesDao.findAllProfiles();
-					Set <SyndEntry> entryRemovalSet = new HashSet<SyndEntry>();
-					final Iterator it = entries.iterator();
-					while (it.hasNext()) {
-						final SyndEntry entry = (SyndEntry) it.next();
-						if (entry.getUri() == null) {
-							feedUpdated = true;
-							entryRemovalSet.add(entry);
-							LOGGER.debug("Feed entry has null URI (GUID), removing because it cannot be identified");
-							continue;
-						}
-						
-						// locate the feed entry in the list of recorded programs 
-						String episodeKey = entry.getUri();
-						boolean found = false;
-						if (seriesInfo != null) {
-						    for (RecordedProgram program : seriesInfo.getRecordedPrograms()) {
-								if (program.getKey().equalsIgnoreCase(episodeKey)) {
-									found = true;
-									break;
-								}
-						    }
-						}
+		// iterate over each series to identify those requiring transcoding
+		for (FeedSubscriptionItem subscription : subscriptions) {
+			LOGGER.debug("Processing feed subscription for recordId[" + subscription.getSeriesId() + "]");
 
-						// if the feed entry is no longer in the list of recorded programs, then remove
-						if (found) {
-							LOGGER.debug("Feed entry is current, continuing: uid[" + entry.getUri() + "]");
-						} else {
-							LOGGER.debug("Feed entry is invalid, deleting: uid[" + entry.getUri() + "]");
-							feedUpdated = true;
-							entryRemovalSet.add(entry);
-
-							final List enclosures = entry.getEnclosures();
-							if (enclosures.size() > 0) {
-								final SyndEnclosure enclosure = (SyndEnclosure) enclosures.get(0);
-
-								final TranscodingProfile transcodingProfile = transcodingProfiles.get(subscription.getTranscodeProfile());
-								transcodingProfile.deleteEncoding(this.feedFilePath, enclosure.getUrl(), entry.getUri());
-							} else {
-								LOGGER.info("No enclosures specified in the entry, removing from feed and continuing");
-							}
-						}
-					}
-
-					// remove all of the entries flagged for removal
-					entries.removeAll(entryRemovalSet);
-				}			
-
-				if (feedUpdated) {
-					// write the updated RSS feed for the series
-					final File encodingDirectory = new File(feedFilePath, subscription.getTranscodeProfile());
-					final File feedFile = new File(encodingDirectory, subscription.getSeriesId() + feedFileExtension);
-					LOGGER.debug("Changes made to feed, updating feed file: path[" + feedFile.getAbsolutePath() + "]");
-
-					// sort the feed entries by published-date
-					Collections.sort(entries, entryComparator);
-					
-					try {
-						FileWriter writer = new FileWriter(feedFile);
-						SyndFeedOutput output = new SyndFeedOutput();
-						output.output(feed, writer);
-					} catch (IOException e) {
-						LOGGER.error("Error rendering feed", e);
-						if (feedFile.canWrite()) {
-							feedFile.delete();
-						}
-					} catch (FeedException e) {
-						LOGGER.error("Error rendering feed", e);
-						if (feedFile.canWrite()) {
-							feedFile.delete();
-						}
-					}
-				}
+			// parse the XML-encoded RSS Feed into a Java object
+			final SyndFeed feed;
+			try {
+				feed = feedFileAccessor.readFeed(subscription.getSeriesId(), subscription.getTranscodeProfile(), subscription.getTitle());
+			} catch (IOException e) {
+				LOGGER.error("Continuing, error reading feed for recordId[" + subscription.getSeriesId() + "]", e);
+				continue;
 			}
+
+            Runnable task = (Runnable) this.applicationContext.getBean("feedTranscodingTask", new Object[]{ subscription, feed });
+            executor.execute(task);
 		}
 		
-		subscriptionsDao.purge(purgeList);
-	}
-
-	private class FeedEntryComparator implements Comparator<SyndEntry> {
-
-		/* (non-Javadoc)
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
-		@Override
-		public int compare(SyndEntry entry1, SyndEntry entry2) {
-			if (entry1 == null || entry1.getPublishedDate() == null) {
-				return 1;
+		if (executor.getActiveCount() > 0) {
+			try {
+				Thread.sleep(threadCompletionPollingFrequency * 1000);
+			} catch (InterruptedException e) {
+				LOGGER.warn("Thread was interrupted while waiting for thread-pool to finish work");
 			}
-
-			if (entry2 == null) {
-				return -1;
-			}
-			return ((-1) * entry1.getPublishedDate().compareTo(entry2.getPublishedDate()));
 		}
 	}
 
@@ -255,29 +125,24 @@ public class TranscodeAndCleanupJob {
 	}
 
 	@Required
-	public void setFeedFilePath(String feedFilePath) {
-		this.feedFilePath = feedFilePath;
-	}
-
-	@Required
-	public void setRecordingsDao(MythRecordingsDAO recordingsDao) {
-		this.recordingsDao = recordingsDao;
-	}
-
-	@Required
-	public void setTranscodingProfilesDao(
-			TranscodingProfilesDAO transcodingProfilesDao) {
-		this.transcodingProfilesDao = transcodingProfilesDao;
-	}
-
-	@Required
 	public void setFeedFileAccessor(FeedFileAccessor feedAccessor) {
 		this.feedFileAccessor = feedAccessor;
 	}
 
-	@Required
-	public void setFeedFileExtension(String feedFileExtension) {
-		this.feedFileExtension = feedFileExtension;
+    @Required
+    public void setExecutor(ThreadPoolExecutor executor) {
+        this.executor = executor;
+    }
+
+    @Required
+    public void setThreadCompletionPollingFrequency(
+			int threadCompletionPollingFrequency) {
+		this.threadCompletionPollingFrequency = threadCompletionPollingFrequency;
 	}
 
+	@Required
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }

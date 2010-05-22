@@ -1,136 +1,216 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <transcoding-profiles>
-    <profiles>
-        <id>hq_2pass_video</id>
-        <displayName>Video - High Quality 2-pass</displayName>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>7200</timeout>
-            <encoderArguments>-y -r 30000/1001 -b 2M -bt 4M -vcodec libx264 -pass 1 -vpre fastfirstpass -threads 0 -an</encoderArguments>
-        </transcoderConfigurationItems>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>7200</timeout>
-            <encoderArguments>-y -r 30000/1001 -b 2M -bt 4M -vcodec libx264 -pass 2 -vpre hq -acodec libfaac -ac 2 -ar 48000 -ab 192k -threads 0</encoderArguments>
-        </transcoderConfigurationItems>
-        <mode>TWO_PASS</mode>
-        <encodingFileExtension>.mp4</encodingFileExtension>
-        <encodingMimeType>video/mpeg</encodingMimeType>
-    </profiles>
-    <profiles>
-        <id>ipod_video</id>
-        <displayName>Video - iPhone/iPod Touch</displayName>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>7200</timeout>
-            <encoderArguments>-vcodec libx264 -vpre hq -vpre ipod640 -b 500k -acodec libfaac -ab 128k -ac 2 -ar 44100 -s 480x320 -threads 0 -f ipod -y</encoderArguments>
-        </transcoderConfigurationItems>
-        <mode>ONE_PASS</mode>
-        <encodingFileExtension>.m4v</encodingFileExtension>
-        <encodingMimeType>video/x-m4v</encodingMimeType>
-    </profiles>
-    <profiles>
-        <id>ipod_video_pgdl</id>
-        <displayName>Video - iPhone/iPod Touch (Progressive Download)</displayName>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>7200</timeout>
-            <encoderArguments>-vcodec libx264 -vpre hq -vpre ipod640 -b 500k -acodec libfaac -ab 128k -ac 2 -ar 44100 -s 480x320 -threads 0 -f ipod -y</encoderArguments>
-        </transcoderConfigurationItems>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="fastStartTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>1800</timeout>
-        </transcoderConfigurationItems>
-        <mode>ONE_PASS_FAST_START</mode>
-        <encodingFileExtension>.m4v</encodingFileExtension>
-        <encodingMimeType>video/x-m4v</encodingMimeType>
-    </profiles>
-    <profiles>
-        <id>iriver_u10_widescreen_video</id>
-        <displayName>Video - iRiver U10 Widescreen</displayName>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>7200</timeout>
-            <encoderArguments>-r 15 -s 320x180 -padtop 30 -padbottom 30 -vcodec mpeg4 -vtag XVID -qscale 6 -deinterlace -ar 44100 -ab 128k -acodec libmp3lame -ac 2 -y</encoderArguments>
-        </transcoderConfigurationItems>
-        <mode>ONE_PASS</mode>
-        <encodingFileExtension>.avi</encodingFileExtension>
-        <encodingMimeType>video/x-msvideo</encodingMimeType>
-    </profiles>
-    <profiles>
-        <id>iriver_u10_standard_video</id>
-        <displayName>Video - iRiver U10 4x3</displayName>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>7200</timeout>
-            <encoderArguments>-r 15 -s 320x240 -vcodec mpeg4 -vtag XVID -qscale 6 -deinterlace -ar 44100 -ab 128k -acodec libmp3lame -ac 2 -y</encoderArguments>
-        </transcoderConfigurationItems>
-        <mode>ONE_PASS</mode>
-        <encodingFileExtension>.avi</encodingFileExtension>
-        <encodingMimeType>video/x-msvideo</encodingMimeType>
-    </profiles>
-    <profiles>
-        <id>audio_mp3</id>
-        <displayName>Audio Only - MP3</displayName>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>7200</timeout>
-            <encoderArguments>-vn -acodec libmp3lame -ar 44100 -ab 128k -ac 2 -threads 0 -y</encoderArguments>
-        </transcoderConfigurationItems>
-        <mode>ONE_PASS</mode>
-        <encodingFileExtension>.mp3</encodingFileExtension>
-        <encodingMimeType>audio/mpeg</encodingMimeType>
-    </profiles>
-    <profiles>
-        <id>audio_aac</id>
-        <displayName>Audio Only - AAC</displayName>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>7200</timeout>
-            <encoderArguments>-vn -acodec libfaac -ar 48000 -ab 128k -ac 2 -threads 0 -y</encoderArguments>
-        </transcoderConfigurationItems>
-        <mode>ONE_PASS</mode>
-        <encodingFileExtension>.m4a</encodingFileExtension>
-        <encodingMimeType>audio/x-m4a</encodingMimeType>
-    </profiles>
-    <profiles>
-        <id>segmented_video</id>
-        <displayName>Video - HTTP Live Streaming</displayName>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>7200</timeout>
-            <encoderArguments>-v 1 -y -f mpegts -acodec libfaac -ar 48000 -ac 2 -ab 128k -s 480x320 -vtag mp4v -vcodec libx264 -b 300k -flags +loop -cmp +chroma -partitions +parti4x4+partp8x8+partb8x8 -subq 5 -trellis 1 -refs 1 -coder 0 -me_range 16 -keyint_min 24 -sc_threshold 40 -i_qfactor 0.71 -bt 200k -maxrate 300k -bufsize 512k -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30 -g 30 -async 2</encoderArguments>
-        </transcoderConfigurationItems>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>7200</timeout>
-		    <segmentDuration>10</segmentDuration>
-		    <segmentFilePrefix>segment</segmentFilePrefix>
-		    <playlistFileName>playlist.m3u8</playlistFileName>
-		    <httpPrefix>./</httpPrefix>
-        </transcoderConfigurationItems>
-        <mode>HTTP_SEGMENTED_VOD</mode>
-        <encodingFileExtension></encodingFileExtension>
-        <encodingMimeType>application/x-mpegURL</encodingMimeType>
-    </profiles>
-    <profiles>
-        <id>segmented_audio</id>
-        <displayName>Audio Only - HTTP Live Streaming</displayName>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>7200</timeout>
-            <encoderArguments>-vn -f mpegts -acodec libfaac -ar 48000 -ab 128k -ac 2 -threads 0 -y</encoderArguments>
-        </transcoderConfigurationItems>
-        <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
-            <niceness>19</niceness>
-            <timeout>7200</timeout>
-		    <segmentDuration>10</segmentDuration>
-		    <segmentFilePrefix>segment</segmentFilePrefix>
-		    <playlistFileName>playlist.m3u8</playlistFileName>
-		    <httpPrefix>./</httpPrefix>
-        </transcoderConfigurationItems>
-        <mode>HTTP_SEGMENTED_VOD</mode>
-        <encodingFileExtension></encodingFileExtension>
-        <encodingMimeType>application/x-mpegURL</encodingMimeType>
-    </profiles>
+  <profiles>
+    <id>hq_2pass_video</id>
+    <displayName>Video - High Quality 2-pass</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-y -r 30000/1001 -b 2M -bt 4M -vcodec libx264 -pass 1 -vpre fastfirstpass -threads 0 -an</encoderArguments>
+    </transcoderConfigurationItems>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-y -r 30000/1001 -b 2M -bt 4M -vcodec libx264 -pass 2 -vpre hq -acodec libfaac -ac 2 -ar 48000 -ab 192k -threads 0</encoderArguments>
+    </transcoderConfigurationItems>
+    <mode>TWO_PASS</mode>
+    <encodingFileExtension>.mp4</encodingFileExtension>
+    <encodingMimeType>video/mpeg</encodingMimeType>
+  </profiles>
+  <profiles>
+    <id>ipod_video</id>
+    <displayName>Video - iPhone/iPod Touch</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-map 0:0 -map 0:1 -vcodec libx264 -vpre hq -vpre ipod640 -b 500k -acodec libfaac -ab 128k -ac 2 -ar 48000 -s 480x320 -threads 0 -f ipod -y</encoderArguments>
+    </transcoderConfigurationItems>
+    <mode>ONE_PASS</mode>
+    <encodingFileExtension>.m4v</encodingFileExtension>
+    <encodingMimeType>video/x-m4v</encodingMimeType>
+  </profiles>
+  <profiles>
+    <id>ipod_video_pgdl</id>
+    <displayName>Video - iPhone/iPod Touch (Progressive Download)</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-vcodec libx264 -vpre hq -vpre ipod640 -b 500k -acodec libfaac -ab 128k -ac 2 -ar 44100 -s 480x320 -threads 0 -f ipod -y</encoderArguments>
+    </transcoderConfigurationItems>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="fastStartTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>1800</timeout>
+    </transcoderConfigurationItems>
+    <mode>ONE_PASS_FAST_START</mode>
+    <encodingFileExtension>.m4v</encodingFileExtension>
+    <encodingMimeType>video/x-m4v</encodingMimeType>
+  </profiles>
+  <profiles>
+    <id>iriver_u10_widescreen_video</id>
+    <displayName>Video - iRiver U10 Widescreen</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-r 15 -s 320x180 -padtop 30 -padbottom 30 -vcodec mpeg4 -vtag XVID -qscale 6 -deinterlace -ar 48000 -ab 128k -acodec libmp3lame -ac 2 -y</encoderArguments>
+    </transcoderConfigurationItems>
+    <mode>ONE_PASS</mode>
+    <encodingFileExtension>.avi</encodingFileExtension>
+    <encodingMimeType>video/x-msvideo</encodingMimeType>
+  </profiles>
+  <profiles>
+    <id>iriver_u10_standard_video</id>
+    <displayName>Video - iRiver U10 4x3</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-r 15 -s 320x240 -vcodec mpeg4 -vtag XVID -qscale 6 -deinterlace -ar 48000 -ab 128k -acodec libmp3lame -ac 2 -y</encoderArguments>
+    </transcoderConfigurationItems>
+    <mode>ONE_PASS</mode>
+    <encodingFileExtension>.avi</encodingFileExtension>
+    <encodingMimeType>video/x-msvideo</encodingMimeType>
+  </profiles>
+  <profiles>
+    <id>audio_mp3</id>
+    <displayName>Audio Only - MP3</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-map 0.1:0 -vn -acodec libmp3lame -ar 48000 -ab 128k -ac 2 -threads 0 -y</encoderArguments>
+    </transcoderConfigurationItems>
+    <mode>ONE_PASS</mode>
+    <encodingFileExtension>.mp3</encodingFileExtension>
+    <encodingMimeType>audio/mpeg</encodingMimeType>
+  </profiles>
+  <profiles>
+    <id>audio_aac</id>
+    <displayName>Audio Only - AAC</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-map 0.1:0 -vn -acodec libfaac -ar 48000 -ab 128k -ac 2 -threads 0 -y</encoderArguments>
+    </transcoderConfigurationItems>
+    <mode>ONE_PASS</mode>
+    <encodingFileExtension>.m4a</encodingFileExtension>
+    <encodingMimeType>audio/x-m4a</encodingMimeType>
+  </profiles>
+  <profiles>
+    <id>segmented_video_high</id>
+    <displayName>Video (High Quality) - HTTP Live Streaming</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-v 1 -y -map 0:0 -map 0:1 -er 4 -f mpegts -acodec libfaac -ac 2 -ab 128k -ar 48000 -s 480x320 -vcodec libx264 -b 600k -flags +loop+mv4 -cmp 256 -partitions +parti4x4+partp8x8+partb8x8 -subq 7 -trellis 1 -refs 5 -coder 0 -me_range 16 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -bt 600k -maxrate 600k -bufsize 600k -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30 -r 30 -g 90 -async 2</encoderArguments>
+    </transcoderConfigurationItems>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <segmentDuration>10</segmentDuration>
+      <segmentFilePrefix>segment</segmentFilePrefix>
+      <playlistFileName>playlist.m3u8</playlistFileName>
+      <httpPrefix>./</httpPrefix>
+    </transcoderConfigurationItems>
+    <mode>HTTP_SEGMENTED_VOD</mode>
+    <encodingFileExtension/>
+    <encodingMimeType>application/vnd.apple.mpegurl</encodingMimeType>
+  </profiles>
+  <profiles>
+    <id>segmented_video_med</id>
+    <displayName>Video (Medium Quality) - HTTP Live Streaming</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-v 1 -y -map 0:0 -map 0:1 -er 4 -f mpegts -acodec libfaac -ac 2 -ab 128k -ar 48000 -s 480x320 -vcodec libx264 -b 400k -flags +loop+mv4 -cmp 256 -partitions +parti4x4+partp8x8+partb8x8 -subq 7 -trellis 1 -refs 5 -coder 0 -me_range 16 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -bt 400k -maxrate 400k -bufsize 400k -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30 -r 30 -g 90 -async 2</encoderArguments>
+    </transcoderConfigurationItems>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <segmentDuration>10</segmentDuration>
+      <segmentFilePrefix>segment</segmentFilePrefix>
+      <playlistFileName>playlist.m3u8</playlistFileName>
+      <httpPrefix>./</httpPrefix>
+    </transcoderConfigurationItems>
+    <mode>HTTP_SEGMENTED_VOD</mode>
+    <encodingFileExtension/>
+    <encodingMimeType>application/vnd.apple.mpegurl</encodingMimeType>
+  </profiles>
+  <profiles>
+    <id>segmented_video_low</id>
+    <displayName>Video (Low Quality) - HTTP Live Streaming</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-v 1 -y -map 0:0 -map 0:1 -er 4 -f mpegts -acodec libfaac -ac 2 -ab 48k -ar 48000 -s 480x320 -vcodec libx264 -b 110k -flags +loop+mv4 -cmp 256 -partitions +parti4x4+partp8x8+partb8x8 -subq 7 -trellis 1 -refs 5 -coder 0 -me_range 16 -keyint_min 25 -sc_threshold 40 -i_qfactor 0.71 -bt 110k -maxrate 110k -bufsize 110k -rc_eq 'blurCplx^(1-qComp)' -qcomp 0.6 -qmin 10 -qmax 51 -qdiff 4 -level 30 -r 10 -g 30 -async 2</encoderArguments>
+    </transcoderConfigurationItems>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <segmentDuration>10</segmentDuration>
+      <segmentFilePrefix>segment</segmentFilePrefix>
+      <playlistFileName>playlist.m3u8</playlistFileName>
+      <httpPrefix>./</httpPrefix>
+    </transcoderConfigurationItems>
+    <mode>HTTP_SEGMENTED_VOD</mode>
+    <encodingFileExtension/>
+    <encodingMimeType>application/vnd.apple.mpegurl</encodingMimeType>
+  </profiles>
+  <profiles>
+    <id>segmented_audio_high</id>
+    <displayName>Audio Only (High Quality) - HTTP Live Streaming</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-map 0.1:0 -vn -f mpegts -acodec libfaac -ar 48000 -ab 128k -ac 2 -threads 0 -y</encoderArguments>
+    </transcoderConfigurationItems>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <segmentDuration>10</segmentDuration>
+      <segmentFilePrefix>segment</segmentFilePrefix>
+      <playlistFileName>playlist.m3u8</playlistFileName>
+      <httpPrefix>./</httpPrefix>
+    </transcoderConfigurationItems>
+    <mode>HTTP_SEGMENTED_VOD</mode>
+    <encodingFileExtension/>
+    <encodingMimeType>application/vnd.apple.mpegurl</encodingMimeType>
+  </profiles>
+  <profiles>
+    <id>segmented_audio_med</id>
+    <displayName>Audio Only (Medium Quality) - HTTP Live Streaming</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-map 0.1:0 -vn -f mpegts -acodec libfaac -ar 48000 -ab 64k -ac 2 -threads 0 -y</encoderArguments>
+    </transcoderConfigurationItems>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <segmentDuration>10</segmentDuration>
+      <segmentFilePrefix>segment</segmentFilePrefix>
+      <playlistFileName>playlist.m3u8</playlistFileName>
+      <httpPrefix>./</httpPrefix>
+    </transcoderConfigurationItems>
+    <mode>HTTP_SEGMENTED_VOD</mode>
+    <encodingFileExtension/>
+    <encodingMimeType>application/vnd.apple.mpegurl</encodingMimeType>
+  </profiles>
+  <profiles>
+    <id>segmented_audio_low</id>
+    <displayName>Audio Only (Low Quality) - HTTP Live Streaming</displayName>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <encoderArguments>-map 0.1:0 -vn -f mpegts -acodec libfaac -ar 22050 -ab 40k -ac 2 -threads 0 -y</encoderArguments>
+    </transcoderConfigurationItems>
+    <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
+      <niceness>19</niceness>
+      <timeout>7200</timeout>
+      <segmentDuration>10</segmentDuration>
+      <segmentFilePrefix>segment</segmentFilePrefix>
+      <playlistFileName>playlist.m3u8</playlistFileName>
+      <httpPrefix>./</httpPrefix>
+    </transcoderConfigurationItems>
+    <mode>HTTP_SEGMENTED_VOD</mode>
+    <encodingFileExtension/>
+    <encodingMimeType>application/vnd.apple.mpegurl</encodingMimeType>
+  </profiles>
 </transcoding-profiles>
