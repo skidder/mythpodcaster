@@ -25,7 +25,6 @@ package net.urlgrey.mythpodcaster.transcode;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import net.urlgrey.mythpodcaster.dao.SubscriptionsDAO;
 import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
@@ -35,6 +34,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 
@@ -47,7 +47,7 @@ public class TranscodeAndCleanupJob implements ApplicationContextAware {
 	private static final Logger LOGGER = Logger.getLogger(TranscodeAndCleanupJob.class);
 	private SubscriptionsDAO subscriptionsDao;
 	private FeedFileAccessor feedFileAccessor;
-	private ThreadPoolExecutor executor;
+	private ThreadPoolTaskExecutor executor;
     private ApplicationContext applicationContext;
 	private int threadCompletionPollingFrequency;
 
@@ -130,7 +130,7 @@ public class TranscodeAndCleanupJob implements ApplicationContextAware {
 	}
 
     @Required
-    public void setExecutor(ThreadPoolExecutor executor) {
+    public void setExecutor(ThreadPoolTaskExecutor executor) {
         this.executor = executor;
     }
 
