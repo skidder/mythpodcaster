@@ -224,4 +224,25 @@ public class FeedTranscodingTaskImpl implements Runnable {
 		this.recordingsDao = recordingsDao;
 	}
 
+	@Required
+	public void setTranscodingProfilesDao(
+			TranscodingProfilesDAO transcodingProfilesDao) {
+		this.transcodingProfilesDao = transcodingProfilesDao;
+	}
+
+	@Required
+	public void setFeedFileAccessor(FeedFileAccessor feedFileAccessor) {
+		this.feedFileAccessor = feedFileAccessor;
+	}
+
+	@Required
+	public void setFeedFilePath(String feedFilePath) {
+		this.feedFilePath = feedFilePath;
+	}
+
+	@Required
+	public void setFeedFileExtension(String feedFileExtension) {
+		this.feedFileExtension = feedFileExtension;
+	}
+
 }
