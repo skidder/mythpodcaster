@@ -74,17 +74,18 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
-* Fri May 14 2010 <kidder.scott@gmail.com> - 0.0.7
-Bugfix:
+* Tue May 25 2010 <kidder.scott@gmail.com> - 0.0.7
+Feature:
 14: Add encoding mode that invokes qt-faststart following FFMPEG encoding
+15: Add support for parallel transcoding jobs
 
 * Tue Apr 27 2010 <kidder.scott@gmail.com> - 0.0.6
-Bugfix:
+Feature:
 10: Support Feed Thumbnails from MythTV Thumbnails
 12: Support iTunes Podcast Feed Tags
 
 * Fri Apr 2 2010 <kidder.scott@gmail.com> - 0.0.5
-Bugfix:
+Feature:
 1: Include a Confirmation dialog when unsubscribing 
 2: Provide an RPM build for simplified installation 
 3: Allow multiple output encodings for a show 
