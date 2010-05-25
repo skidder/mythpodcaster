@@ -6,12 +6,12 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-y -r 30000/1001 -b 2M -bt 4M -vcodec libx264 -pass 1 -vpre fastfirstpass -threads 0 -an</encoderArguments>
+      <encoderArguments>-y -r 30000/1001 -b 2M -bt 4M -vcodec libx264 -pass 1 -vpre fastfirstpass -an</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-y -r 30000/1001 -b 2M -bt 4M -vcodec libx264 -pass 2 -vpre hq -acodec libfaac -ac 2 -ar 48000 -ab 192k -threads 0</encoderArguments>
+      <encoderArguments>-y -r 30000/1001 -b 2M -bt 4M -vcodec libx264 -pass 2 -vpre hq -acodec libfaac -ac 2 -ar 48000 -ab 192k</encoderArguments>
     </transcoderConfigurationItems>
     <mode>TWO_PASS</mode>
     <encodingFileExtension>.mp4</encodingFileExtension>
@@ -23,7 +23,7 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-map 0:0 -map 0:1 -vcodec libx264 -vpre hq -vpre ipod640 -b 500k -acodec libfaac -ab 128k -ac 2 -ar 48000 -s 480x320 -threads 0 -f ipod -y</encoderArguments>
+      <encoderArguments>-map 0:0 -map 0:1 -vcodec libx264 -vpre hq -vpre ipod640 -b 500k -acodec libfaac -ab 128k -ac 2 -ar 48000 -s 480x320 -f ipod -y</encoderArguments>
     </transcoderConfigurationItems>
     <mode>ONE_PASS</mode>
     <encodingFileExtension>.m4v</encodingFileExtension>
@@ -35,7 +35,7 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-vcodec libx264 -vpre hq -vpre ipod640 -b 500k -acodec libfaac -ab 128k -ac 2 -ar 44100 -s 480x320 -threads 0 -f ipod -y</encoderArguments>
+      <encoderArguments>-vcodec libx264 -vpre hq -vpre ipod640 -b 500k -acodec libfaac -ab 128k -ac 2 -ar 44100 -s 480x320 -f ipod -y</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="fastStartTranscoderConfigurationItem">
       <niceness>19</niceness>
@@ -75,7 +75,7 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-map 0.1:0 -vn -acodec libmp3lame -ar 48000 -ab 128k -ac 2 -threads 0 -y</encoderArguments>
+      <encoderArguments>-map 0.1:0 -vn -acodec libmp3lame -ar 48000 -ab 128k -ac 2 -y</encoderArguments>
     </transcoderConfigurationItems>
     <mode>ONE_PASS</mode>
     <encodingFileExtension>.mp3</encodingFileExtension>
@@ -87,7 +87,7 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-map 0.1:0 -vn -acodec libfaac -ar 48000 -ab 128k -ac 2 -threads 0 -y</encoderArguments>
+      <encoderArguments>-map 0.1:0 -vn -acodec libfaac -ar 48000 -ab 128k -ac 2 -y</encoderArguments>
     </transcoderConfigurationItems>
     <mode>ONE_PASS</mode>
     <encodingFileExtension>.m4a</encodingFileExtension>
@@ -159,7 +159,7 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-map 0.1:0 -vn -f mpegts -acodec libfaac -ar 48000 -ab 128k -ac 2 -threads 0 -y</encoderArguments>
+      <encoderArguments>-map 0.1:0 -vn -f mpegts -acodec libfaac -ar 48000 -ab 128k -ac 2 -y</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
       <niceness>19</niceness>
@@ -179,7 +179,7 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-map 0.1:0 -vn -f mpegts -acodec libfaac -ar 48000 -ab 64k -ac 2 -threads 0 -y</encoderArguments>
+      <encoderArguments>-map 0.1:0 -vn -f mpegts -acodec libfaac -ar 48000 -ab 64k -ac 2 -y</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
       <niceness>19</niceness>
@@ -199,7 +199,7 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-map 0.1:0 -vn -f mpegts -acodec libfaac -ar 22050 -ab 40k -ac 2 -threads 0 -y</encoderArguments>
+      <encoderArguments>-map 0.1:0 -vn -f mpegts -acodec libfaac -ar 22050 -ab 40k -ac 2 -y</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
       <niceness>19</niceness>
