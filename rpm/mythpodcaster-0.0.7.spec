@@ -74,10 +74,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
-* Tue May 25 2010 <kidder.scott@gmail.com> - 0.0.7
+* Wed May 26 2010 <kidder.scott@gmail.com> - 0.0.7
 Feature:
 14: Add encoding mode that invokes qt-faststart following FFMPEG encoding
 15: Add support for parallel transcoding jobs
+16: Include information about the software license in the Maven POM 
 
 * Tue Apr 27 2010 <kidder.scott@gmail.com> - 0.0.6
 Feature:

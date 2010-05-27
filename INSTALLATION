@@ -1,8 +1,8 @@
 MythPodcaster
-Author: Scott Kidder (scott@urlgrey.net)
+Author: Scott Kidder (kidder.scott@gmail.com)
 Additional Patches provided by Simon Hyde
-Release: 0.0.6
-Date: 27 April 2010
+Release: 0.0.7
+Date: 26 May 2010
 
 For details on how to install and configure MythPodcaster, please refer to:
 
@@ -12,7 +12,7 @@ http://code.google.com/p/mythpodcaster/
 
 Requirements
 
-    * MythTV (developed and tested with 0.21 and 0.22)
+    * MythTV (developed and tested with 0.21, 0.22, & 0.23)
     * Java 6
     * Tomcat 6
     * FFMPEG (tested with ffmpeg-0.5-30.fc9.rpm)
@@ -20,15 +20,16 @@ Requirements
     * AAC Encoding Library (tested with faac-1.28-6.fc9.rpm) 
     * MPEG-3 Audio Encoding Library (tested with lame) 
     * Open-Source HTTP Live Segmenter (optional) (http://www.ioncannon.net/programming/452/iphone-http-streaming-with-ffmpeg-and-an-open-source-segmenter/)
+    * qt-faststart (optional, for progressive-download encoding) (http://multimedia.cx/eggs/improving-qt-faststart/)
 
-Installation Steps (RPM, recommended)
+RPM Installation Steps (recommended)
 
    1. Install Tomcat6
          1. sudo yum install tomcat6 
    2. Stop Tomcat
          1. sudo /etc/init.d/tomcat6 stop 
    3. Install the MythPodcaster RPM
-         1. sudo rpm -Uvh mythpodcaster-0.0.5-1.fc12.noarch. 
+         1. sudo rpm -Uvh mythpodcaster-0.0.6-1.fc12.noarch.rpm 
    4. Edit the MythPodcaster properties file:
          1. sudo vi /etc/mythpodcaster/mythpodcaster.properties 
    5. Start Tomcat
@@ -37,15 +38,23 @@ Installation Steps (RPM, recommended)
          1. tail -f /var/log/mythpodcaster/mythpodcaster.log 
    7. Access the MythPodcaster web application to create your subscriptions.
          1. Example: http://localhost:8080/MythPodcaster/ 
-  
 
-Installation Steps (Binary or Source)
+
+Binary Installation Steps
+
+Installing the binary requires that you have the following tools configured:
+
+    * Java 6 SDK
+    * Apache Tomcat
+    * Apache HTTPD 
+
+Use the following steps to compile:
 
    1. Install a Java 6 SDK (http://java.sun.com/javase/downloads/index.jsp)
    2. Install the Apache Tomcat 6 Servlet Container (http://tomcat.apache.org/)
    3. Set the JAVA_HOME environment variable to the location where you installed the Java SDK
          1. Example: export JAVA_HOME=/usr/java/jdk6 
-   4. Set the CATALINA_HOME environment variable to the location where you install Tomcat
+   4. Set the CATALINA_HOME environment variable to the location where you installed Tomcat
          1. Example: export CATALINA_HOME=/home/tomcat/bin/tomcat/ 
    5. Start the Tomcat server
          1. Example: ${CATALINA_HOME}/bin/startup.sh 
@@ -75,3 +84,19 @@ Installation Steps (Binary or Source)
   13. Access the MythPodcaster web application to create your subscriptions.
          1. Example: http://localhost:8080/MythPodcaster/ 
 
+
+Source Installation Steps
+
+Installing from source requires that you have the following development tools configured:
+
+    * Java 6 SDK
+    * Maven 
+
+Use the following steps to compile:
+
+   1. Extract the source archive:
+         1. tar -xzf mythpodcaster-0.0.6-src.tar.gz 
+   2. Build the package:
+         1. cd mythpodcaster-src
+         2. mvn clean package 
+   3. Install the WAR file according the Binary Installation Steps mentioned above. 

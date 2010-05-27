@@ -4,8 +4,31 @@
 	<groupId>net.urlgrey</groupId>
 	<artifactId>MythPodcaster</artifactId>
 	<packaging>war</packaging>
+	<name>MythPodcaster</name>
 	<version>0.0.7</version>
-	<dependencies>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL)</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<distribution>manual</distribution>
+			<comments></comments>
+		</license>
+	</licenses>
+	<url>http://code.google.com/p/mythpodcaster/</url>
+	<inceptionYear>2009</inceptionYear>
+	<developers>
+		<developer>
+			<id>kidder.scott</id>
+			<name>Scott Kidder</name>
+			<email>kidder.scott@gmail.com</email>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>-7</timezone>
+		</developer>
+	</developers>
+  	<dependencies>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
