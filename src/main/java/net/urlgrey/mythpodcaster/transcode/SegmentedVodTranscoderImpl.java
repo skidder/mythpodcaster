@@ -87,7 +87,7 @@ public class SegmentedVodTranscoderImpl extends AbstractTranscoderImpl implement
                 throw new Exception("Segmenter return code indicated failure: " + exitValue);
             }
         } catch (InterruptedException e) {
-            throw new Exception("Segmenter process interuppted by another thread",
+            throw new Exception("Segmenter process interrupted by another thread",
                     e);
         } catch (ExecutionException ee) {
             throw new Exception("Something went wrong parsing Segmenter output",

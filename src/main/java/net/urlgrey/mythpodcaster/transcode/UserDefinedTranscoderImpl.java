@@ -1,7 +1,7 @@
 /*
- * FastStartVodTranscoderImpl.java
+ * UserDefinedTranscoderImpl.java
  *
- * Created: May 14, 2010
+ * Created: Jun 2, 2010
  *
  * Copyright (C) 2010 Scott Kidder
  * 
@@ -33,18 +33,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
 
-import net.urlgrey.mythpodcaster.dto.FastStartTranscoderConfigurationItem;
 import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.dto.UserDefinedTranscoderConfigurationItem;
 
 /**
  * @author scottkidder
  *
  */
-public class FastStartVodTranscoderImpl extends AbstractTranscoderImpl implements Transcoder {
+public class UserDefinedTranscoderImpl extends AbstractTranscoderImpl implements Transcoder {
 
-	private String fastStartLocation;
     private String niceLocation = "nice";
 
     static final ExecutorService pool = Executors.newCachedThreadPool();
@@ -53,14 +51,25 @@ public class FastStartVodTranscoderImpl extends AbstractTranscoderImpl implement
 	public void transcode(File workingDirectory, TranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
 		LOG.info("transcode started: inputFile [" + inputFile.getAbsolutePath() + "], outputFile [" + outputFile.getAbsolutePath() + "]");
 
-		FastStartTranscoderConfigurationItem config = (FastStartTranscoderConfigurationItem) genericConfig;
+		UserDefinedTranscoderConfigurationItem config = (UserDefinedTranscoderConfigurationItem) genericConfig;
 		List <String> commandList = new ArrayList<String>();
 		commandList.add(niceLocation);
 		commandList.add("-n");
 		commandList.add(Integer.toString(config.getNiceness()));
-		commandList.add(fastStartLocation);
-		commandList.add(inputFile.getAbsolutePath());
-		commandList.add(outputFile.getAbsolutePath());
+
+		for (String argument : config.getParsedEncoderArguments()) {
+			if (argument.contains(config.getInputVariableName())) {
+				final String inputFileSub = argument.replace(config.getInputVariableName(), inputFile.getAbsolutePath());
+				LOG.debug("Substituted input file path: " + inputFileSub);
+				commandList.add(inputFileSub);
+			} else if (argument.contains(config.getOutputVariableName())) {
+				final String outputFileSub = argument.replace(config.getOutputVariableName(), outputFile.getAbsolutePath());
+				LOG.debug("Substituted output file path: " + outputFileSub);
+				commandList.add(outputFileSub);
+			} else {
+				commandList.add(argument);
+			}
+		}
 		ProcessBuilder pb = new ProcessBuilder(commandList);
 
         pb.environment().put("LD_LIBRARY_PATH", "/usr/local/lib:");
@@ -69,32 +78,32 @@ public class FastStartVodTranscoderImpl extends AbstractTranscoderImpl implement
         Process process = null;
 
         try {
-            // Get the FastStart process
+            // Get the UserDefinedCommand process
             process = pb.start();
             // We give a couple of secs to complete task if needed
             Future<List<String>> stdout = pool.submit(new OutputMonitor(process.getInputStream()));
             List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
             process.waitFor();
             final int exitValue = process.exitValue();
-            LOG.debug("FastStart exit value: " + exitValue);
+            LOG.debug("UserDefinedCommand exit value: " + exitValue);
             if (exitValue != 0) {
                 for (String line : result) {
                     LOG.debug(line);
                 }
-                throw new Exception("FastStart return code indicated failure: " + exitValue);
+                throw new Exception("UserDefinedCommand return code indicated failure: " + exitValue);
             }
         } catch (InterruptedException e) {
-            throw new Exception("FastStart process interrupted by another thread",
+            throw new Exception("UserDefinedCommand process interrupted by another thread",
                     e);
         } catch (ExecutionException ee) {
-            throw new Exception("Something went wrong parsing FastStart output",
+            throw new Exception("Something went wrong parsing UserDefinedCommand output",
                     ee);
         } catch (TimeoutException te) {
             // We could not get the result before timeout
-            throw new Exception("FastStart process timed out", te);
+            throw new Exception("UserDefinedCommand process timed out", te);
         } catch (RuntimeException re) {
-            // Unexpected output from FastStart
-            throw new Exception("Something went wrong parsing FastStart output",
+            // Unexpected output from UserDefinedCommand
+            throw new Exception("Something went wrong parsing UserDefinedCommand output",
                     re);
         } finally {
             if (process != null) {
@@ -105,13 +114,7 @@ public class FastStartVodTranscoderImpl extends AbstractTranscoderImpl implement
         LOG.debug("transcoding finished");
     }
 
-	@Required
-	public void setFastStartLocation(String fastStartLocation) {
-		this.fastStartLocation = fastStartLocation;
-	}
-
 	public void setNiceLocation(String niceLocation) {
 		this.niceLocation = niceLocation;
 	}
-
 }

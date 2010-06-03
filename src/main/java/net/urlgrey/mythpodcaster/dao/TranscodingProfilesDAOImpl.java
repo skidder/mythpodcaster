@@ -42,6 +42,7 @@ import net.urlgrey.mythpodcaster.dto.SegmenterTranscoderConfigurationItem;
 import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
 import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 import net.urlgrey.mythpodcaster.dto.TranscodingProfileGroup;
+import net.urlgrey.mythpodcaster.dto.UserDefinedTranscoderConfigurationItem;
 
 /**
  * @author scottkidder
@@ -55,7 +56,15 @@ public class TranscodingProfilesDAOImpl extends AbstractFileBasedDAO implements 
 
 	public TranscodingProfilesDAOImpl() {
 		 try {
-				jaxbContext = JAXBContext.newInstance(new Class[] {TranscodingProfile.class, TranscodingProfileGroup.class, FFMpegTranscoderConfigurationItem.class, TranscoderConfigurationItem.class, SegmenterTranscoderConfigurationItem.class, FastStartTranscoderConfigurationItem.class} );
+				final Class[] jaxbClasses = new Class[] {TranscodingProfile.class, 
+													     TranscodingProfileGroup.class, 
+													     FFMpegTranscoderConfigurationItem.class, 
+													     UserDefinedTranscoderConfigurationItem.class, 
+													     TranscoderConfigurationItem.class, 
+													     SegmenterTranscoderConfigurationItem.class, 
+													     FastStartTranscoderConfigurationItem.class};
+
+				jaxbContext = JAXBContext.newInstance(jaxbClasses);
 			} catch (JAXBException e) {
 				LOGGER.fatal("Unable to create JAXB Context", e);
 				throw new IllegalStateException(e);

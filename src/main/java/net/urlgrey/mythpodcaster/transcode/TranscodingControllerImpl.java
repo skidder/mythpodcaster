@@ -25,6 +25,7 @@ package net.urlgrey.mythpodcaster.transcode;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.server.UID;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -42,6 +43,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 	private Transcoder ffmpegTranscoder;
 	private Transcoder segmentedVodTranscoder;
 	private Transcoder fastStartVodTranscoder;
+	private Transcoder userDefinedTranscoder;
 
 
 	@Override
@@ -66,8 +68,45 @@ public class TranscodingControllerImpl implements TranscodingController {
 		case HTTP_SEGMENTED_VOD:
 			encodeSegmented(profile, inputFile, outputFile);
 			break;
+		case USER_DEFINED:
+			encodeUserDefined(profile, inputFile, outputFile);
+			break;
 		default:
 			break;
+		}
+	}
+
+
+	private void encodeUserDefined(TranscodingProfile profile, File inputFile,
+			File outputFile) throws Exception {
+
+		LOGGER.info("Starting user-defined encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
+		final File workingDirectory = this.createTempDir();
+
+		try {
+			File tempInputFile = null;
+			File tempOutputFile = null;
+			final List<TranscoderConfigurationItem> configItems = profile.getTranscoderConfigurationItems();
+			for (TranscoderConfigurationItem config : configItems) {
+				if (tempOutputFile == null) {
+					// first run, use the original input
+					tempInputFile = inputFile;
+				} else {
+					// use the output from the previously executed command
+					tempInputFile = tempOutputFile;
+				}
+
+				if (config.equals(configItems.get(configItems.size() - 1))) {
+					tempOutputFile = File.createTempFile(new UID().toString(), profile.getEncodingFileExtension(), workingDirectory);
+				} else {
+					tempOutputFile = File.createTempFile(new UID().toString(), "tmp", workingDirectory);
+				}
+				userDefinedTranscoder.transcode(workingDirectory, config, tempInputFile, tempOutputFile);
+			}
+
+			FileOperations.copy(tempOutputFile, outputFile);
+		} finally {
+			deleteDir(workingDirectory);
 		}
 	}
 
@@ -199,5 +238,11 @@ public class TranscodingControllerImpl implements TranscodingController {
 	@Required
 	public void setFastStartVodTranscoder(Transcoder fastStartTranscoder) {
 		this.fastStartVodTranscoder = fastStartTranscoder;
+	}
+
+
+	@Required
+	public void setUserDefinedTranscoder(Transcoder userDefinedTranscoder) {
+		this.userDefinedTranscoder = userDefinedTranscoder;
 	}
 }

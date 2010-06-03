@@ -87,7 +87,7 @@ public class FFMpegTranscoderImpl extends AbstractTranscoderImpl implements Tran
                 throw new Exception("FFMpeg return code indicated failure: " + exitValue);
             }
         } catch (InterruptedException e) {
-            throw new Exception("FFMpeg process interuppted by another thread",
+            throw new Exception("FFMpeg process interrupted by another thread",
                     e);
         } catch (ExecutionException ee) {
             throw new Exception("Something went wrong parsing FFMpeg output",

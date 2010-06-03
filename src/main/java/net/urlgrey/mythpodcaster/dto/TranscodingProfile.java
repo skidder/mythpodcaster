@@ -40,15 +40,13 @@ import org.apache.log4j.Logger;
 @XmlRootElement(name="transcoding-profile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TranscodingProfile implements Comparable<TranscodingProfile> {
-	/**
-	 * 
-	 */
-	private static final String PATH_SEPARATOR = "/";
-
-	public enum TranscoderType{ ONE_PASS, ONE_PASS_FAST_START, TWO_PASS, TWO_PASS_FAST_START, HTTP_SEGMENTED_VOD }
 
 	private static final Logger LOGGER = Logger.getLogger(TranscodingProfile.class);
 	
+	private static final String PATH_SEPARATOR = "/";
+
+	public enum TranscoderType{ ONE_PASS, ONE_PASS_FAST_START, TWO_PASS, TWO_PASS_FAST_START, HTTP_SEGMENTED_VOD, USER_DEFINED }
+
 	private String id;
 	private String displayName;
 	private List<TranscoderConfigurationItem> transcoderConfigurationItems = new ArrayList<TranscoderConfigurationItem>();
@@ -110,6 +108,7 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 		case ONE_PASS_FAST_START:
 		case TWO_PASS:
 		case TWO_PASS_FAST_START:
+		case USER_DEFINED:
 			outputFile = new File(encodingDirectory, programKey + this.encodingFileExtension);
 			break;
 		case HTTP_SEGMENTED_VOD:
