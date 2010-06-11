@@ -159,6 +159,12 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 				}
 			}
 		}
+		
+		// delete the encoding profile directory if it is empty following the purge
+		if (encodingDirectory.list().length == 0) {
+			LOGGER.info("Deleting empty encoding profile directory: " + encodingDirectory.getAbsolutePath());
+			encodingDirectory.delete();
+		}
 	}
 
 	/**
