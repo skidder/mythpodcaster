@@ -76,6 +76,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Mon Jun 21 2010 <kidder.scott@gmail.com> - 0.0.8
 Feature:
+18: Add a No-Op Transcoder
 19: Extract audio from recording as audio recording (run arbitrary transcoding commands)
 22: Reformat the Java Source Code to normalize indentation 
 

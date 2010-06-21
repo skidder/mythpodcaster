@@ -47,6 +47,10 @@
 		class="net.urlgrey.mythpodcaster.transcode.UserDefinedTranscoderImpl">
 	</bean>
 
+	<bean id="symbolicLinkTranscoder"
+		class="net.urlgrey.mythpodcaster.transcode.SymbolicLinkTranscoderImpl">
+	</bean>
+
 	<bean id="clipLocator" class="net.urlgrey.mythpodcaster.transcode.ClipLocatorImpl">
 		<property name="recordingsDao" ref="recordingsDao"></property>
 	</bean>
@@ -57,6 +61,7 @@
 		<property name="segmentedVodTranscoder" ref="segmentedVodTranscoder" />
 		<property name="fastStartVodTranscoder" ref="fastStartVodTranscoder" />
 		<property name="userDefinedTranscoder" ref="userDefinedTranscoder" />
+		<property name="symbolicLinkTranscoder" ref="symbolicLinkTranscoder" />
 	</bean>
 
 	<bean id="taskExecutor"

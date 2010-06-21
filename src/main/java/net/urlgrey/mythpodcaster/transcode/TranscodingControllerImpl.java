@@ -23,7 +23,6 @@
 package net.urlgrey.mythpodcaster.transcode;
 
 import java.io.File;
-import java.io.IOException;
 import java.rmi.server.UID;
 import java.util.List;
 
@@ -44,6 +43,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 	private Transcoder segmentedVodTranscoder;
 	private Transcoder fastStartVodTranscoder;
 	private Transcoder userDefinedTranscoder;
+	private Transcoder symbolicLinkTranscoder;
 
 
 	@Override
@@ -71,8 +71,24 @@ public class TranscodingControllerImpl implements TranscodingController {
 		case USER_DEFINED:
 			encodeUserDefined(profile, inputFile, outputFile);
 			break;
+		case SYMBOLIC_LINK:
+			encodeSymbolicLink(profile, inputFile, outputFile);
+			break;
 		default:
 			break;
+		}
+	}
+
+
+	private void encodeSymbolicLink(TranscodingProfile profile, File inputFile,
+			File outputFile) throws Exception {
+		LOGGER.info("Starting symbolic-link encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
+		File workingDirectory = FileOperations.createTempDir();
+
+		try {
+			symbolicLinkTranscoder.transcode(workingDirectory, profile.getTranscoderConfigurationItems().get(0), inputFile, outputFile);
+		} finally {
+			FileOperations.deleteDir(workingDirectory);
 		}
 	}
 
@@ -81,7 +97,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 			File outputFile) throws Exception {
 
 		LOGGER.info("Starting user-defined encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
-		final File workingDirectory = this.createTempDir();
+		final File workingDirectory = FileOperations.createTempDir();
 
 		try {
 			File tempInputFile = null;
@@ -106,14 +122,14 @@ public class TranscodingControllerImpl implements TranscodingController {
 
 			FileOperations.copy(tempOutputFile, outputFile);
 		} finally {
-			deleteDir(workingDirectory);
+			FileOperations.deleteDir(workingDirectory);
 		}
 	}
 
 
 	private void encodeFastStart(TranscodingProfile profile, File inputFile) throws Exception {
 		LOGGER.info("Starting fast-start optimization of clip: inputFile[" + inputFile.getAbsolutePath() + "]");
-		File workingDirectory = this.createTempDir();
+		File workingDirectory = FileOperations.createTempDir();
 		File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
 		try {
 			final TranscoderConfigurationItem config = profile.getTranscoderConfigurationItems().get(profile.getTranscoderConfigurationItems().size() - 1);
@@ -122,10 +138,10 @@ public class TranscodingControllerImpl implements TranscodingController {
 			// replace the input-file with the fast-start optimized version
 			FileOperations.copy(tempOutputFile, inputFile);
 		} catch (Exception e) {
-			deleteDir(inputFile.getParentFile());
+			FileOperations.deleteDir(inputFile.getParentFile());
 			throw e;
 		} finally {
-			deleteDir(workingDirectory);
+			FileOperations.deleteDir(workingDirectory);
 
 			if (tempOutputFile.exists()) {
 				tempOutputFile.delete();
@@ -138,12 +154,12 @@ public class TranscodingControllerImpl implements TranscodingController {
 			File outputFile) throws Exception {
 
 		LOGGER.info("Starting 1-pass encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
-		File workingDirectory = this.createTempDir();
+		File workingDirectory = FileOperations.createTempDir();
 
 		try {
 			ffmpegTranscoder.transcode(workingDirectory, profile.getTranscoderConfigurationItems().get(0), inputFile, outputFile);
 		} finally {
-			deleteDir(workingDirectory);
+			FileOperations.deleteDir(workingDirectory);
 		}
 	}
 
@@ -152,7 +168,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 			File outputFile) throws Exception {
 
 		LOGGER.info("Starting 2-pass encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
-		File workingDirectory = this.createTempDir();		
+		File workingDirectory = FileOperations.createTempDir();		
 		try {
 			final TranscoderConfigurationItem pass1Config = profile.getTranscoderConfigurationItems().get(0);
 			ffmpegTranscoder.transcode(workingDirectory, pass1Config, inputFile, outputFile);
@@ -160,7 +176,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 			final TranscoderConfigurationItem pass2Config = profile.getTranscoderConfigurationItems().get(1);
 			ffmpegTranscoder.transcode(workingDirectory, pass2Config, inputFile, outputFile);
 		} finally {
-			deleteDir(workingDirectory);
+			FileOperations.deleteDir(workingDirectory);
 		}
 	}
 
@@ -169,7 +185,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 			File outputFile) throws Exception {
 
 		LOGGER.info("Starting segmented vod encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
-		File workingDirectory = this.createTempDir();		
+		File workingDirectory = FileOperations.createTempDir();		
 		File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
 
 		try {
@@ -179,47 +195,15 @@ public class TranscodingControllerImpl implements TranscodingController {
 			final TranscoderConfigurationItem segmentedVodConfig = profile.getTranscoderConfigurationItems().get(1);
 			segmentedVodTranscoder.transcode(workingDirectory, segmentedVodConfig, tempOutputFile, outputFile);
 		} catch (Exception e) {
-			deleteDir(outputFile.getParentFile());
+			FileOperations.deleteDir(outputFile.getParentFile());
 			throw e;
 		} finally {
-			deleteDir(workingDirectory);
+			FileOperations.deleteDir(workingDirectory);
 
 			if (tempOutputFile.exists()) {
 				tempOutputFile.delete();
 			}
 		}
-	}
-
-
-	/**
-	 * @param directory
-	 */
-	private void deleteDir(File directory) {
-		try {
-			// delete files in the directory
-			File[] files = directory.listFiles();
-			for(int i=0;i<files.length;i++) {
-				File file = files[i];
-				file.delete();
-			}
-			directory.delete();
-		} catch (Exception e) {
-			// ignore
-		}
-	}
-
-
-	/**
-	 * Creates a folder in "java.io.tmpdir" with a uniqe name.
-	 */
-	private File createTempDir() throws IOException {
-		UID uid = new UID();
-		File dir = new File(System.getProperty("java.io.tmpdir"));
-		File tmp = new File(dir, uid.toString());
-		if(!tmp.mkdirs()) {
-			throw new IOException("Cannot create tmp dir ["+tmp.toString()+"]");
-		}
-		return tmp;
 	}
 
 	@Required
@@ -244,5 +228,11 @@ public class TranscodingControllerImpl implements TranscodingController {
 	@Required
 	public void setUserDefinedTranscoder(Transcoder userDefinedTranscoder) {
 		this.userDefinedTranscoder = userDefinedTranscoder;
+	}
+
+
+	@Required
+	public void setSymbolicLinkTranscoder(Transcoder symbolicLinkTranscoder) {
+		this.symbolicLinkTranscoder = symbolicLinkTranscoder;
 	}
 }

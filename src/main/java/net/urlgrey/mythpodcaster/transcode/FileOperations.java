@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.rmi.server.UID;
 
 /**
  * @author scottkidder
@@ -67,5 +68,37 @@ public class FileOperations {
 				out.close();
 			}
 		}
+	}
+
+
+	/**
+	 * @param directory
+	 */
+	public static void deleteDir(File directory) {
+		try {
+			// delete files in the directory
+			File[] files = directory.listFiles();
+			for(int i=0;i<files.length;i++) {
+				File file = files[i];
+				file.delete();
+			}
+			directory.delete();
+		} catch (Exception e) {
+			// ignore
+		}
+	}
+
+
+	/**
+	 * Creates a folder in "java.io.tmpdir" with a unique name.
+	 */
+	public static File createTempDir() throws IOException {
+		UID uid = new UID();
+		File dir = new File(System.getProperty("java.io.tmpdir"));
+		File tmp = new File(dir, uid.toString());
+		if(!tmp.mkdirs()) {
+			throw new IOException("Cannot create tmp dir ["+tmp.toString()+"]");
+		}
+		return tmp;
 	}
 }

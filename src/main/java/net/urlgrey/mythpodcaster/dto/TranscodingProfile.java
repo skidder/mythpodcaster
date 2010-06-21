@@ -50,7 +50,8 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 		TWO_PASS, 
 		TWO_PASS_FAST_START, 
 		HTTP_SEGMENTED_VOD, 
-		USER_DEFINED }
+		USER_DEFINED,
+		SYMBOLIC_LINK }
 
 	private String id;
 	private String displayName;
@@ -77,6 +78,7 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 		case TWO_PASS:
 		case TWO_PASS_FAST_START:
 		case USER_DEFINED:
+		case SYMBOLIC_LINK:
 			outputFile = new File(encodingDirectory, programKey + this.encodingFileExtension);
 			break;
 		case HTTP_SEGMENTED_VOD:
