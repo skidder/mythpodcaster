@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import net.urlgrey.mythpodcaster.dto.FastStartTranscoderConfigurationItem;
-import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
 
 /**
  * @author scottkidder
@@ -50,7 +50,7 @@ public class FastStartVodTranscoderImpl extends AbstractTranscoderImpl implement
 	static final ExecutorService pool = Executors.newCachedThreadPool();
 	private static final Logger LOG = Logger.getLogger(FastStartVodTranscoderImpl.class);
 
-	public void transcode(File workingDirectory, TranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
+	public void transcode(File workingDirectory, GenericTranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
 		LOG.info("transcode started: inputFile [" + inputFile.getAbsolutePath() + "], outputFile [" + outputFile.getAbsolutePath() + "]");
 
 		FastStartTranscoderConfigurationItem config = (FastStartTranscoderConfigurationItem) genericConfig;

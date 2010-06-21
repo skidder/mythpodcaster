@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <transcoding-profiles>
   <profiles>
+    <id>symlink</id>
+    <displayName>Video - Symbolic Link to Original</displayName>
+    <mode>SYMBOLIC_LINK</mode>
+    <encodingFileExtension>.mpg</encodingFileExtension>
+    <encodingMimeType>video/mpeg</encodingMimeType>
+  </profiles>
+  <profiles>
     <id>hq_2pass_video</id>
     <displayName>Video - High Quality 2-pass</displayName>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">

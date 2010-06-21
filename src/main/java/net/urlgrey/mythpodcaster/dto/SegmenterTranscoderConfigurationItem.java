@@ -27,7 +27,7 @@ package net.urlgrey.mythpodcaster.dto;
  * @author scottkidder
  *
  */
-public class SegmenterTranscoderConfigurationItem extends TranscoderConfigurationItem {
+public class SegmenterTranscoderConfigurationItem extends GenericTranscoderConfigurationItem {
 
 	private String segmentDuration;
 	private String segmentFilePrefix;

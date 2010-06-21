@@ -34,7 +34,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.log4j.Logger;
 
-import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
 import net.urlgrey.mythpodcaster.dto.UserDefinedTranscoderConfigurationItem;
 
 /**
@@ -48,7 +48,7 @@ public class UserDefinedTranscoderImpl extends AbstractTranscoderImpl implements
 	static final ExecutorService pool = Executors.newCachedThreadPool();
 	private static final Logger LOG = Logger.getLogger(FastStartVodTranscoderImpl.class);
 
-	public void transcode(File workingDirectory, TranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
+	public void transcode(File workingDirectory, GenericTranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
 		LOG.info("transcode started: inputFile [" + inputFile.getAbsolutePath() + "], outputFile [" + outputFile.getAbsolutePath() + "]");
 
 		UserDefinedTranscoderConfigurationItem config = (UserDefinedTranscoderConfigurationItem) genericConfig;

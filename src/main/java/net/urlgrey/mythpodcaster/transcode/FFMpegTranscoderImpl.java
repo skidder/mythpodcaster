@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import net.urlgrey.mythpodcaster.dto.FFMpegTranscoderConfigurationItem;
-import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -50,7 +50,7 @@ public class FFMpegTranscoderImpl extends AbstractTranscoderImpl implements Tran
 
 	static final ExecutorService pool = Executors.newCachedThreadPool();
 
-	public void transcode(File workingDirectory, TranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
+	public void transcode(File workingDirectory, GenericTranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
 		LOG.info("transcode started: inputFile [" + inputFile.getAbsolutePath() + "], outputFile [" + outputFile.getAbsolutePath() + "]");
 
 		FFMpegTranscoderConfigurationItem config = (FFMpegTranscoderConfigurationItem) genericConfig;

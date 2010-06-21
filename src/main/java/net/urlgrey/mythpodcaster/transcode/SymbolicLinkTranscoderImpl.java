@@ -34,7 +34,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.log4j.Logger;
 
-import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
 
 /**
  * @author scottkidder
@@ -47,11 +47,11 @@ public class SymbolicLinkTranscoderImpl extends AbstractTranscoderImpl implement
 	static final ExecutorService pool = Executors.newCachedThreadPool();
 
 	/* (non-Javadoc)
-	 * @see net.urlgrey.mythpodcaster.transcode.Transcoder#transcode(java.io.File, net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem, java.io.File, java.io.File)
+	 * @see net.urlgrey.mythpodcaster.transcode.Transcoder#transcode(java.io.File, net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem, java.io.File, java.io.File)
 	 */
 	@Override
 	public void transcode(File workingDirectory,
-			TranscoderConfigurationItem config, File inputFile, File outputFile)
+			GenericTranscoderConfigurationItem config, File inputFile, File outputFile)
 	throws Exception {
 
 		LOG.info("transcode started: inputFile [" + inputFile.getAbsolutePath() + "], outputFile [" + outputFile.getAbsolutePath() + "]");

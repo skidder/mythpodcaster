@@ -29,7 +29,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
-import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
 import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 
 /**
@@ -83,10 +83,18 @@ public class TranscodingControllerImpl implements TranscodingController {
 	private void encodeSymbolicLink(TranscodingProfile profile, File inputFile,
 			File outputFile) throws Exception {
 		LOGGER.info("Starting symbolic-link encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
-		File workingDirectory = FileOperations.createTempDir();
+
+		final File workingDirectory = FileOperations.createTempDir();
+		final GenericTranscoderConfigurationItem config;
+		if (profile.getTranscoderConfigurationItems() == null || profile.getTranscoderConfigurationItems().size() == 0) {
+			config = new GenericTranscoderConfigurationItem();
+			config.setTimeout(60);
+		} else {
+			config = profile.getTranscoderConfigurationItems().get(0);
+		}
 
 		try {
-			symbolicLinkTranscoder.transcode(workingDirectory, profile.getTranscoderConfigurationItems().get(0), inputFile, outputFile);
+			symbolicLinkTranscoder.transcode(workingDirectory, config, inputFile, outputFile);
 		} finally {
 			FileOperations.deleteDir(workingDirectory);
 		}
@@ -102,8 +110,8 @@ public class TranscodingControllerImpl implements TranscodingController {
 		try {
 			File tempInputFile = null;
 			File tempOutputFile = null;
-			final List<TranscoderConfigurationItem> configItems = profile.getTranscoderConfigurationItems();
-			for (TranscoderConfigurationItem config : configItems) {
+			final List<GenericTranscoderConfigurationItem> configItems = profile.getTranscoderConfigurationItems();
+			for (GenericTranscoderConfigurationItem config : configItems) {
 				if (tempOutputFile == null) {
 					// first run, use the original input
 					tempInputFile = inputFile;
@@ -132,7 +140,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 		File workingDirectory = FileOperations.createTempDir();
 		File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
 		try {
-			final TranscoderConfigurationItem config = profile.getTranscoderConfigurationItems().get(profile.getTranscoderConfigurationItems().size() - 1);
+			final GenericTranscoderConfigurationItem config = profile.getTranscoderConfigurationItems().get(profile.getTranscoderConfigurationItems().size() - 1);
 			fastStartVodTranscoder.transcode(workingDirectory, config, inputFile, tempOutputFile);
 
 			// replace the input-file with the fast-start optimized version
@@ -170,10 +178,10 @@ public class TranscodingControllerImpl implements TranscodingController {
 		LOGGER.info("Starting 2-pass encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
 		File workingDirectory = FileOperations.createTempDir();		
 		try {
-			final TranscoderConfigurationItem pass1Config = profile.getTranscoderConfigurationItems().get(0);
+			final GenericTranscoderConfigurationItem pass1Config = profile.getTranscoderConfigurationItems().get(0);
 			ffmpegTranscoder.transcode(workingDirectory, pass1Config, inputFile, outputFile);
 
-			final TranscoderConfigurationItem pass2Config = profile.getTranscoderConfigurationItems().get(1);
+			final GenericTranscoderConfigurationItem pass2Config = profile.getTranscoderConfigurationItems().get(1);
 			ffmpegTranscoder.transcode(workingDirectory, pass2Config, inputFile, outputFile);
 		} finally {
 			FileOperations.deleteDir(workingDirectory);
@@ -189,10 +197,10 @@ public class TranscodingControllerImpl implements TranscodingController {
 		File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
 
 		try {
-			final TranscoderConfigurationItem pass1Config = profile.getTranscoderConfigurationItems().get(0);
+			final GenericTranscoderConfigurationItem pass1Config = profile.getTranscoderConfigurationItems().get(0);
 			ffmpegTranscoder.transcode(workingDirectory, pass1Config, inputFile, tempOutputFile);
 
-			final TranscoderConfigurationItem segmentedVodConfig = profile.getTranscoderConfigurationItems().get(1);
+			final GenericTranscoderConfigurationItem segmentedVodConfig = profile.getTranscoderConfigurationItems().get(1);
 			segmentedVodTranscoder.transcode(workingDirectory, segmentedVodConfig, tempOutputFile, outputFile);
 		} catch (Exception e) {
 			FileOperations.deleteDir(outputFile.getParentFile());

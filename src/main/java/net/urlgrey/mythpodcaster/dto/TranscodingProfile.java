@@ -55,7 +55,7 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 
 	private String id;
 	private String displayName;
-	private List<TranscoderConfigurationItem> transcoderConfigurationItems = new ArrayList<TranscoderConfigurationItem>();
+	private List<GenericTranscoderConfigurationItem> transcoderConfigurationItems = new ArrayList<GenericTranscoderConfigurationItem>();
 	private TranscoderType mode;
 	private String encodingFileExtension;
 	private String encodingMimeType;
@@ -149,11 +149,11 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
 	}
-	public List<TranscoderConfigurationItem> getTranscoderConfigurationItems() {
+	public List<GenericTranscoderConfigurationItem> getTranscoderConfigurationItems() {
 		return transcoderConfigurationItems;
 	}
 	public void setTranscoderConfigurationItems(
-			List<TranscoderConfigurationItem> transcoderConfigurationItems) {
+			List<GenericTranscoderConfigurationItem> transcoderConfigurationItems) {
 		this.transcoderConfigurationItems = transcoderConfigurationItems;
 	}	
 	public TranscoderType getMode() {

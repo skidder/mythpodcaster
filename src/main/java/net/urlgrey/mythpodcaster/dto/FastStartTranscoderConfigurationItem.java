@@ -26,6 +26,6 @@ package net.urlgrey.mythpodcaster.dto;
  * @author scottkidder
  *
  */
-public class FastStartTranscoderConfigurationItem extends TranscoderConfigurationItem {
+public class FastStartTranscoderConfigurationItem extends GenericTranscoderConfigurationItem {
 
 }

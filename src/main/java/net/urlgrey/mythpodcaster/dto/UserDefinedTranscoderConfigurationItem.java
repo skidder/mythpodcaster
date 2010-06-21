@@ -29,7 +29,7 @@ import java.util.List;
  * @author scottkidder
  *
  */
-public class UserDefinedTranscoderConfigurationItem extends TranscoderConfigurationItem {
+public class UserDefinedTranscoderConfigurationItem extends GenericTranscoderConfigurationItem {
 
 	private String encoderArguments;
 	private String inputVariableName;

@@ -1,5 +1,5 @@
 /*
- * TranscoderConfigurationItem.java
+ * GenericTranscoderConfigurationItem.java
  *
  * Created: Feb 18, 2010
  *
@@ -26,7 +26,7 @@ package net.urlgrey.mythpodcaster.dto;
  * @author scottkidder
  *
  */
-public abstract class TranscoderConfigurationItem {
+public class GenericTranscoderConfigurationItem {
 	private long timeout = 900;
 	private int niceness = 19;
 

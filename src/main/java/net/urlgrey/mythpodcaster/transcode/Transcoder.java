@@ -24,7 +24,7 @@ package net.urlgrey.mythpodcaster.transcode;
 
 import java.io.File;
 
-import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
 
 /**
  * @author scott
@@ -32,6 +32,6 @@ import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
  */
 public interface Transcoder {
 
-	void transcode(File workingDirectory, TranscoderConfigurationItem config, File inputFile, File outputFile) throws Exception;
+	void transcode(File workingDirectory, GenericTranscoderConfigurationItem config, File inputFile, File outputFile) throws Exception;
 
 }

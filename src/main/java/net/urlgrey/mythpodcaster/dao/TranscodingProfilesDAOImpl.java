@@ -39,7 +39,7 @@ import org.springframework.beans.factory.annotation.Required;
 import net.urlgrey.mythpodcaster.dto.FFMpegTranscoderConfigurationItem;
 import net.urlgrey.mythpodcaster.dto.FastStartTranscoderConfigurationItem;
 import net.urlgrey.mythpodcaster.dto.SegmenterTranscoderConfigurationItem;
-import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
 import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 import net.urlgrey.mythpodcaster.dto.TranscodingProfileGroup;
 import net.urlgrey.mythpodcaster.dto.UserDefinedTranscoderConfigurationItem;
@@ -60,7 +60,7 @@ public class TranscodingProfilesDAOImpl extends AbstractFileBasedDAO implements 
 					TranscodingProfileGroup.class, 
 					FFMpegTranscoderConfigurationItem.class, 
 					UserDefinedTranscoderConfigurationItem.class, 
-					TranscoderConfigurationItem.class, 
+					GenericTranscoderConfigurationItem.class, 
 					SegmenterTranscoderConfigurationItem.class, 
 					FastStartTranscoderConfigurationItem.class};
 
