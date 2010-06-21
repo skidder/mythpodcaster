@@ -41,7 +41,7 @@ public class FeedSubscriptionItem implements Comparable<FeedSubscriptionItem> {
 	private Date dateAdded;
 	private boolean active = true;
 	private String transcodeProfile;
-	
+
 	public String getTitle() {
 		return title;
 	}
@@ -78,10 +78,10 @@ public class FeedSubscriptionItem implements Comparable<FeedSubscriptionItem> {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((seriesId == null) ? 0 : seriesId.hashCode());
+		+ ((seriesId == null) ? 0 : seriesId.hashCode());
 		result = prime
-				* result
-				+ ((transcodeProfile == null) ? 0 : transcodeProfile.hashCode());
+		* result
+		+ ((transcodeProfile == null) ? 0 : transcodeProfile.hashCode());
 		return result;
 	}
 	@Override
@@ -111,13 +111,13 @@ public class FeedSubscriptionItem implements Comparable<FeedSubscriptionItem> {
 		int titleComparison = this.getTitle().compareTo(o.getTitle());
 		if (titleComparison != 0)
 			return titleComparison;
-		
+
 		int transcodingProfileComparison = this.getTranscodeProfile().compareTo(o.getTranscodeProfile());
 		if (transcodingProfileComparison != 0)
 			return transcodingProfileComparison;
-		
+
 		return 0;
 	}
-	
-	
+
+
 }

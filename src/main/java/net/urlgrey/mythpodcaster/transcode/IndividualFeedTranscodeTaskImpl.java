@@ -1,5 +1,5 @@
 /*
- * FeedTranscodingTaskImpl.java
+ * IndividualFeedTranscodeTaskImpl.java
  *
  * Created: May 21, 2010
  *
@@ -55,9 +55,9 @@ import com.sun.syndication.io.SyndFeedOutput;
  * @author scottkidder
  *
  */
-public class FeedTranscodingTaskImpl implements Runnable {
+public class IndividualFeedTranscodeTaskImpl implements Runnable {
 
-	private static final Logger LOGGER = Logger.getLogger(FeedTranscodingTaskImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(IndividualFeedTranscodeTaskImpl.class);
 	private FeedSubscriptionItem subscription;
 	private SyndFeed feed;
 
@@ -68,7 +68,7 @@ public class FeedTranscodingTaskImpl implements Runnable {
 	private String feedFilePath;
 	private String feedFileExtension;
 
-	public FeedTranscodingTaskImpl(FeedSubscriptionItem subscription,
+	public IndividualFeedTranscodeTaskImpl(FeedSubscriptionItem subscription,
 			SyndFeed feed) {
 		this.subscription = subscription;
 		this.feed = feed;
@@ -88,12 +88,12 @@ public class FeedTranscodingTaskImpl implements Runnable {
 			}
 
 			if (seriesInfo != null) {
-			    for (RecordedProgram program : seriesInfo.getRecordedPrograms()) {
+				for (RecordedProgram program : seriesInfo.getRecordedPrograms()) {
 					if (program.getEndTime() == null || program.getEndTime().after(new Date())) {
-					    LOGGER.debug("Skipping recorded program, end-time is in future (still recording): programId[" + program.getProgramId() + "]");
-					    continue;
+						LOGGER.debug("Skipping recorded program, end-time is in future (still recording): programId[" + program.getProgramId() + "]");
+						continue;
 					}
-					
+
 					boolean found = false;
 					LOGGER.debug("Locating program in existing feed entries: programId[" + program.getProgramId() + "], key[" + program.getKey() + "]");
 					if (entries != null && entries.size() > 0) {
@@ -119,7 +119,7 @@ public class FeedTranscodingTaskImpl implements Runnable {
 						feedFileAccessor.addProgramToFeed(program, channel, feed, subscription.getTranscodeProfile());
 						feedUpdated = true;
 					}
-			    }	
+				}	
 			}
 
 			// identify RSS Feed entries no longer in the database (delete)
@@ -136,24 +136,24 @@ public class FeedTranscodingTaskImpl implements Runnable {
 						LOGGER.debug("Feed entry has null URI (GUID), removing because it cannot be identified");
 						continue;
 					}
-					
+
 					// locate the feed entry in the list of recorded programs 
 					String episodeKey = entry.getUri();
 					boolean found = false;
 					if (seriesInfo != null) {
-					    for (RecordedProgram program : seriesInfo.getRecordedPrograms()) {
+						for (RecordedProgram program : seriesInfo.getRecordedPrograms()) {
 							if (program.getKey().equalsIgnoreCase(episodeKey)) {
 								found = true;
 								break;
 							}
-					    }
+						}
 					}
 
 					// if the feed entry is no longer in the list of recorded programs, then remove
 					if (found) {
 						LOGGER.debug("Feed entry is current, continuing: uid[" + entry.getUri() + "]");
 					} else {
-						LOGGER.debug("Feed entry is invalid, deleting: uid[" + entry.getUri() + "]");
+						LOGGER.debug("Feed entry will be deleted: uid[" + entry.getUri() + "]");
 						feedUpdated = true;
 						entryRemovalSet.add(entry);
 
@@ -181,7 +181,7 @@ public class FeedTranscodingTaskImpl implements Runnable {
 
 				// sort the feed entries by published-date
 				Collections.sort(entries, entryComparator);
-				
+
 				try {
 					FileWriter writer = new FileWriter(feedFile);
 					SyndFeedOutput output = new SyndFeedOutput();

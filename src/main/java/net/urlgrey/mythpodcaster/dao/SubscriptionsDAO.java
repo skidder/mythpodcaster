@@ -50,5 +50,5 @@ public interface SubscriptionsDAO {
 	 * @param purgeList
 	 */
 	void purge(List<FeedSubscriptionItem> purgeList);
-	
+
 }

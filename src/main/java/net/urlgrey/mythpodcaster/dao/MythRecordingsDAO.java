@@ -32,10 +32,10 @@ import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 
 public interface MythRecordingsDAO {
 
-    List <RecordedSeries> findAllRecordedSeries();
+	List <RecordedSeries> findAllRecordedSeries();
 
 	RecordedSeries findRecordedSeries(String seriesId);
-	
+
 	Channel findChannel(int channelId);
 
 	List<String> findRecordingDirectories();

@@ -42,10 +42,15 @@ import org.apache.log4j.Logger;
 public class TranscodingProfile implements Comparable<TranscodingProfile> {
 
 	private static final Logger LOGGER = Logger.getLogger(TranscodingProfile.class);
-	
+
 	private static final String PATH_SEPARATOR = "/";
 
-	public enum TranscoderType{ ONE_PASS, ONE_PASS_FAST_START, TWO_PASS, TWO_PASS_FAST_START, HTTP_SEGMENTED_VOD, USER_DEFINED }
+	public enum TranscoderType{ ONE_PASS, 
+		ONE_PASS_FAST_START, 
+		TWO_PASS, 
+		TWO_PASS_FAST_START, 
+		HTTP_SEGMENTED_VOD, 
+		USER_DEFINED }
 
 	private String id;
 	private String displayName;
@@ -53,6 +58,82 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 	private TranscoderType mode;
 	private String encodingFileExtension;
 	private String encodingMimeType;
+
+	/**
+	 * Generates the output file (regular file, directory, etc) appropriate for this profile.
+	 * @param feedFilePath
+	 * @param programKey
+	 * @return reference to the output file
+	 */
+	public File generateOutputFilePath(String feedFilePath, String programKey) {
+		final File outputFile;
+
+		final File encodingDirectory = new File(feedFilePath, this.id);
+		encodingDirectory.mkdirs();
+
+		switch (mode) {
+		case ONE_PASS:
+		case ONE_PASS_FAST_START:
+		case TWO_PASS:
+		case TWO_PASS_FAST_START:
+		case USER_DEFINED:
+			outputFile = new File(encodingDirectory, programKey + this.encodingFileExtension);
+			break;
+		case HTTP_SEGMENTED_VOD:
+			SegmenterTranscoderConfigurationItem segmenterConfig = (SegmenterTranscoderConfigurationItem) this.transcoderConfigurationItems.get(1);
+
+			File outputDirectory = new File(encodingDirectory, programKey);
+			outputDirectory.mkdirs();
+			outputFile = new File(outputDirectory, segmenterConfig.getPlaylistFileName());
+			break;
+		default:
+			outputFile = null;
+		}
+
+		return outputFile;
+	}
+
+	/**
+	 * 
+	 * @param applicationURL
+	 * @param outputFile
+	 * @return
+	 */
+	public String generateOutputFileURL(URL applicationURL, File outputFile) {
+		final String link;
+
+		if (mode == TranscoderType.HTTP_SEGMENTED_VOD) {
+			link = applicationURL.toExternalForm() + PATH_SEPARATOR + this.id + PATH_SEPARATOR + outputFile.getParentFile().getName() + PATH_SEPARATOR + outputFile.getName();
+		} else {
+			link = applicationURL.toExternalForm() + PATH_SEPARATOR + this.id + PATH_SEPARATOR + outputFile.getName();
+		}
+
+		return link;
+	}
+
+	/**
+	 * @param feedFilePath
+	 * @param url
+	 * @param uid
+	 */
+	public void deleteEncoding(String feedFilePath, String url, String uid) {
+		if (mode == TranscoderType.HTTP_SEGMENTED_VOD) {
+			final File encodingDir = new File(feedFilePath, this.id);
+			final File entryDir = new File(encodingDir, uid);
+
+			for (File child : entryDir.listFiles()) {
+				child.delete();
+			}
+			entryDir.delete();
+			LOGGER.debug("Deleted encoding directory: " + entryDir.getPath());
+		} else {
+			final String encodingFileName = url.substring(url.lastIndexOf(PATH_SEPARATOR)+1);
+			final File encodingDir = new File(feedFilePath, this.id);
+			final File encodingFile = new File(encodingDir, encodingFileName);
+			encodingFile.delete();
+			LOGGER.debug("Deleted encoding file: " + encodingFile.getPath());
+		}
+	}	
 
 	public String getId() {
 		return id;
@@ -91,79 +172,9 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 	public void setEncodingMimeType(String encodingMimeType) {
 		this.encodingMimeType = encodingMimeType;
 	}
-	
+
 	@Override
 	public int compareTo(TranscodingProfile o) {
 		return this.getDisplayName().compareTo(o.getDisplayName());
 	}
-
-	public File generateOutputFilePath(String feedFilePath, String programKey) {
-		final File outputFile;
-		
-		final File encodingDirectory = new File(feedFilePath, this.id);
-		encodingDirectory.mkdirs();
-
-		switch (mode) {
-		case ONE_PASS:
-		case ONE_PASS_FAST_START:
-		case TWO_PASS:
-		case TWO_PASS_FAST_START:
-		case USER_DEFINED:
-			outputFile = new File(encodingDirectory, programKey + this.encodingFileExtension);
-			break;
-		case HTTP_SEGMENTED_VOD:
-			SegmenterTranscoderConfigurationItem segmenterConfig = (SegmenterTranscoderConfigurationItem) this.transcoderConfigurationItems.get(1);
-
-			File outputDirectory = new File(encodingDirectory, programKey);
-			outputDirectory.mkdirs();
-			outputFile = new File(outputDirectory, segmenterConfig.getPlaylistFileName());
-			break;
-		default:
-			outputFile = null;
-		}
-
-		return outputFile;
-	}
-	
-	/**
-	 * 
-	 * @param applicationURL
-	 * @param outputFile
-	 * @return
-	 */
-	public String generateOutputFileURL(URL applicationURL, File outputFile) {
-		final String link;
-
-		if (mode == TranscoderType.HTTP_SEGMENTED_VOD) {
-			link = applicationURL.toExternalForm() + PATH_SEPARATOR + this.id + PATH_SEPARATOR + outputFile.getParentFile().getName() + PATH_SEPARATOR + outputFile.getName();
-		} else {
-			link = applicationURL.toExternalForm() + PATH_SEPARATOR + this.id + PATH_SEPARATOR + outputFile.getName();
-		}
-		
-		return link;
-	}
-
-	/**
-	 * @param feedFilePath
-	 * @param url
-	 * @param uid
-	 */
-	public void deleteEncoding(String feedFilePath, String url, String uid) {
-		if (mode == TranscoderType.HTTP_SEGMENTED_VOD) {
-			final File encodingDir = new File(feedFilePath, this.id);
-			final File entryDir = new File(encodingDir, uid);
-			
-			for (File child : entryDir.listFiles()) {
-				child.delete();
-			}
-			entryDir.delete();
-			LOGGER.debug("Deleted encoding directory: " + entryDir.getPath());
-		} else {
-			final String encodingFileName = url.substring(url.lastIndexOf(PATH_SEPARATOR)+1);
-			final File encodingDir = new File(feedFilePath, this.id);
-			final File encodingFile = new File(encodingDir, encodingFileName);
-			encodingFile.delete();
-			LOGGER.debug("Deleted encoding file: " + encodingFile.getPath());
-		}
-	}	
 }

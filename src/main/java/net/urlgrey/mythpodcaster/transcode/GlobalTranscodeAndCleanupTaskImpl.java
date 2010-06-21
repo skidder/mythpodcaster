@@ -1,5 +1,5 @@
 /*
- * TranscodeAndCleanupJob.java
+ * GlobalTranscodeAndCleanupTaskImpl.java
  *
  * Created: Oct 8, 2009 12:41:45 PM
  *
@@ -42,13 +42,13 @@ import com.sun.syndication.feed.synd.SyndFeed;
  * @author scott
  *
  */
-public class TranscodeAndCleanupJob implements ApplicationContextAware {
+public class GlobalTranscodeAndCleanupTaskImpl implements ApplicationContextAware {
 
-	private static final Logger LOGGER = Logger.getLogger(TranscodeAndCleanupJob.class);
+	private static final Logger LOGGER = Logger.getLogger(GlobalTranscodeAndCleanupTaskImpl.class);
 	private SubscriptionsDAO subscriptionsDao;
 	private FeedFileAccessor feedFileAccessor;
 	private ThreadPoolTaskExecutor executor;
-    private ApplicationContext applicationContext;
+	private ApplicationContext applicationContext;
 	private int threadCompletionPollingFrequency;
 
 
@@ -106,10 +106,10 @@ public class TranscodeAndCleanupJob implements ApplicationContextAware {
 				continue;
 			}
 
-            Runnable task = (Runnable) this.applicationContext.getBean("feedTranscodingTask", new Object[]{ subscription, feed });
-            executor.execute(task);
+			Runnable task = (Runnable) this.applicationContext.getBean("feedTranscodingTask", new Object[]{ subscription, feed });
+			executor.execute(task);
 		}
-		
+
 		while (executor.getActiveCount() > 0) {
 			try {
 				Thread.sleep(threadCompletionPollingFrequency * 1000);
@@ -129,20 +129,20 @@ public class TranscodeAndCleanupJob implements ApplicationContextAware {
 		this.feedFileAccessor = feedAccessor;
 	}
 
-    @Required
-    public void setExecutor(ThreadPoolTaskExecutor executor) {
-        this.executor = executor;
-    }
+	@Required
+	public void setExecutor(ThreadPoolTaskExecutor executor) {
+		this.executor = executor;
+	}
 
-    @Required
-    public void setThreadCompletionPollingFrequency(
+	@Required
+	public void setThreadCompletionPollingFrequency(
 			int threadCompletionPollingFrequency) {
 		this.threadCompletionPollingFrequency = threadCompletionPollingFrequency;
 	}
 
 	@Required
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
-        this.applicationContext = applicationContext;
-    }
+	public void setApplicationContext(ApplicationContext applicationContext)
+	throws BeansException {
+		this.applicationContext = applicationContext;
+	}
 }

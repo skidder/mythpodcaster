@@ -37,7 +37,7 @@ public class Channel {
 
 	@Id
 	@Column(name = "chanid")
-    private int channelId;
+	private int channelId;
 
 	@Column(name="name")
 	private String name;
@@ -67,18 +67,18 @@ public class Channel {
 	 */
 	public String toString()
 	{
-	    final String TAB = "    ";
-	    
-	    String retValue = "";
-	    
-	    retValue = "Channel ( "
-	        + super.toString() + TAB
-	        + "channelId = " + this.channelId + TAB
-	        + "name = " + this.name + TAB
-	        + " )";
-	
-	    return retValue;
+		final String TAB = "    ";
+
+		String retValue = "";
+
+		retValue = "Channel ( "
+			+ super.toString() + TAB
+			+ "channelId = " + this.channelId + TAB
+			+ "name = " + this.name + TAB
+			+ " )";
+
+		return retValue;
 	}
-	
-	
+
+
 }

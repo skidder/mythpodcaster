@@ -50,7 +50,7 @@ import org.springframework.web.servlet.view.RedirectView;
  *
  */
 public class SeriesSubscriptionController implements Controller {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(SeriesSubscriptionController.class);
 	private String successView = null;
 	private SubscriptionsDAO subscriptionsDao;
@@ -84,7 +84,7 @@ public class SeriesSubscriptionController implements Controller {
 				if(transcodeProfiles.size() > 1)
 				{
 					if( transcodeProfileId == null 
-					     || !transcodeProfiles.containsKey(transcodeProfileId))
+							|| !transcodeProfiles.containsKey(transcodeProfileId))
 					{
 						// identify and remove those transcoding profiles already in use for this series
 						final List<FeedSubscriptionItem> currentSubscriptions = subscriptionsDao.findSubscriptions();
@@ -97,11 +97,11 @@ public class SeriesSubscriptionController implements Controller {
 						//Output a page
 						final Map<String, Object> model = new HashMap <String, Object>();
 						final ArrayList<TranscodingProfile> transList = new ArrayList<TranscodingProfile>(transcodeProfiles.values());
-					    Collections.sort(transList);
-					    model.put("", seriesId);
-					    model.put("action", action);
-					    model.put("transcoders", transList);
-					    return new ModelAndView("transcoder-selection", model);
+						Collections.sort(transList);
+						model.put("", seriesId);
+						model.put("action", action);
+						model.put("transcoders", transList);
+						return new ModelAndView("transcoder-selection", model);
 					}
 				}
 				else if (transcodeProfiles.size() == 1)
@@ -115,7 +115,7 @@ public class SeriesSubscriptionController implements Controller {
 					LOGGER.error("Unable to find info for  [" + seriesId + "], aborting");
 					return new ModelAndView(new RedirectView(successView));
 				}
-				
+
 				final FeedSubscriptionItem item = new FeedSubscriptionItem();
 				item.setDateAdded(new Date());
 				item.setSeriesId(seriesId);
@@ -129,7 +129,7 @@ public class SeriesSubscriptionController implements Controller {
 		} catch (Exception e) {
 			LOGGER.error("Error while processing subscription action", e);
 		}
-		
+
 		return new ModelAndView(new RedirectView(successView));
 	}
 

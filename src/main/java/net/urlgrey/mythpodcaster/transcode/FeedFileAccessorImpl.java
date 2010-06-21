@@ -159,7 +159,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 				}
 			}
 		}
-		
+
 		// delete the encoding profile directory if it is empty following the purge
 		if (encodingDirectory.list().length == 0) {
 			LOGGER.info("Deleting empty encoding profile directory: " + encodingDirectory.getAbsolutePath());
@@ -245,7 +245,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 				feedImage.setUrl(feedImageUrl);
 				feedImage.setTitle(program.getSeries().getTitle());
 				feed.setImage(feedImage);
-				
+
 				// include iTunes-specific metadata
 				final Module module = feed.getModule("http://www.itunes.com/dtds/podcast-1.0.dtd");
 				final FeedInformation itunesFeedMetadata;

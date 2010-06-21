@@ -74,9 +74,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
-* Wed Jun 1 2010 <kidder.scott@gmail.com> - 0.0.8
+* Mon Jun 21 2010 <kidder.scott@gmail.com> - 0.0.8
 Feature:
 19: Extract audio from recording as audio recording (run arbitrary transcoding commands)
+22: Reformat the Java Source Code to normalize indentation 
 
 * Wed May 26 2010 <kidder.scott@gmail.com> - 0.0.7
 Feature:

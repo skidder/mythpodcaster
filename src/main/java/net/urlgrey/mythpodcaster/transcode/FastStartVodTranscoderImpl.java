@@ -45,9 +45,9 @@ import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
 public class FastStartVodTranscoderImpl extends AbstractTranscoderImpl implements Transcoder {
 
 	private String fastStartLocation;
-    private String niceLocation = "nice";
+	private String niceLocation = "nice";
 
-    static final ExecutorService pool = Executors.newCachedThreadPool();
+	static final ExecutorService pool = Executors.newCachedThreadPool();
 	private static final Logger LOG = Logger.getLogger(FastStartVodTranscoderImpl.class);
 
 	public void transcode(File workingDirectory, TranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
@@ -63,47 +63,47 @@ public class FastStartVodTranscoderImpl extends AbstractTranscoderImpl implement
 		commandList.add(outputFile.getAbsolutePath());
 		ProcessBuilder pb = new ProcessBuilder(commandList);
 
-        pb.environment().put("LD_LIBRARY_PATH", "/usr/local/lib:");
-        pb.redirectErrorStream(true);
-        pb.directory(outputFile.getParentFile());
-        Process process = null;
+		pb.environment().put("LD_LIBRARY_PATH", "/usr/local/lib:");
+		pb.redirectErrorStream(true);
+		pb.directory(outputFile.getParentFile());
+		Process process = null;
 
-        try {
-            // Get the FastStart process
-            process = pb.start();
-            // We give a couple of secs to complete task if needed
-            Future<List<String>> stdout = pool.submit(new OutputMonitor(process.getInputStream()));
-            List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
-            process.waitFor();
-            final int exitValue = process.exitValue();
-            LOG.debug("FastStart exit value: " + exitValue);
-            if (exitValue != 0) {
-                for (String line : result) {
-                    LOG.debug(line);
-                }
-                throw new Exception("FastStart return code indicated failure: " + exitValue);
-            }
-        } catch (InterruptedException e) {
-            throw new Exception("FastStart process interrupted by another thread",
-                    e);
-        } catch (ExecutionException ee) {
-            throw new Exception("Something went wrong parsing FastStart output",
-                    ee);
-        } catch (TimeoutException te) {
-            // We could not get the result before timeout
-            throw new Exception("FastStart process timed out", te);
-        } catch (RuntimeException re) {
-            // Unexpected output from FastStart
-            throw new Exception("Something went wrong parsing FastStart output",
-                    re);
-        } finally {
-            if (process != null) {
-                process.destroy();
-            }
-        }
-        
-        LOG.debug("transcoding finished");
-    }
+		try {
+			// Get the FastStart process
+			process = pb.start();
+			// We give a couple of secs to complete task if needed
+			Future<List<String>> stdout = pool.submit(new OutputMonitor(process.getInputStream()));
+			List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
+			process.waitFor();
+			final int exitValue = process.exitValue();
+			LOG.debug("FastStart exit value: " + exitValue);
+			if (exitValue != 0) {
+				for (String line : result) {
+					LOG.debug(line);
+				}
+				throw new Exception("FastStart return code indicated failure: " + exitValue);
+			}
+		} catch (InterruptedException e) {
+			throw new Exception("FastStart process interrupted by another thread",
+					e);
+		} catch (ExecutionException ee) {
+			throw new Exception("Something went wrong parsing FastStart output",
+					ee);
+		} catch (TimeoutException te) {
+			// We could not get the result before timeout
+			throw new Exception("FastStart process timed out", te);
+		} catch (RuntimeException re) {
+			// Unexpected output from FastStart
+			throw new Exception("Something went wrong parsing FastStart output",
+					re);
+		} finally {
+			if (process != null) {
+				process.destroy();
+			}
+		}
+
+		LOG.debug("transcoding finished");
+	}
 
 	@Required
 	public void setFastStartLocation(String fastStartLocation) {

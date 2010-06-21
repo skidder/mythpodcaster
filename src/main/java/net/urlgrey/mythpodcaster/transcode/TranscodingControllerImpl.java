@@ -49,7 +49,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 	@Override
 	public void transcode(TranscodingProfile profile, File inputFile,
 			File outputFile) throws Exception {
-		
+
 		switch (profile.getMode()) {
 		case ONE_PASS:
 			encodeOnePass(profile, inputFile, outputFile);
@@ -118,7 +118,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 		try {
 			final TranscoderConfigurationItem config = profile.getTranscoderConfigurationItems().get(profile.getTranscoderConfigurationItems().size() - 1);
 			fastStartVodTranscoder.transcode(workingDirectory, config, inputFile, tempOutputFile);
-			
+
 			// replace the input-file with the fast-start optimized version
 			FileOperations.copy(tempOutputFile, inputFile);
 		} catch (Exception e) {
@@ -136,7 +136,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 
 	private void encodeOnePass(TranscodingProfile profile, File inputFile,
 			File outputFile) throws Exception {
-		
+
 		LOGGER.info("Starting 1-pass encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
 		File workingDirectory = this.createTempDir();
 
@@ -147,7 +147,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 		}
 	}
 
-	
+
 	private void encodeTwoPass(TranscodingProfile profile, File inputFile,
 			File outputFile) throws Exception {
 
@@ -156,7 +156,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 		try {
 			final TranscoderConfigurationItem pass1Config = profile.getTranscoderConfigurationItems().get(0);
 			ffmpegTranscoder.transcode(workingDirectory, pass1Config, inputFile, outputFile);
-			
+
 			final TranscoderConfigurationItem pass2Config = profile.getTranscoderConfigurationItems().get(1);
 			ffmpegTranscoder.transcode(workingDirectory, pass2Config, inputFile, outputFile);
 		} finally {
@@ -171,11 +171,11 @@ public class TranscodingControllerImpl implements TranscodingController {
 		LOGGER.info("Starting segmented vod encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
 		File workingDirectory = this.createTempDir();		
 		File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
-		
+
 		try {
 			final TranscoderConfigurationItem pass1Config = profile.getTranscoderConfigurationItems().get(0);
 			ffmpegTranscoder.transcode(workingDirectory, pass1Config, inputFile, tempOutputFile);
-			
+
 			final TranscoderConfigurationItem segmentedVodConfig = profile.getTranscoderConfigurationItems().get(1);
 			segmentedVodTranscoder.transcode(workingDirectory, segmentedVodConfig, tempOutputFile, outputFile);
 		} catch (Exception e) {
@@ -199,8 +199,8 @@ public class TranscodingControllerImpl implements TranscodingController {
 			// delete files in the directory
 			File[] files = directory.listFiles();
 			for(int i=0;i<files.length;i++) {
-			    File file = files[i];
-			    file.delete();
+				File file = files[i];
+				file.delete();
 			}
 			directory.delete();
 		} catch (Exception e) {
@@ -209,18 +209,18 @@ public class TranscodingControllerImpl implements TranscodingController {
 	}
 
 
-    /**
-    * Creates a folder in "java.io.tmpdir" with a uniqe name.
-    */
-    private File createTempDir() throws IOException {
-        UID uid = new UID();
-        File dir = new File(System.getProperty("java.io.tmpdir"));
-        File tmp = new File(dir, uid.toString());
-        if(!tmp.mkdirs()) {
-          throw new IOException("Cannot create tmp dir ["+tmp.toString()+"]");
-        }
-        return tmp;
-    }
+	/**
+	 * Creates a folder in "java.io.tmpdir" with a uniqe name.
+	 */
+	private File createTempDir() throws IOException {
+		UID uid = new UID();
+		File dir = new File(System.getProperty("java.io.tmpdir"));
+		File tmp = new File(dir, uid.toString());
+		if(!tmp.mkdirs()) {
+			throw new IOException("Cannot create tmp dir ["+tmp.toString()+"]");
+		}
+		return tmp;
+	}
 
 	@Required
 	public void setFfmpegTranscoder(Transcoder ffmpegTranscoder) {

@@ -45,9 +45,9 @@ import net.urlgrey.mythpodcaster.dto.TranscoderConfigurationItem;
 public class SegmentedVodTranscoderImpl extends AbstractTranscoderImpl implements Transcoder {
 
 	private String segmenterLocation;
-    private String niceLocation = "nice";
+	private String niceLocation = "nice";
 
-    static final ExecutorService pool = Executors.newCachedThreadPool();
+	static final ExecutorService pool = Executors.newCachedThreadPool();
 	private static final Logger LOG = Logger.getLogger(SegmentedVodTranscoderImpl.class);
 
 	public void transcode(File workingDirectory, TranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
@@ -66,47 +66,47 @@ public class SegmentedVodTranscoderImpl extends AbstractTranscoderImpl implement
 		commandList.add(config.getHttpPrefix());
 		ProcessBuilder pb = new ProcessBuilder(commandList);
 
-        pb.environment().put("LD_LIBRARY_PATH", "/usr/local/lib:");
-        pb.redirectErrorStream(true);
-        pb.directory(outputFile.getParentFile());
-        Process process = null;
+		pb.environment().put("LD_LIBRARY_PATH", "/usr/local/lib:");
+		pb.redirectErrorStream(true);
+		pb.directory(outputFile.getParentFile());
+		Process process = null;
 
-        try {
-            // Get the segmenter process
-            process = pb.start();
-            // We give a couple of secs to complete task if needed
-            Future<List<String>> stdout = pool.submit(new OutputMonitor(process.getInputStream()));
-            List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
-            process.waitFor();
-            final int exitValue = process.exitValue();
-            LOG.debug("Segmenter exit value: " + exitValue);
-            if (exitValue != 0) {
-                for (String line : result) {
-                    LOG.debug(line);
-                }
-                throw new Exception("Segmenter return code indicated failure: " + exitValue);
-            }
-        } catch (InterruptedException e) {
-            throw new Exception("Segmenter process interrupted by another thread",
-                    e);
-        } catch (ExecutionException ee) {
-            throw new Exception("Something went wrong parsing Segmenter output",
-                    ee);
-        } catch (TimeoutException te) {
-            // We could not get the result before timeout
-            throw new Exception("Segmenter process timed out", te);
-        } catch (RuntimeException re) {
-            // Unexpected output from Segmenter
-            throw new Exception("Something went wrong parsing Segmenter output",
-                    re);
-        } finally {
-            if (process != null) {
-                process.destroy();
-            }
-        }
-        
-        LOG.debug("transcoding finished");
-    }
+		try {
+			// Get the segmenter process
+			process = pb.start();
+			// We give a couple of secs to complete task if needed
+			Future<List<String>> stdout = pool.submit(new OutputMonitor(process.getInputStream()));
+			List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
+			process.waitFor();
+			final int exitValue = process.exitValue();
+			LOG.debug("Segmenter exit value: " + exitValue);
+			if (exitValue != 0) {
+				for (String line : result) {
+					LOG.debug(line);
+				}
+				throw new Exception("Segmenter return code indicated failure: " + exitValue);
+			}
+		} catch (InterruptedException e) {
+			throw new Exception("Segmenter process interrupted by another thread",
+					e);
+		} catch (ExecutionException ee) {
+			throw new Exception("Something went wrong parsing Segmenter output",
+					ee);
+		} catch (TimeoutException te) {
+			// We could not get the result before timeout
+			throw new Exception("Segmenter process timed out", te);
+		} catch (RuntimeException re) {
+			// Unexpected output from Segmenter
+			throw new Exception("Something went wrong parsing Segmenter output",
+					re);
+		} finally {
+			if (process != null) {
+				process.destroy();
+			}
+		}
+
+		LOG.debug("transcoding finished");
+	}
 
 	@Required
 	public void setSegmenterLocation(String segmenterLocation) {

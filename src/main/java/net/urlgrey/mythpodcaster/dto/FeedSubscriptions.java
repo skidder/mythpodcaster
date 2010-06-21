@@ -47,6 +47,4 @@ public class FeedSubscriptions {
 	public void setSubscriptions(List<FeedSubscriptionItem> subscriptions) {
 		this.subscriptions = subscriptions;
 	}
-	
-	
 }

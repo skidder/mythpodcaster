@@ -27,7 +27,7 @@ package net.urlgrey.mythpodcaster.dto;
  *
  */
 public abstract class TranscoderConfigurationItem {
-    private long timeout = 900;
+	private long timeout = 900;
 	private int niceness = 19;
 
 	public long getTimeout() {

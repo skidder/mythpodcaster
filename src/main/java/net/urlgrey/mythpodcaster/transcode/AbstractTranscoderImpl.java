@@ -36,38 +36,38 @@ import java.util.concurrent.Callable;
  */
 public class AbstractTranscoderImpl {
 
-    /**
-     * Reads the process output streams
-     */
-    class OutputMonitor implements Callable<List<String>> {
+	/**
+	 * Reads the process output streams
+	 */
+	class OutputMonitor implements Callable<List<String>> {
 
-        private InputStream in;
+		private InputStream in;
 
-        public OutputMonitor(InputStream in) {
-            this.in = in;
-        }
+		public OutputMonitor(InputStream in) {
+			this.in = in;
+		}
 
-        public List<String> call() throws Exception {
-            ArrayList<String> lines = new ArrayList<String>();
-            BufferedReader br = null;
+		public List<String> call() throws Exception {
+			ArrayList<String> lines = new ArrayList<String>();
+			BufferedReader br = null;
 
-            try {
-                br = new BufferedReader(new InputStreamReader(in));
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    lines.add(line);
-                }
-            } finally {
-                try {
-                    if (br != null) {
-                        br.close();
-                    }
-                } catch (IOException e) {
-                }
-            }
-            return lines;
-        }
+			try {
+				br = new BufferedReader(new InputStreamReader(in));
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					lines.add(line);
+				}
+			} finally {
+				try {
+					if (br != null) {
+						br.close();
+					}
+				} catch (IOException e) {
+				}
+			}
+			return lines;
+		}
 
-    }
+	}
 
 }

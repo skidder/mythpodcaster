@@ -37,13 +37,13 @@ public class ClipLocatorImpl implements ClipLocator {
 
 	private static final String PNG_EXTENSION = ".png";
 	private MythRecordingsDAO recordingsDao;
-	
+
 	/**
 	 * @param filename
 	 * @return
 	 */
 	public File locateOriginalClip(String filename) {
-		
+
 		final List<String> recordingDirectories = recordingsDao.findRecordingDirectories();
 		if (recordingDirectories == null || recordingDirectories.size() == 0) {
 			return null;
@@ -70,7 +70,7 @@ public class ClipLocatorImpl implements ClipLocator {
 				return clipThumbnailFile;
 			}
 		}
-		
+
 		return null;
 	}
 

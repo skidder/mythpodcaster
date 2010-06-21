@@ -38,19 +38,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 
-    protected static final Logger LOGGER = Logger.getLogger(MythRecordingsDAOImpl.class);
+	protected static final Logger LOGGER = Logger.getLogger(MythRecordingsDAOImpl.class);
 
-    @PersistenceContext
-    private EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    
+
 	/* (non-Javadoc)
 	 * @see net.urlgrey.mythpodcaster.dao.MythRecordingsDAO#findAllRecordedSeries()
 	 */
 	@Override
-    @Transactional(readOnly=true)
+	@Transactional(readOnly=true)
 	public List<RecordedSeries> findAllRecordedSeries() {
-    	final Query namedQuery = entityManager.createNamedQuery("MYTH_RECORDINGS.findAllRecordedSeries");
+		final Query namedQuery = entityManager.createNamedQuery("MYTH_RECORDINGS.findAllRecordedSeries");
 
 		final List<RecordedSeries> series = namedQuery.getResultList();
 		return series;
@@ -60,15 +60,15 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 	 * @see net.urlgrey.mythpodcaster.dao.MythRecordingsDAO#findRecordedSeries(java.lang.String)
 	 */
 	@Override
-    @Transactional(readOnly=true)
+	@Transactional(readOnly=true)
 	public RecordedSeries findRecordedSeries(String seriesId) {
-    	final Query namedQuery = entityManager.createNamedQuery("MYTH_RECORDINGS.findRecordedSeries");
-    	namedQuery.setParameter("seriesId", seriesId);
+		final Query namedQuery = entityManager.createNamedQuery("MYTH_RECORDINGS.findRecordedSeries");
+		namedQuery.setParameter("seriesId", seriesId);
 
-    	final List<RecordedSeries> resultsList = namedQuery.getResultList();
-    	if (resultsList != null && resultsList.size() == 1) {
-    		return resultsList.get(0);
-    	}
+		final List<RecordedSeries> resultsList = namedQuery.getResultList();
+		if (resultsList != null && resultsList.size() == 1) {
+			return resultsList.get(0);
+		}
 
 		return null;
 	}
@@ -77,7 +77,7 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 	 * @see net.urlgrey.mythpodcaster.dao.MythRecordingsDAO#findChannel(int)
 	 */
 	@Override
-    @Transactional(readOnly=true)
+	@Transactional(readOnly=true)
 	public Channel findChannel(int channelId) {
 		return entityManager.find(Channel.class, Integer.valueOf(channelId));
 	}
@@ -87,10 +87,10 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 	 */
 	@Override
 	public List<String> findRecordingDirectories() {
-    	final Query nativeQuery = entityManager.createNativeQuery("SELECT DISTINCT dirname FROM storagegroup");
-    	nativeQuery.setHint("org.hibernate.comment", "MythPodcaster: findRecordingDirectories");
+		final Query nativeQuery = entityManager.createNativeQuery("SELECT DISTINCT dirname FROM storagegroup");
+		nativeQuery.setHint("org.hibernate.comment", "MythPodcaster: findRecordingDirectories");
 
-    	final List<String> resultsList = nativeQuery.getResultList();
+		final List<String> resultsList = nativeQuery.getResultList();
 		return resultsList;
 	}
 

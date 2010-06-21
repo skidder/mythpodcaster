@@ -51,45 +51,45 @@ import org.hibernate.annotations.SortType;
 @Entity
 @Table(name = "recorded")
 @NamedQueries({
-@NamedQuery(
-    name = "MYTH_RECORDINGS.findAllRecordedSeries",
-    query = "SELECT recordedseries FROM RecordedSeries AS recordedseries WHERE recordedseries.recordingGroup != 'LiveTV' group by recordedseries.seriesId order by recordedseries.title asc",
-    hints = {@QueryHint(name="org.hibernate.comment", value="MythPodcaster: MYTH_RECORDINGS.findAllRecordedSeries")}	),
-@NamedQuery(
-    name = "MYTH_RECORDINGS.findRecordedSeries",
-    query = "SELECT recordedseries FROM RecordedSeries AS recordedseries WHERE recordedseries.recordingGroup != 'LiveTV' AND recordedseries.seriesId = :seriesId group by recordedseries.seriesId",
-    hints = {@QueryHint(name="org.hibernate.comment", value="MythPodcaster: MYTH_RECORDINGS.findRecordedSeries")}	)})
-public class RecordedSeries implements Serializable {
+	@NamedQuery(
+			name = "MYTH_RECORDINGS.findAllRecordedSeries",
+			query = "SELECT recordedseries FROM RecordedSeries AS recordedseries WHERE recordedseries.recordingGroup != 'LiveTV' group by recordedseries.seriesId order by recordedseries.title asc",
+			hints = {@QueryHint(name="org.hibernate.comment", value="MythPodcaster: MYTH_RECORDINGS.findAllRecordedSeries")}	),
+			@NamedQuery(
+					name = "MYTH_RECORDINGS.findRecordedSeries",
+					query = "SELECT recordedseries FROM RecordedSeries AS recordedseries WHERE recordedseries.recordingGroup != 'LiveTV' AND recordedseries.seriesId = :seriesId group by recordedseries.seriesId",
+					hints = {@QueryHint(name="org.hibernate.comment", value="MythPodcaster: MYTH_RECORDINGS.findRecordedSeries")}	)})
+					public class RecordedSeries implements Serializable {
 
-    @Column(name = "title")
-    private String title;
-	
+	@Column(name = "title")
+	private String title;
+
 	@Id
 	@Column(name = "recordid")
 	private String seriesId;
-	
+
 	@Column(name = "recgroup")
 	private String recordingGroup;
 
-    @OneToMany(cascade = {CascadeType.ALL}, fetch=FetchType.EAGER)
-    @JoinColumn(name="recordid")
-    @Sort(type=SortType.NATURAL)
+	@OneToMany(cascade = {CascadeType.ALL}, fetch=FetchType.EAGER)
+	@JoinColumn(name="recordid")
+	@Sort(type=SortType.NATURAL)
 	private List<RecordedProgram> recordedPrograms = new ArrayList<RecordedProgram>();
 
-    @Transient
+	@Transient
 	private Timestamp earliestRecordingTimestamp;
 
-    @Transient
+	@Transient
 	private Timestamp lastRecordingTimestamp;
 
-    @PostLoad
-    public void postQuery() {
-    	if (recordedPrograms != null && recordedPrograms.size() > 0) {
-    		earliestRecordingTimestamp = recordedPrograms.get(0).getStartTime();
+	@PostLoad
+	public void postQuery() {
+		if (recordedPrograms != null && recordedPrograms.size() > 0) {
+			earliestRecordingTimestamp = recordedPrograms.get(0).getStartTime();
 			lastRecordingTimestamp = recordedPrograms.get(recordedPrograms.size() - 1).getStartTime();
-    	}
-    }
-    
+		}
+	}
+
 	public String getTitle() {
 		return title;
 	}
@@ -146,7 +146,7 @@ public class RecordedSeries implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((seriesId == null) ? 0 : seriesId.hashCode());
+		+ ((seriesId == null) ? 0 : seriesId.hashCode());
 		return result;
 	}
 

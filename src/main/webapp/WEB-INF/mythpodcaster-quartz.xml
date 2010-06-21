@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/aop
@@ -13,13 +11,15 @@
                            http://www.springframework.org/schema/tx
                            http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
 
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-            <property name="location">
-                    <value>file:///etc/mythpodcaster/mythpodcaster.properties</value>
-            </property>
-    </bean>
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>file:///etc/mythpodcaster/mythpodcaster.properties</value>
+		</property>
+	</bean>
 
-	<bean id="feedFileAccessor" class="net.urlgrey.mythpodcaster.transcode.FeedFileAccessorImpl">
+	<bean id="feedFileAccessor"
+		class="net.urlgrey.mythpodcaster.transcode.FeedFileAccessorImpl">
 		<property name="applicationURL" value="${static.content.url}" />
 		<property name="feedFilePath" value="${static.content.path}" />
 		<property name="transcodingProfilesDao" ref="transcodingProfilesDao" />
@@ -28,30 +28,35 @@
 		<property name="feedFileExtension" value="${feed.file.extension}" />
 	</bean>
 
-	<bean id="ffmpegTranscoder" class="net.urlgrey.mythpodcaster.transcode.FFMpegTranscoderImpl">
+	<bean id="ffmpegTranscoder"
+		class="net.urlgrey.mythpodcaster.transcode.FFMpegTranscoderImpl">
 		<property name="ffmpegLocation" value="${ffmpeg.location}"></property>
 	</bean>
 
-	<bean id="segmentedVodTranscoder" class="net.urlgrey.mythpodcaster.transcode.SegmentedVodTranscoderImpl">
+	<bean id="segmentedVodTranscoder"
+		class="net.urlgrey.mythpodcaster.transcode.SegmentedVodTranscoderImpl">
 		<property name="segmenterLocation" value="${segmenter.location}"></property>
 	</bean>
 
-	<bean id="fastStartVodTranscoder" class="net.urlgrey.mythpodcaster.transcode.FastStartVodTranscoderImpl">
+	<bean id="fastStartVodTranscoder"
+		class="net.urlgrey.mythpodcaster.transcode.FastStartVodTranscoderImpl">
 		<property name="fastStartLocation" value="${faststart.location}"></property>
 	</bean>
 
-	<bean id="userDefinedTranscoder" class="net.urlgrey.mythpodcaster.transcode.UserDefinedTranscoderImpl">
+	<bean id="userDefinedTranscoder"
+		class="net.urlgrey.mythpodcaster.transcode.UserDefinedTranscoderImpl">
 	</bean>
 
 	<bean id="clipLocator" class="net.urlgrey.mythpodcaster.transcode.ClipLocatorImpl">
 		<property name="recordingsDao" ref="recordingsDao"></property>
 	</bean>
 
-	<bean id="transcodingController" class="net.urlgrey.mythpodcaster.transcode.TranscodingControllerImpl">
-		<property name="ffmpegTranscoder" ref="ffmpegTranscoder"/>
-		<property name="segmentedVodTranscoder" ref="segmentedVodTranscoder"/>
-		<property name="fastStartVodTranscoder" ref="fastStartVodTranscoder"/>
-		<property name="userDefinedTranscoder" ref="userDefinedTranscoder"/>
+	<bean id="transcodingController"
+		class="net.urlgrey.mythpodcaster.transcode.TranscodingControllerImpl">
+		<property name="ffmpegTranscoder" ref="ffmpegTranscoder" />
+		<property name="segmentedVodTranscoder" ref="segmentedVodTranscoder" />
+		<property name="fastStartVodTranscoder" ref="fastStartVodTranscoder" />
+		<property name="userDefinedTranscoder" ref="userDefinedTranscoder" />
 	</bean>
 
 	<bean id="taskExecutor"
@@ -63,9 +68,10 @@
 		<property name="rejectedExecutionHandler">
 			<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
 		</property>
-	</bean>  
+	</bean>
 
-	<bean id="transcodeJob" class="net.urlgrey.mythpodcaster.transcode.TranscodeAndCleanupJob">
+	<bean id="transcodeJob"
+		class="net.urlgrey.mythpodcaster.transcode.GlobalTranscodeAndCleanupTaskImpl">
 		<property name="subscriptionsDao" ref="subscriptionsDao" />
 		<property name="feedFileAccessor" ref="feedFileAccessor" />
 		<property name="executor" ref="taskExecutor" />
@@ -73,7 +79,7 @@
 	</bean>
 
 	<bean id="feedTranscodingTask"
-		class="net.urlgrey.mythpodcaster.transcode.FeedTranscodingTaskImpl"
+		class="net.urlgrey.mythpodcaster.transcode.IndividualFeedTranscodeTaskImpl"
 		scope="prototype">
 		<property name="recordingsDao" ref="recordingsDao" />
 		<property name="transcodingProfilesDao" ref="transcodingProfilesDao" />
@@ -82,21 +88,22 @@
 		<property name="feedFileExtension" value="${feed.file.extension}" />
 	</bean>
 
-	<bean id="rssJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-	  <property name="targetObject" ref="transcodeJob" />
-	  <property name="targetMethod" value="execute" />
-	  <property name="concurrent" value="false" />
+	<bean id="rssJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="transcodeJob" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
 	</bean>
 
 	<bean id="cronRssTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="rssJob" />
 		<property name="cronExpression" value="${rss.cron}" />
 	</bean>
-	
+
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="cronRssTrigger"/>
+				<ref bean="cronRssTrigger" />
 			</list>
 		</property>
 	</bean>

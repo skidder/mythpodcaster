@@ -29,8 +29,7 @@ import java.util.List;
  * @author scottkidder
  *
  */
-public class FFMpegTranscoderConfigurationItem extends
-		TranscoderConfigurationItem {
+public class FFMpegTranscoderConfigurationItem extends TranscoderConfigurationItem {
 
 	private String encoderArguments;
 	private List<String> parsedEncoderArguments;

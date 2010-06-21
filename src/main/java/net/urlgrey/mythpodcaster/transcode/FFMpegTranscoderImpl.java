@@ -44,11 +44,11 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public class FFMpegTranscoderImpl extends AbstractTranscoderImpl implements Transcoder {
 
-    static final Logger LOG = Logger.getLogger(FFMpegTranscoderImpl.class);
+	static final Logger LOG = Logger.getLogger(FFMpegTranscoderImpl.class);
 	private String ffmpegLocation;
-    private String niceLocation = "nice";
-	
-    static final ExecutorService pool = Executors.newCachedThreadPool();
+	private String niceLocation = "nice";
+
+	static final ExecutorService pool = Executors.newCachedThreadPool();
 
 	public void transcode(File workingDirectory, TranscoderConfigurationItem genericConfig, File inputFile, File outputFile) throws Exception {
 		LOG.info("transcode started: inputFile [" + inputFile.getAbsolutePath() + "], outputFile [" + outputFile.getAbsolutePath() + "]");
@@ -65,50 +65,50 @@ public class FFMpegTranscoderImpl extends AbstractTranscoderImpl implements Tran
 		commandList.add(outputFile.getAbsolutePath());
 		ProcessBuilder pb = new ProcessBuilder(commandList);
 
-        // Needed for ffmpeg
-        pb.environment().put("LD_LIBRARY_PATH", "/usr/local/lib:");
-        pb.redirectErrorStream(true);
-        pb.directory(workingDirectory);
-        Process process = null;
+		// Needed for ffmpeg
+		pb.environment().put("LD_LIBRARY_PATH", "/usr/local/lib:");
+		pb.redirectErrorStream(true);
+		pb.directory(workingDirectory);
+		Process process = null;
 
-        try {
-            // Get the ffmpeg process
-            process = pb.start();
-            // We give a couple of secs to complete task if needed
-            Future<List<String>> stdout = pool.submit(new OutputMonitor(process.getInputStream()));
-            List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
-            process.waitFor();
-            final int exitValue = process.exitValue();
-            LOG.debug("FFMPEG exit value: " + exitValue);
-            if (exitValue != 0) {
-                for (String line : result) {
-                    LOG.debug(line);
-                }
-                throw new Exception("FFMpeg return code indicated failure: " + exitValue);
-            }
-        } catch (InterruptedException e) {
-            throw new Exception("FFMpeg process interrupted by another thread",
-                    e);
-        } catch (ExecutionException ee) {
-            throw new Exception("Something went wrong parsing FFMpeg output",
-                    ee);
-        } catch (TimeoutException te) {
-            // We could not get the result before timeout
-            throw new Exception("FFMpeg process timed out", te);
-        } catch (RuntimeException re) {
-            // Unexpected output from FFMpeg
-            throw new Exception("Something went wrong parsing FFMpeg output",
-                    re);
-        } finally {
-            if (process != null) {
-                process.destroy();
-            }
-        }
-        
-        LOG.debug("transcoding finished");
-    }
+		try {
+			// Get the ffmpeg process
+			process = pb.start();
+			// We give a couple of secs to complete task if needed
+			Future<List<String>> stdout = pool.submit(new OutputMonitor(process.getInputStream()));
+			List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
+			process.waitFor();
+			final int exitValue = process.exitValue();
+			LOG.debug("FFMPEG exit value: " + exitValue);
+			if (exitValue != 0) {
+				for (String line : result) {
+					LOG.debug(line);
+				}
+				throw new Exception("FFMpeg return code indicated failure: " + exitValue);
+			}
+		} catch (InterruptedException e) {
+			throw new Exception("FFMpeg process interrupted by another thread",
+					e);
+		} catch (ExecutionException ee) {
+			throw new Exception("Something went wrong parsing FFMpeg output",
+					ee);
+		} catch (TimeoutException te) {
+			// We could not get the result before timeout
+			throw new Exception("FFMpeg process timed out", te);
+		} catch (RuntimeException re) {
+			// Unexpected output from FFMpeg
+			throw new Exception("Something went wrong parsing FFMpeg output",
+					re);
+		} finally {
+			if (process != null) {
+				process.destroy();
+			}
+		}
 
-    @Required
+		LOG.debug("transcoding finished");
+	}
+
+	@Required
 	public void setFfmpegLocation(String ffmpegLocation) {
 		this.ffmpegLocation = ffmpegLocation;
 	}

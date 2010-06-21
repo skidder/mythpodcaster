@@ -46,20 +46,20 @@ import com.sun.syndication.feed.synd.SyndFeed;
  */
 public class SubscriptionsDAOImpl extends AbstractFileBasedDAO implements SubscriptionsDAO {
 
-    protected static final Logger LOGGER = Logger.getLogger(SubscriptionsDAOImpl.class);
+	protected static final Logger LOGGER = Logger.getLogger(SubscriptionsDAOImpl.class);
 
 	private static final String RSS_FILE_EXTENSION = ".rss";
 
-    private String subscriptionsFilePath;
-    private String feedFilePath;
-    private FeedFileAccessor feedFileAccessor;
+	private String subscriptionsFilePath;
+	private String feedFilePath;
+	private FeedFileAccessor feedFileAccessor;
 	private JAXBContext jaxbContext;
 
 	/**
 	 * 
 	 */
 	public SubscriptionsDAOImpl() {
-		 try {
+		try {
 			jaxbContext = JAXBContext.newInstance(new Class[] {FeedSubscriptionItem.class, FeedSubscriptions.class} );
 		} catch (JAXBException e) {
 			LOGGER.fatal("Unable to create JAXB Context", e);
@@ -74,7 +74,7 @@ public class SubscriptionsDAOImpl extends AbstractFileBasedDAO implements Subscr
 	@Override
 	public List<FeedSubscriptionItem> findSubscriptions() {
 		final FeedSubscriptions subscriptionsDocument = loadSubscriptionDocument();
-		
+
 		if (subscriptionsDocument != null && subscriptionsDocument.getSubscriptions() != null) {
 			LOGGER.debug("Subscriptions size: " + subscriptionsDocument.getSubscriptions().size());
 			return subscriptionsDocument.getSubscriptions();
@@ -97,7 +97,7 @@ public class SubscriptionsDAOImpl extends AbstractFileBasedDAO implements Subscr
 		} else {
 			subscriptions.add(item);
 		}
-		
+
 		final File encodingDirectory = new File(feedFilePath, item.getTranscodeProfile());
 		final File feedFile = new File(encodingDirectory, seriesId + RSS_FILE_EXTENSION);
 		if (feedFile.exists() == false) {
@@ -107,7 +107,7 @@ public class SubscriptionsDAOImpl extends AbstractFileBasedDAO implements Subscr
 				throw new IOException("Unable to create feed for new subscription");
 			}
 		}
-		
+
 		LOGGER.debug("Subscriptions size: " + subscriptions.size());
 		storeSubscriptionDocument(subscriptionsDocument);
 	}
@@ -154,7 +154,7 @@ public class SubscriptionsDAOImpl extends AbstractFileBasedDAO implements Subscr
 	public void removeSubscription(String seriesId, String transcodeProfileId) {
 		LOGGER.debug("Removing subscription: seriesId [" + seriesId + "], transcodeProfileId[" + transcodeProfileId + "]");
 		FeedSubscriptions subscriptionsDocument = loadSubscriptionDocument();
-		
+
 		FeedSubscriptionItem item = new FeedSubscriptionItem();
 		item.setSeriesId(seriesId);
 		item.setTranscodeProfile(transcodeProfileId);

@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.urlgrey.mythpodcaster.dao.MythRecordingsDAO;
 import net.urlgrey.mythpodcaster.dao.SubscriptionsDAO;
-import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
 
@@ -86,7 +85,7 @@ public class ProgramsController implements Controller {
 				displaySubscriptions.add(item);
 			}
 		}
-		
+
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("applicationURL", this.applicationURL);
 		model.put("feedFileExtension", this.feedFileExtension);

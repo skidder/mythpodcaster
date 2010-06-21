@@ -55,29 +55,29 @@ public class TranscodingProfilesDAOImpl extends AbstractFileBasedDAO implements 
 	private JAXBContext jaxbContext;
 
 	public TranscodingProfilesDAOImpl() {
-		 try {
-				final Class[] jaxbClasses = new Class[] {TranscodingProfile.class, 
-													     TranscodingProfileGroup.class, 
-													     FFMpegTranscoderConfigurationItem.class, 
-													     UserDefinedTranscoderConfigurationItem.class, 
-													     TranscoderConfigurationItem.class, 
-													     SegmenterTranscoderConfigurationItem.class, 
-													     FastStartTranscoderConfigurationItem.class};
+		try {
+			final Class[] jaxbClasses = new Class[] {TranscodingProfile.class, 
+					TranscodingProfileGroup.class, 
+					FFMpegTranscoderConfigurationItem.class, 
+					UserDefinedTranscoderConfigurationItem.class, 
+					TranscoderConfigurationItem.class, 
+					SegmenterTranscoderConfigurationItem.class, 
+					FastStartTranscoderConfigurationItem.class};
 
-				jaxbContext = JAXBContext.newInstance(jaxbClasses);
-			} catch (JAXBException e) {
-				LOGGER.fatal("Unable to create JAXB Context", e);
-				throw new IllegalStateException(e);
-			}
+			jaxbContext = JAXBContext.newInstance(jaxbClasses);
+		} catch (JAXBException e) {
+			LOGGER.fatal("Unable to create JAXB Context", e);
+			throw new IllegalStateException(e);
+		}
 	}
 
 	@Override
 	public void addTranscodingProfile(TranscodingProfile profile)
-			throws IOException {
+	throws IOException {
 		final String profileId = profile.getId();
 		LOGGER.debug("Adding encoding profile: profileId [" + profileId + "]");
 		TranscodingProfileGroup profileGroup = loadTranscodingProfilesDocument();
-		
+
 		final List<TranscodingProfile> profiles = profileGroup.getProfiles();
 		if (!profiles.contains(profile)) {
 			profiles.add(profile);
@@ -92,7 +92,7 @@ public class TranscodingProfilesDAOImpl extends AbstractFileBasedDAO implements 
 		for (TranscodingProfile profile : loadTranscodingProfilesDocument().getProfiles()) {
 			profiles.put(profile.getId(), profile);
 		}
-		
+
 		return profiles;
 	}
 
@@ -100,7 +100,7 @@ public class TranscodingProfilesDAOImpl extends AbstractFileBasedDAO implements 
 	public void removeTranscodingProfile(String profileId) {
 		LOGGER.debug("Removing encoding profile: profileId [" + profileId + "]");
 		TranscodingProfileGroup profileGroup = loadTranscodingProfilesDocument();
-		
+
 		final List<TranscodingProfile> profiles = profileGroup.getProfiles();
 		TranscodingProfile targetedProfile = null;
 		for (TranscodingProfile profile : profiles) {
@@ -108,7 +108,7 @@ public class TranscodingProfilesDAOImpl extends AbstractFileBasedDAO implements 
 				targetedProfile  = profile;
 			}
 		}
-		
+
 		if (targetedProfile != null ) {
 			profiles.remove(targetedProfile);
 			storeTranscodingProfilesDocument(profileGroup);
