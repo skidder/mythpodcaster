@@ -67,7 +67,9 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 
 		final List<RecordedSeries> resultsList = namedQuery.getResultList();
 		if (resultsList != null && resultsList.size() == 1) {
-			return resultsList.get(0);
+			final RecordedSeries series = resultsList.get(0);
+			series.getRecordedPrograms().size(); //trigger retrieval of lazily-loaded items
+			return series;
 		}
 
 		return null;

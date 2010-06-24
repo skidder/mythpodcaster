@@ -23,7 +23,6 @@
 package net.urlgrey.mythpodcaster.domain;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,10 +35,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
@@ -71,24 +68,10 @@ import org.hibernate.annotations.SortType;
 	@Column(name = "recgroup")
 	private String recordingGroup;
 
-	@OneToMany(cascade = {CascadeType.ALL}, fetch=FetchType.EAGER)
+	@OneToMany(cascade = {CascadeType.ALL}, fetch=FetchType.LAZY)
 	@JoinColumn(name="recordid")
 	@Sort(type=SortType.NATURAL)
 	private List<RecordedProgram> recordedPrograms = new ArrayList<RecordedProgram>();
-
-	@Transient
-	private Timestamp earliestRecordingTimestamp;
-
-	@Transient
-	private Timestamp lastRecordingTimestamp;
-
-	@PostLoad
-	public void postQuery() {
-		if (recordedPrograms != null && recordedPrograms.size() > 0) {
-			earliestRecordingTimestamp = recordedPrograms.get(0).getStartTime();
-			lastRecordingTimestamp = recordedPrograms.get(recordedPrograms.size() - 1).getStartTime();
-		}
-	}
 
 	public String getTitle() {
 		return title;
@@ -120,22 +103,6 @@ import org.hibernate.annotations.SortType;
 
 	public void setRecordingGroup(String recordingGroup) {
 		this.recordingGroup = recordingGroup;
-	}
-
-	public Timestamp getEarliestRecordingTimestamp() {
-		return earliestRecordingTimestamp;
-	}
-
-	public void setEarliestRecordingTimestamp(Timestamp earliestRecordingTimestamp) {
-		this.earliestRecordingTimestamp = earliestRecordingTimestamp;
-	}
-
-	public Timestamp getLastRecordingTimestamp() {
-		return lastRecordingTimestamp;
-	}
-
-	public void setLastRecordingTimestamp(Timestamp lastRecordingTimestamp) {
-		this.lastRecordingTimestamp = lastRecordingTimestamp;
 	}
 
 	/* (non-Javadoc)
