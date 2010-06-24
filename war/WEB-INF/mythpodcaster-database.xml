@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+            <property name="location">
+                    <value>file:///etc/mythpodcaster/mythpodcaster.properties</value>
+            </property>
+    </bean>
+
+  	<bean id="ds" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${hibernate.connection.driver_class}" />
+		<property name="jdbcUrl" value="${hibernate.connection.url}" />
+		<property name="user" value="${hibernate.connection.username}" />
+		<property name="password" value="${hibernate.connection.password}" />
+
+        <property name="initialPoolSize"><value>1</value></property>
+        <property name="minPoolSize"><value>1</value></property>
+        <property name="maxPoolSize"><value>10</value></property>
+        <!-- <property name="timeout"><value>0</value></property> -->   <!-- 0 means: no timeout -->
+        <property name="idleConnectionTestPeriod"><value>200</value></property>
+        <property name="acquireIncrement"><value>1</value></property>
+        <property name="maxStatements"><value>0</value></property>  <!-- 0 means: statement caching is turned off.  -->
+        <property name="numHelperThreads"><value>3</value></property>  <!-- 3 is default --> 
+	</bean>
+
+	<tx:annotation-driven/>
+
+	<!-- post-processors for all standard config annotations -->
+	<context:annotation-config/>
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="ds" />
+		<property name="persistenceUnitName" value="MythPodcasterPU" />
+		<property name="jpaVendorAdapter">
+        	<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+	           <property name="showSql" value="false" />
+	           <property name="generateDdl" value="false" />
+	           <property name="databasePlatform" value="${hibernate.dialect}" />
+        	</bean>
+		</property>
+		<property name="loadTimeWeaver">
+			<bean
+				class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
+		</property>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager" >
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<bean id="recordingsDao" class="net.urlgrey.mythpodcaster.dao.MythRecordingsDAOImpl">
+	</bean>
+
+	<bean id="transcodingProfilesDao" class="net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAOImpl">
+		<property name="transcodingProfilesFilePath" value="/etc/mythpodcaster/transcoding_profiles.xml"></property>
+	</bean>
+
+	<bean id="subscriptionsDao" class="net.urlgrey.mythpodcaster.dao.SubscriptionsDAOImpl">
+		<property name="feedFileAccessor" ref="feedFileAccessor" />
+		<property name="subscriptionsFilePath" value="/etc/mythpodcaster/subscriptions.xml"></property>
+		<property name="feedFilePath" value="${static.content.path}" />
+	</bean>
+
+</beans>
