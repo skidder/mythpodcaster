@@ -1,11 +1,13 @@
 Release Notes
 --------------------------
 
-* Mon Jun 21 2010 <kidder.scott@gmail.com> - 0.0.8
+* Wed Jun 23 2010 <kidder.scott@gmail.com> - 0.0.8
 Feature:
 18: Add a No-Op Transcoder
 19: Extract audio from recording as audio recording (run arbitrary transcoding commands)
-22: Reformat the Java Source Code to normalize indentation 
+21: Automatically Delete Transcoding Profile Directories that are unused
+22: Reformat the Java Source Code to normalize indentation
+24: Migrate the Web UI to Google Web Toolkit (GWT)
 
 
 * Wed May 26 2010 <kidder.scott@gmail.com> - 0.0.7
