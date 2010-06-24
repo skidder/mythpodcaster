@@ -1,0 +1,84 @@
+body,html {
+	height: 100%;
+}
+
+body {
+	background: #fff;
+	color: black;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: small;
+	margin: 8px;
+	margin-top: 3px;
+}
+
+a {
+	color: #000;
+}
+
+a:visited {
+	color: #000;
+}
+
+.mythpodcaster-Header {
+	font-weight: bold;
+	font-size: x-large;
+	margin-bottom: 20px;
+}
+
+.mythpodcaster-ListBox {
+	margin-right: 10px;
+}
+
+.mythpodcaster-SubscriptionsPanel {
+	margin-bottom: 20px;
+}
+
+.mythpodcaster-SubscriptionsTable {
+	border-width: 2px 2px 2px 2px;
+	border-spacing: 5px;
+	border-style: solid solid solid solid;
+	border-color: gray gray gray gray;
+	border-collapse: collapse;
+	background-color: rgb(250, 240, 230);
+}
+
+.mythpodcaster-SubscriptionsTable th {
+	border-width: 1px 1px 1px 1px;
+	padding: 5px;
+	border-style: dotted dotted dotted dotted;
+	border-color: gray gray gray gray;
+	background-color: white;
+	-moz-border-radius: 0px 0px 0px 0px;
+}
+
+.mythpodcaster-SubscriptionsTable td {
+	border-width: 1px 1px 1px 1px;
+	padding: 5px;
+	border-style: dotted dotted dotted dotted;
+	border-color: gray gray gray gray;
+	background-color: white;
+	-moz-border-radius: 0px 0px 0px 0px;
+}
+
+.mythpodcaster-SubscriptionsTableHeader {
+	background: #c1eec8 url(gradient.gif) repeat-x 0px -1px;
+	font-weight: bold;
+}
+
+.mythpodcaster-SubscriptionsTableHeader .gwt-HTML {
+	font-weight: bold;
+}
+
+.mythpodcaster-SubscriptionsTableHeader td {
+	padding: 2px 0 2px 10px;
+	border-top: 1px solid #666;
+	border-bottom: 1px solid #666;
+}
+.mythpodcaster-SubscriptionsTable {
+	width: 100%;
+	border-width: 2px 2px 2px 2px;
+	border-spacing: 5px;
+	border-style: solid solid solid solid;
+	border-color: gray gray gray gray;
+	background-color: rgb(250, 240, 230);
+}
