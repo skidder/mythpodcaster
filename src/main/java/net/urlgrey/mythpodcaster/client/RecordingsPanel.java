@@ -55,39 +55,10 @@ public class RecordingsPanel extends Composite {
 		VerticalPanel panel = new VerticalPanel();
 		seriesListBox.setStyleName("mythpodcaster-SubscriptionsTable");
 
-		AsyncCallback<List<RecordedSeriesDTO>> callback = new AsyncCallback<List<RecordedSeriesDTO>>() {
-
-			@Override
-			public void onSuccess(List<RecordedSeriesDTO> recordedSeriesList) {
-				for (RecordedSeriesDTO item : recordedSeriesList) {
-					seriesListBox.addItem(item.getTitle(), item.getSeriesId());
-				}
-			}
-
-			@Override
-			public void onFailure(Throwable arg0) {
-				// TODO Auto-generated method stub
-
-			}
-		};
-
-
-		UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
-		try {
-			service.findAllRecordedSeries(callback);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-
+		// create change handler that updates the displayed transcoding profiles when program changes
 		ChangeHandler seriesSelectionHandler = new ChangeHandler() {
-
-			@Override
 			public void onChange(ChangeEvent event) {
-				final int index = seriesListBox.getSelectedIndex();
-				final String selectedSeries = seriesListBox.getValue(index);
-				final String seriesTitle = seriesListBox.getItemText(index);
-				transcodingProfileSubscriptionsPanel.update(selectedSeries, seriesTitle);
+				handleProgramSeriesSelectionEvent();
 			}
 		};
 
@@ -100,7 +71,48 @@ public class RecordingsPanel extends Composite {
 		panel.add(seriesSelectionPanel);
 		panel.add(transcodingProfileSubscriptionsPanel);
 
+		AsyncCallback<List<RecordedSeriesDTO>> callback = new AsyncCallback<List<RecordedSeriesDTO>>() {
+
+			@Override
+			public void onSuccess(List<RecordedSeriesDTO> recordedSeriesList) {
+				// add all of the recorded series to the program series listbox
+				for (RecordedSeriesDTO item : recordedSeriesList) {
+					seriesListBox.addItem(item.getTitle(), item.getSeriesId());
+				}
+
+				if (seriesListBox.getItemCount() > 0) {
+					seriesListBox.setSelectedIndex(0);
+					handleProgramSeriesSelectionEvent();
+				}
+
+			}
+
+			@Override
+			public void onFailure(Throwable arg0) {
+				// ignore
+			}
+		};
+
+		// retrieve and display the list of program series
+		UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
+		try {
+			seriesListBox.clear();
+			service.findAllRecordedSeries(callback);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		initWidget(panel);
 	}
 
+
+	/**
+	 * Update the transcoding profile subscriptions panel when the listbox has been selected.
+	 */
+	private void handleProgramSeriesSelectionEvent() {
+		final int index = seriesListBox.getSelectedIndex();
+		final String selectedSeries = seriesListBox.getValue(index);
+		final String seriesTitle = seriesListBox.getItemText(index);
+		transcodingProfileSubscriptionsPanel.update(selectedSeries, seriesTitle);
+	}
 }
