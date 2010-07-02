@@ -71,11 +71,19 @@ public class UIControllerImpl implements UIControllerService {
 
 	@Override
 	public List<RecordedSeriesDTO> findAllRecordedSeries() {
-		List<RecordedSeriesDTO> results = new ArrayList<RecordedSeriesDTO>();
-		
+		final List<RecordedSeriesDTO> results = new ArrayList<RecordedSeriesDTO>();
+		final List<FeedSubscriptionItem> subscriptions = subscriptionsDao.findSubscriptions();
+
 		for (RecordedSeries item : recordingsDao.findAllRecordedSeries()) {
 			final RecordedSeriesDTO dto = new RecordedSeriesDTO();
-			dto.setRecordingGroup(item.getRecordingGroup());
+
+			for (FeedSubscriptionItem subscription : subscriptions) {
+				if (subscription.isActive() && item.getSeriesId().equals(subscription.getSeriesId())) {
+					dto.setActive(true);
+					break;
+				}
+			}
+
 			dto.setSeriesId(item.getSeriesId());
 			dto.setTitle(item.getTitle());
 			results.add(dto);

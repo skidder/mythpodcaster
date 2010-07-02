@@ -74,9 +74,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
-* Thu Jul 1 2010 <kidder.scott@gmail.com> - 0.0.9
+* Fri Jul 2 2010 <kidder.scott@gmail.com> - 0.0.9
 Feature:
 25: First item in the Program Series combo-box should be automatically selected
+26: Provide a visual cue in the Program Series listbox indicating whether subcriptions exist
 
 * Wed Jun 23 2010 <kidder.scott@gmail.com> - 0.0.8
 Feature:

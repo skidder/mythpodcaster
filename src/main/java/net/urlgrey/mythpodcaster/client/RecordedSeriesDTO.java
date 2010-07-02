@@ -31,7 +31,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class RecordedSeriesDTO implements IsSerializable {
 	private String title;
 	private String seriesId;
-	private String recordingGroup;
+	private boolean active = false;
 
 	public String getTitle() {
 		return title;
@@ -45,11 +45,11 @@ public class RecordedSeriesDTO implements IsSerializable {
 	public void setSeriesId(String seriesId) {
 		this.seriesId = seriesId;
 	}
-	public String getRecordingGroup() {
-		return recordingGroup;
+	public boolean isActive() {
+		return active;
 	}
-	public void setRecordingGroup(String recordingGroup) {
-		this.recordingGroup = recordingGroup;
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 }

@@ -51,6 +51,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class TranscodingProfileSubscriptionsPanel extends Composite {
 
+	private RecordingsPanel parent;
 	private VerticalPanel panel = new VerticalPanel();
 	private VerticalPanel subscriptionsPanel = new VerticalPanel();
 	private Label subscriptionsLabel = new Label("Subscriptions:");
@@ -63,7 +64,8 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 	/**
 	 * 
 	 */
-	public TranscodingProfileSubscriptionsPanel() {
+	public TranscodingProfileSubscriptionsPanel(RecordingsPanel parent) {
+		this.parent = parent;
 		subscriptionsTable.resizeColumns(3);
 		subscriptionsTable.setStyleName("mythpodcaster-SubscriptionsTable");
 
@@ -84,10 +86,10 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 		this.seriesId = seriesId;
 		this.seriesTitle = seriesTitle;
 
-		refresh();
+		refreshData();
 	}
 
-	public void refresh() {
+	public void refreshData() {
 		if (this.applicationUrl == null) {
 			UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
 			try {
@@ -193,12 +195,12 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 
 							@Override
 							public void onFailure(Throwable arg0) {
-								refresh();
+								parent.refreshData();
 							}
 
 							@Override
 							public void onSuccess(Boolean arg0) {
-								refresh();
+								parent.refreshData();
 							}
 						});
 					} catch (Exception e) {
@@ -285,12 +287,12 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 
 							@Override
 							public void onFailure(Throwable arg0) {
-								refresh();
+								parent.refreshData();
 							}
 
 							@Override
 							public void onSuccess(Boolean arg0) {
-								refresh();
+								parent.refreshData();
 							}
 						});
 					} catch (Exception e) {
