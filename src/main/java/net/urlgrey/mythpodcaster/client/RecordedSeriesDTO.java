@@ -33,6 +33,13 @@ public class RecordedSeriesDTO implements IsSerializable {
 	private String seriesId;
 	private boolean active = false;
 
+	public RecordedSeriesDTO() {
+	}
+
+	public RecordedSeriesDTO(String seriesId) {
+		this.seriesId = seriesId;
+	}
+
 	public String getTitle() {
 		return title;
 	}
@@ -50,6 +57,38 @@ public class RecordedSeriesDTO implements IsSerializable {
 	}
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((seriesId == null) ? 0 : seriesId.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RecordedSeriesDTO other = (RecordedSeriesDTO) obj;
+		if (seriesId == null) {
+			if (other.seriesId != null)
+				return false;
+		} else if (!seriesId.equals(other.seriesId))
+			return false;
+		return true;
 	}
 
 }
