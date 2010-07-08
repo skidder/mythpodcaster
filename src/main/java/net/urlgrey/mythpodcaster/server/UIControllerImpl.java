@@ -71,25 +71,46 @@ public class UIControllerImpl implements UIControllerService {
 
 	@Override
 	public List<RecordedSeriesDTO> findAllRecordedSeries() {
-		final List<RecordedSeriesDTO> results = new ArrayList<RecordedSeriesDTO>();
+		final Set<RecordedSeriesDTO> results = new HashSet<RecordedSeriesDTO>();
 		final List<FeedSubscriptionItem> subscriptions = subscriptionsDao.findSubscriptions();
 
+		// begin with all of the current subscriptions
+		for (FeedSubscriptionItem subscription : subscriptions) {
+			final RecordedSeriesDTO dto = new RecordedSeriesDTO();
+			dto.setSeriesId(subscription.getSeriesId());
+			dto.setTitle(subscription.getTitle());
+			dto.setActive(subscription.isActive());
+			results.add(dto);			
+		}
+
+		// add all remaining recorded series
 		for (RecordedSeries item : recordingsDao.findAllRecordedSeries()) {
 			final RecordedSeriesDTO dto = new RecordedSeriesDTO();
 
-			for (FeedSubscriptionItem subscription : subscriptions) {
-				if (subscription.isActive() && item.getSeriesId().equals(subscription.getSeriesId())) {
-					dto.setActive(true);
-					break;
-				}
+			if (results.contains(new RecordedSeriesDTO(item.getSeriesId()))) {
+				continue;
 			}
 
 			dto.setSeriesId(item.getSeriesId());
 			dto.setTitle(item.getTitle());
 			results.add(dto);
 		}
+
+		// sort the recorded series entries using the program title
+		final ArrayList<RecordedSeriesDTO> resultList = new ArrayList<RecordedSeriesDTO>(results);
+		Collections.sort(resultList, new Comparator<RecordedSeriesDTO>() {
+
+			@Override
+			public int compare(RecordedSeriesDTO o1, RecordedSeriesDTO o2) {
+				if (o1 == null || o1.getTitle() == null) {
+					return -1;
+				}
+
+				return o1.getTitle().compareTo(o2.getTitle());
+			}
+		});
 		
-		return results;
+		return resultList;
 	}
 
 	@Override
