@@ -26,6 +26,7 @@ import java.util.List;
 
 import net.urlgrey.mythpodcaster.client.FeedSubscriptionItemDTO;
 import net.urlgrey.mythpodcaster.client.RecordedSeriesDTO;
+import net.urlgrey.mythpodcaster.client.StatusDTO;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -51,4 +52,6 @@ public interface UIControllerService extends RemoteService {
 			String seriesId);
 
 	String retrieveApplicationUrl();
+
+	StatusDTO retrieveStatus();
 }

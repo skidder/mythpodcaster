@@ -44,6 +44,7 @@ import net.urlgrey.mythpodcaster.domain.RecordedProgram;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
 import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
+import net.urlgrey.mythpodcaster.transcode.StatusBean.StatusMode;
 
 import com.sun.syndication.feed.synd.SyndEnclosure;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -67,6 +68,7 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 	private FeedFileAccessor feedFileAccessor;
 	private String feedFilePath;
 	private String feedFileExtension;
+	private StatusBean status;
 
 	public IndividualFeedTranscodeTaskImpl(FeedSubscriptionItem subscription,
 			SyndFeed feed) {
@@ -115,9 +117,15 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 					if (found) {
 						LOGGER.debug("Program was found in feed, continuing");
 					} else {
+						status.setTranscodingProfileName(transcodingProfilesDao.findAllProfiles().get(subscription.getTranscodeProfile()).getDisplayName());
+						status.setTranscodingProgramEpisodeName(program.getKey());
+						status.setTranscodingProgramName(program.getSeries().getTitle());
+						status.setCurrentTranscodeStart(new Date());
+
 						final Channel channel = this.recordingsDao.findChannel(program.getChannelId());
 						feedFileAccessor.addProgramToFeed(program, channel, feed, subscription.getTranscodeProfile());
 						feedUpdated = true;
+						status.setCurrentTranscodeStart(null);
 					}
 				}	
 			}
@@ -217,6 +225,11 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 			}
 			return ((-1) * entry1.getPublishedDate().compareTo(entry2.getPublishedDate()));
 		}
+	}
+
+	@Required
+	public void setStatus(StatusBean status) {
+		this.status = status;
 	}
 
 	@Required

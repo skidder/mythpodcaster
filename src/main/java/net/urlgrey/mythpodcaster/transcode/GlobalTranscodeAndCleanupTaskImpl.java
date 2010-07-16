@@ -24,10 +24,12 @@ package net.urlgrey.mythpodcaster.transcode;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import net.urlgrey.mythpodcaster.dao.SubscriptionsDAO;
 import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
+import net.urlgrey.mythpodcaster.transcode.StatusBean.StatusMode;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
@@ -45,11 +47,12 @@ import com.sun.syndication.feed.synd.SyndFeed;
 public class GlobalTranscodeAndCleanupTaskImpl implements ApplicationContextAware {
 
 	private static final Logger LOGGER = Logger.getLogger(GlobalTranscodeAndCleanupTaskImpl.class);
+	private static final long QUEUE_POLLING_FREQUENCY = 30000;
 	private SubscriptionsDAO subscriptionsDao;
 	private FeedFileAccessor feedFileAccessor;
 	private ThreadPoolTaskExecutor executor;
 	private ApplicationContext applicationContext;
-	private int threadCompletionPollingFrequency;
+	private StatusBean status;
 
 
 	public void execute() {
@@ -64,6 +67,13 @@ public class GlobalTranscodeAndCleanupTaskImpl implements ApplicationContextAwar
 	}
 
 	private void doWork() {
+		status.setMode(StatusMode.TRANSCODING);
+		status.setCurrentTriggerStart(new Date());
+		status.setCurrentTranscodeStart(null);
+		status.setTranscodingProfileName("");
+		status.setTranscodingProgramEpisodeName("");
+		status.setTranscodingProgramName("");
+
 		final List <FeedSubscriptionItem> purgeList = new ArrayList<FeedSubscriptionItem>();
 
 		// retrieve series subscriptions
@@ -110,13 +120,56 @@ public class GlobalTranscodeAndCleanupTaskImpl implements ApplicationContextAwar
 			executor.execute(task);
 		}
 
-		while (executor.getActiveCount() > 0) {
-			try {
-				Thread.sleep(threadCompletionPollingFrequency * 1000);
-			} catch (InterruptedException e) {
-				LOGGER.warn("Thread was interrupted while waiting for thread-pool to finish work");
+		// add a task to the execution queue that denotes the end of the queue
+		final Object semaphore = new Object();
+		executor.execute(new TranscodingCompletionTaskImpl(semaphore));
+
+		try {
+			synchronized (semaphore) {
+				semaphore.wait();
+			}
+
+			// check the queue and perform a manual poll if there are still tasks, 
+			// as in the case of parallel task execution (2 or more threads)
+			while (executor.getActiveCount() > 0) {
+				try {
+					Thread.sleep(QUEUE_POLLING_FREQUENCY);
+				} catch (InterruptedException e) {
+					LOGGER.warn("Thread was interrupted while polling for thread-pool to finish work");
+				}
+			}
+		} catch (InterruptedException e) {
+			LOGGER.warn("Thread was interrupted while waiting for thread-pool to finish work");
+		}
+
+		status.setMode(StatusMode.IDLE);
+		status.setCurrentTriggerStart(null);
+		status.setCurrentTranscodeStart(null);
+		status.setTranscodingProfileName("");
+		status.setTranscodingProgramEpisodeName("");
+		status.setTranscodingProgramName("");
+	}
+
+	private class TranscodingCompletionTaskImpl implements Runnable {
+
+		private Object semaphore;
+
+		public TranscodingCompletionTaskImpl(Object semaphore) {
+			this.semaphore = semaphore;
+		}
+
+		@Override
+		public void run() {
+			synchronized (this.semaphore) {
+				this.semaphore.notify();
 			}
 		}
+
+	}
+
+	@Required
+	public void setStatus(StatusBean status) {
+		this.status = status;
 	}
 
 	@Required
@@ -132,12 +185,6 @@ public class GlobalTranscodeAndCleanupTaskImpl implements ApplicationContextAwar
 	@Required
 	public void setExecutor(ThreadPoolTaskExecutor executor) {
 		this.executor = executor;
-	}
-
-	@Required
-	public void setThreadCompletionPollingFrequency(
-			int threadCompletionPollingFrequency) {
-		this.threadCompletionPollingFrequency = threadCompletionPollingFrequency;
 	}
 
 	@Required

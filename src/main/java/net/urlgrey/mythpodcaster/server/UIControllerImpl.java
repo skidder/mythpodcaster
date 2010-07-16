@@ -31,8 +31,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+
 import net.urlgrey.mythpodcaster.client.FeedSubscriptionItemDTO;
 import net.urlgrey.mythpodcaster.client.RecordedSeriesDTO;
+import net.urlgrey.mythpodcaster.client.StatusDTO;
 import net.urlgrey.mythpodcaster.client.service.UIControllerService;
 import net.urlgrey.mythpodcaster.dao.MythRecordingsDAO;
 import net.urlgrey.mythpodcaster.dao.SubscriptionsDAO;
@@ -40,17 +46,24 @@ import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
 import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
+import net.urlgrey.mythpodcaster.transcode.StatusBean;
+import net.urlgrey.mythpodcaster.transcode.StatusBean.StatusMode;
 
 /**
  * @author scottkidder
  *
  */
 public class UIControllerImpl implements UIControllerService {
+	private static final Logger LOGGER = Logger.getLogger(UIControllerImpl.class);
 
 	private SubscriptionsDAO subscriptionsDao;
 	private MythRecordingsDAO recordingsDao;
 	private TranscodingProfilesDAO transcodingProfilesDao;
 	private String applicationUrl;
+	private StatusBean status;
+	private Scheduler scheduler;
+	private String triggerName;
+	private String triggerGroup;
 
 	@Override
 	public List<FeedSubscriptionItemDTO> findSubscriptions() {
@@ -109,7 +122,7 @@ public class UIControllerImpl implements UIControllerService {
 				return o1.getTitle().compareTo(o2.getTitle());
 			}
 		});
-		
+
 		return resultList;
 	}
 
@@ -139,10 +152,10 @@ public class UIControllerImpl implements UIControllerService {
 			public int compare(Object o1, Object o2) {
 				FeedSubscriptionItemDTO p1 = (FeedSubscriptionItemDTO) o1;
 				FeedSubscriptionItemDTO p2 = (FeedSubscriptionItemDTO) o2;
-				
+
 				return p1.getTranscodeProfileDisplayName().compareTo(p2.getTranscodeProfileDisplayName());
 			}
-			
+
 		});
 		return results;
 	}
@@ -167,14 +180,14 @@ public class UIControllerImpl implements UIControllerService {
 		} catch (IOException e) {
 			return false;
 		}
-		
+
 		return true;
 	}
 
 	@Override
 	public List<String[]> findAvailableTranscodingProfilesForSeries(
 			String seriesId) 
-	{
+			{
 		final Set <String> activeProfiles = new HashSet<String>();
 		final List <TranscodingProfile> availableProfiles = new ArrayList<TranscodingProfile>();
 		final List<String[]> result = new ArrayList<String[]>();
@@ -212,6 +225,30 @@ public class UIControllerImpl implements UIControllerService {
 		}
 
 		return result;
+			}
+
+	@Override
+	public StatusDTO retrieveStatus() {
+		StatusDTO dto = new StatusDTO();
+		dto.setMode(status.getMode().name());
+
+		if (status.getMode() == StatusMode.IDLE) {
+			try {
+				Trigger trigger = scheduler.getTrigger(triggerName, triggerGroup);
+				dto.setNextTriggerStart(trigger.getNextFireTime());
+			} catch (SchedulerException e) {
+				LOGGER.warn("Unable to find Quartz trigger for job", e);
+				dto.setNextTriggerStart(null);
+			}
+		} else {
+			dto.setCurrentTriggerStart(status.getCurrentTriggerStart());
+			dto.setCurrentTranscodeStart(status.getCurrentTranscodeStart());
+			dto.setTranscodingProfileName(status.getTranscodingProfileName());
+			dto.setTranscodingProgramEpisodeName(status.getTranscodingProgramEpisodeName());
+			dto.setTranscodingProgramName(status.getTranscodingProgramName());
+		}
+
+		return dto;
 	}
 
 	@Override
@@ -232,8 +269,24 @@ public class UIControllerImpl implements UIControllerService {
 		this.transcodingProfilesDao = transcodingProfilesDao;
 	}
 
+	public void setStatus(StatusBean status) {
+		this.status = status;
+	}
+
 	public void setApplicationUrl(String applicationUrl) {
 		this.applicationUrl = applicationUrl;
 	}
-	
+
+	public void setScheduler(Scheduler scheduler) {
+		this.scheduler = scheduler;
+	}
+
+	public void setTriggerName(String triggerName) {
+		this.triggerName = triggerName;
+	}
+
+	public void setTriggerGroup(String triggerGroup) {
+		this.triggerGroup = triggerGroup;
+	}
+
 }

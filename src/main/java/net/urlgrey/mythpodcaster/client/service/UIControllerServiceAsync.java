@@ -26,6 +26,7 @@ import java.util.List;
 
 import net.urlgrey.mythpodcaster.client.FeedSubscriptionItemDTO;
 import net.urlgrey.mythpodcaster.client.RecordedSeriesDTO;
+import net.urlgrey.mythpodcaster.client.StatusDTO;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -51,5 +52,7 @@ public interface UIControllerServiceAsync {
 			AsyncCallback<List<String[]>> asyncCallback);
 
 	void retrieveApplicationUrl(AsyncCallback<String> callback);
+
+	void retrieveStatus(AsyncCallback<StatusDTO> callback);
 
 }

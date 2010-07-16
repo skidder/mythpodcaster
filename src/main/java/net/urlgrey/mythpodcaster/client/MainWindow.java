@@ -35,6 +35,7 @@ public class MainWindow extends Composite {
 
 	private Label logoLabel = new Label();
 	private TabPanel tabPanel = new TabPanel();
+	private StatusPanel statusPanel = new StatusPanel();
 
 	public MainWindow() {
 		super();
@@ -47,6 +48,7 @@ public class MainWindow extends Composite {
 		tabPanel.setSize("100%", "100%");
 
 		topPanel.add(logoLabel);
+		topPanel.add(statusPanel);
 		topPanel.add(tabPanel);
 		initWidget(topPanel);
 	}
