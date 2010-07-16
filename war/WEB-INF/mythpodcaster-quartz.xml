@@ -77,15 +77,16 @@
 
 	<bean id="transcodeJob"
 		class="net.urlgrey.mythpodcaster.transcode.GlobalTranscodeAndCleanupTaskImpl">
+		<property name="status" ref="status" />
 		<property name="subscriptionsDao" ref="subscriptionsDao" />
 		<property name="feedFileAccessor" ref="feedFileAccessor" />
 		<property name="executor" ref="taskExecutor" />
-		<property name="threadCompletionPollingFrequency" value="${thread.completion.polling.frequency}" />
 	</bean>
 
 	<bean id="feedTranscodingTask"
 		class="net.urlgrey.mythpodcaster.transcode.IndividualFeedTranscodeTaskImpl"
 		scope="prototype">
+		<property name="status" ref="status" />
 		<property name="recordingsDao" ref="recordingsDao" />
 		<property name="transcodingProfilesDao" ref="transcodingProfilesDao" />
 		<property name="feedFileAccessor" ref="feedFileAccessor" />
@@ -101,16 +102,21 @@
 	</bean>
 
 	<bean id="cronRssTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="name" value="rssTrigger"></property>
+		<property name="group" value="mythpodcaster"></property>
 		<property name="jobDetail" ref="rssJob" />
 		<property name="cronExpression" value="${rss.cron}" />
 	</bean>
 
-	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
 				<ref bean="cronRssTrigger" />
 			</list>
 		</property>
+	</bean>
+
+	<bean id="status" class="net.urlgrey.mythpodcaster.transcode.StatusBean">
 	</bean>
 
 </beans>

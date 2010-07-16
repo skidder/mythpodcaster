@@ -86,3 +86,20 @@ a:visited {
 	border-color: gray gray gray gray;
 	background-color: rgb(250, 240, 230);
 }
+
+.mythpodcaster-StatusPanel {
+	border-width: 2px 2px 2px 2px;
+	border-spacing: 5px;
+	border-style: solid solid solid solid;
+	border-color: gray gray gray gray;
+	margin-bottom: 10px;
+	width: 100%;
+}
+
+.mythpodcaster-StatusPanelLabel {
+	font-weight: bold;
+}
+
+.mythpodcaster-StatusPanelValue {
+	margin-left: 5px; 
+}
