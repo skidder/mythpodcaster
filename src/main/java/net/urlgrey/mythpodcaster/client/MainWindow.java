@@ -40,16 +40,17 @@ public class MainWindow extends Composite {
 	public MainWindow() {
 		super();
 
-		VerticalPanel topPanel = new VerticalPanel();
+		VerticalPanel mainPanel = new VerticalPanel();
+		mainPanel.setStyleName("mythpodcaster-MainPanel");
 		logoLabel.setText("MythPodcaster");
 		logoLabel.setStyleName("mythpodcaster-Header");
 		tabPanel.add(new RecordingsPanel(), "Recordings");
 		tabPanel.selectTab(0);
 		tabPanel.setSize("100%", "100%");
 
-		topPanel.add(logoLabel);
-		topPanel.add(statusPanel);
-		topPanel.add(tabPanel);
-		initWidget(topPanel);
+		mainPanel.add(logoLabel);
+		mainPanel.add(statusPanel);
+		mainPanel.add(tabPanel);
+		initWidget(mainPanel);
 	}
 }
