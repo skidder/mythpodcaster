@@ -74,10 +74,13 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
-* Fri Jul 2 2010 <kidder.scott@gmail.com> - 0.0.9
+* Sat Jul 17 2010 <kidder.scott@gmail.com> - 0.0.9
 Feature:
-25: First item in the Program Series combo-box should be automatically selected
+13: Show current transcoding status in the Web UI
 26: Provide a visual cue in the Program Series listbox indicating whether subcriptions exist
+Bugfix:
+25: First item in the Program Series combo-box should be automatically selected
+27: Subscriptions without any recordings are not shown in the Program Series listbox
 
 * Wed Jun 23 2010 <kidder.scott@gmail.com> - 0.0.8
 Feature:
