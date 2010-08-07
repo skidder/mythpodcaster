@@ -98,13 +98,16 @@ public class UIControllerImpl implements UIControllerService {
 
 		// add all remaining recorded series
 		for (RecordedSeries item : recordingsDao.findAllRecordedSeries()) {
-			final RecordedSeriesDTO dto = new RecordedSeriesDTO();
-
-			if (results.contains(new RecordedSeriesDTO(item.getSeriesId()))) {
+			// continue if the item is null or the series-id is null
+			if ((null == item) || (null == item.getSeriesId())) {
 				continue;
 			}
 
-			dto.setSeriesId(item.getSeriesId());
+			// add the item only if it's not already present in the subscriptions set
+			final RecordedSeriesDTO dto = new RecordedSeriesDTO(item.getSeriesId());
+			if (results.contains(dto)) {
+				continue;
+			}
 			dto.setTitle(item.getTitle());
 			results.add(dto);
 		}

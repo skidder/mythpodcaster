@@ -1,8 +1,8 @@
 MythPodcaster
 Author: Scott Kidder (kidder.scott@gmail.com)
 Additional Patches provided by Simon Hyde
-Release: 0.0.7
-Date: 26 May 2010
+Release: 0.0.10
+Date: 07 Aug 2010
 
 For details on how to install and configure MythPodcaster, please refer to:
 
@@ -29,7 +29,7 @@ RPM Installation Steps (recommended)
    2. Stop Tomcat
          1. sudo /etc/init.d/tomcat6 stop 
    3. Install the MythPodcaster RPM
-         1. sudo rpm -Uvh mythpodcaster-0.0.6-1.fc12.noarch.rpm 
+         1. sudo rpm -Uvh mythpodcaster-0.0.10-1.fc12.noarch.rpm 
    4. Edit the MythPodcaster properties file:
          1. sudo vi /etc/mythpodcaster/mythpodcaster.properties 
    5. Start Tomcat
@@ -95,7 +95,7 @@ Installing from source requires that you have the following development tools co
 Use the following steps to compile:
 
    1. Extract the source archive:
-         1. tar -xzf mythpodcaster-0.0.6-src.tar.gz 
+         1. tar -xzf mythpodcaster-0.0.10-src.tar.gz 
    2. Build the package:
          1. cd mythpodcaster-src
          2. mvn clean package 

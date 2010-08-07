@@ -74,9 +74,11 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
-* Wed Jul 21 2010 <kidder.scott@gmail.com> - 0.0.10
+* Sat Aug 07 2010 <kidder.scott@gmail.com> - 0.0.10
 Feature:
 29: Upgrade to GWT 2.0.4
+Bugfix:
+30: Program Series Pulldown Menu is empty
 
 * Sat Jul 17 2010 <kidder.scott@gmail.com> - 0.0.9
 Feature:
