@@ -6,7 +6,7 @@ Summary:	A Java web application that transcodes MythTV recordings and publishes 
 Group:		Applications/Multimedia
 License:	GPLv3
 URL:		http://code.google.com/p/mythpodcaster/
-Source0:	http://mythpodcaster.googlecode.com/files/mythpodcaster-0.0.10-src.tar.gz
+Source0:	http://mythpodcaster.googlecode.com/files/mythpodcaster-0.0.11-src.tar.gz
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 #BuildRequires:		
