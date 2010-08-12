@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import net.urlgrey.mythpodcaster.domain.Channel;
 import net.urlgrey.mythpodcaster.domain.RecordedProgram;
+import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 
@@ -47,12 +48,13 @@ public interface FeedFileAccessor {
 	SyndFeed createFeed(File feedFile, String seriesId, String title, String transcodingProfileId);
 
 	/**
+	 * @param series
 	 * @param program
 	 * @param channel 
 	 * @param feed
 	 * @param transcoderProfile
 	 */
-	void addProgramToFeed(RecordedProgram program, Channel channel, SyndFeed feed, String transcodingProfileId);
+	void addProgramToFeed(RecordedSeries series, RecordedProgram program, Channel channel, SyndFeed feed, String transcodingProfileId);
 
 	/**
 	 * @param seriesId

@@ -26,20 +26,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
+import javax.persistence.Transient;
 
 /**
  * @author scott
@@ -58,6 +52,8 @@ import org.hibernate.annotations.SortType;
 					hints = {@QueryHint(name="org.hibernate.comment", value="MythPodcaster: MYTH_RECORDINGS.findRecordedSeries")}	)})
 					public class RecordedSeries implements Serializable {
 
+	private static final long serialVersionUID = 2765850174592586286L;
+
 	@Column(name = "title")
 	private String title;
 
@@ -68,9 +64,7 @@ import org.hibernate.annotations.SortType;
 	@Column(name = "recgroup")
 	private String recordingGroup;
 
-	@OneToMany(cascade = {CascadeType.ALL}, fetch=FetchType.LAZY)
-	@JoinColumn(name="recordid")
-	@Sort(type=SortType.NATURAL)
+	@Transient
 	private List<RecordedProgram> recordedPrograms = new ArrayList<RecordedProgram>();
 
 	public String getTitle() {

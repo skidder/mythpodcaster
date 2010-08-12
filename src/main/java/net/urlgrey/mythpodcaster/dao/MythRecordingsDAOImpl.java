@@ -65,10 +65,13 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 		final Query namedQuery = entityManager.createNamedQuery("MYTH_RECORDINGS.findRecordedSeries");
 		namedQuery.setParameter("seriesId", seriesId);
 
-		final List<RecordedSeries> resultsList = namedQuery.getResultList();
-		if (resultsList != null && resultsList.size() == 1) {
-			final RecordedSeries series = resultsList.get(0);
-			series.getRecordedPrograms().size(); //trigger retrieval of lazily-loaded items
+		final List<RecordedSeries> seriesResultsList = namedQuery.getResultList();
+		if (seriesResultsList != null && seriesResultsList.size() == 1) {
+			final Query seriesProgramsQuery = entityManager.createNamedQuery("MYTH_RECORDINGS.findRecordedProgramsForSeries");
+			seriesProgramsQuery.setParameter("seriesId", seriesId);
+
+			final RecordedSeries series = seriesResultsList.get(0);
+			series.setRecordedPrograms(seriesProgramsQuery.getResultList());
 			return series;
 		}
 

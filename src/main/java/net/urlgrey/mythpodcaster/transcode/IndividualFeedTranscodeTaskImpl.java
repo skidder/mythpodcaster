@@ -82,15 +82,15 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 		if (subscription.isActive()) {
 			// identify series recordings not represented in the RSS Feed (transcode)
 			final List entries = feed.getEntries();
-			final RecordedSeries seriesInfo = recordingsDao.findRecordedSeries(subscription.getSeriesId());
+			final RecordedSeries series = recordingsDao.findRecordedSeries(subscription.getSeriesId());
 
-			if (seriesInfo == null) {
+			if (series == null) {
 				// if not occurences of the recorded series are found, then continue
 				LOGGER.debug("No recordings found for recordId[" + subscription.getSeriesId() + "]");
 			}
 
-			if (seriesInfo != null) {
-				for (RecordedProgram program : seriesInfo.getRecordedPrograms()) {
+			if (series != null) {
+				for (RecordedProgram program : series.getRecordedPrograms()) {
 					if (program.getEndTime() == null || program.getEndTime().after(new Date())) {
 						LOGGER.debug("Skipping recorded program, end-time is in future (still recording): programId[" + program.getProgramId() + "]");
 						continue;
@@ -119,11 +119,11 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 					} else {
 						status.setTranscodingProfileName(transcodingProfilesDao.findAllProfiles().get(subscription.getTranscodeProfile()).getDisplayName());
 						status.setTranscodingProgramEpisodeName(program.getKey());
-						status.setTranscodingProgramName(program.getSeries().getTitle());
+						status.setTranscodingProgramName(series.getTitle());
 						status.setCurrentTranscodeStart(new Date());
 
-						final Channel channel = this.recordingsDao.findChannel(program.getChannelId());
-						feedFileAccessor.addProgramToFeed(program, channel, feed, subscription.getTranscodeProfile());
+						final Channel channel = this.recordingsDao.findChannel(program.getRecordedProgramKey().getChannelId());
+						feedFileAccessor.addProgramToFeed(series, program, channel, feed, subscription.getTranscodeProfile());
 						feedUpdated = true;
 						status.setCurrentTranscodeStart(null);
 					}
@@ -148,8 +148,8 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 					// locate the feed entry in the list of recorded programs 
 					String episodeKey = entry.getUri();
 					boolean found = false;
-					if (seriesInfo != null) {
-						for (RecordedProgram program : seriesInfo.getRecordedPrograms()) {
+					if (series != null) {
+						for (RecordedProgram program : series.getRecordedPrograms()) {
 							if (program.getKey().equalsIgnoreCase(episodeKey)) {
 								found = true;
 								break;

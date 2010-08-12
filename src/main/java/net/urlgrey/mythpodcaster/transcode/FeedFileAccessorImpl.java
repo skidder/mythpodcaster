@@ -34,6 +34,7 @@ import java.util.List;
 import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.Channel;
 import net.urlgrey.mythpodcaster.domain.RecordedProgram;
+import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 
 import org.apache.log4j.Logger;
@@ -198,18 +199,20 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 	}
 
 	/**
+	 * @param series
 	 * @param program
-	 * @param channel
-	 * @param entries
+	 * @param channel 
+	 * @param feed
+	 * @param transcoderProfile
 	 */
-	public void addProgramToFeed(RecordedProgram program, Channel channel, SyndFeed feed, String transcodingProfileId) {
+	public void addProgramToFeed(RecordedSeries series, RecordedProgram program, Channel channel, SyndFeed feed, String transcodingProfileId) {
 		LOGGER.info("Transcoding new feed entry: programId[" + program.getProgramId() + "], key[" +  program.getKey() + "], title[" + program.getTitle() + "], channel[" + (channel != null ? channel.getName() : "") + "], transcodingProfileId[" + transcodingProfileId + "]");
 		final SyndEntryImpl entry = new SyndEntryImpl();
 		entry.setUri(program.getKey());
-		entry.setPublishedDate(program.getStartTime());
+		entry.setPublishedDate(program.getRecordedProgramKey().getStartTime());
 
 		final EntryInformation itunesEntryMetadata = new EntryInformationImpl();
-		itunesEntryMetadata.setDuration(new Duration(program.getEndTime().getTime() - program.getStartTime().getTime()));
+		itunesEntryMetadata.setDuration(new Duration(program.getEndTime().getTime() - program.getRecordedProgramKey().getStartTime().getTime()));
 		itunesEntryMetadata.setSummary(program.getDescription());
 
 		// set author info from the channel if available
@@ -233,7 +236,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 		// apply thumbnail for clip to the feed
 		final File originalClipThumbnail = clipLocator.locateThumbnailForOriginalClip(program.getFilename());
 		if (originalClipThumbnail != null) {
-			final String seriesId = program.getSeries().getSeriesId();
+			final String seriesId = series.getSeriesId();
 			final File encodingDirectory = new File(feedFilePath, transcodingProfileId);
 			final File feedThumbnailFile = new File(encodingDirectory, seriesId + PNG_EXTENSION);
 
@@ -243,7 +246,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 				final SyndImageImpl feedImage = new SyndImageImpl();
 				final String feedImageUrl = this.applicationURL + PATH_SEPARATOR + transcodingProfileId + PATH_SEPARATOR + seriesId + PNG_EXTENSION;
 				feedImage.setUrl(feedImageUrl);
-				feedImage.setTitle(program.getSeries().getTitle());
+				feedImage.setTitle(series.getTitle());
 				feed.setImage(feedImage);
 
 				// include iTunes-specific metadata

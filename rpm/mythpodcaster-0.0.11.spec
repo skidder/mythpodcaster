@@ -1,5 +1,5 @@
 Name:		mythpodcaster
-Version:	0.0.10
+Version:	0.0.11
 Release:	1%{?dist}
 Summary:	A Java web application that transcodes MythTV recordings and publishes them through RSS feeds.
 
@@ -74,6 +74,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
+* Thu Aug 12 2010 <kidder.scott@gmail.com> - 0.0.11
+Bugfix:
+32: Certain shows not transcoding.
+
 * Sat Aug 07 2010 <kidder.scott@gmail.com> - 0.0.10
 Feature:
 29: Upgrade to GWT 2.0.4

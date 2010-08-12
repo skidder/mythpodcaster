@@ -27,10 +27,8 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.PostLoad;
@@ -46,23 +44,24 @@ import javax.persistence.Transient;
 @Table(name = "recorded")
 @NamedQueries({
 	@NamedQuery(
-			name = "MYTH_RECORDINGS.findRecordedPrograms",
-			query = "SELECT recordedprogram FROM RecordedProgram AS recordedprogram ",
-			hints = {@QueryHint(name="org.hibernate.comment", value="MythPodcaster: MYTH_RECORDINGS.findRecordedPrograms")}	)})
-			public class RecordedProgram implements Comparable, Serializable {
+			name = "MYTH_RECORDINGS.findRecordedProgramsForSeries",
+			query = "SELECT recordedprogram FROM RecordedProgram AS recordedprogram WHERE seriesId = :seriesId",
+			hints = {@QueryHint(name="org.hibernate.comment", value="MythPodcaster: MYTH_RECORDINGS.findRecordedProgramsForSeries")}	)})
+			public class RecordedProgram implements Comparable<RecordedProgram>, Serializable {
+
+	private static final long serialVersionUID = 1972318377670024183L;
 
 	@Transient
 	private String key;
 
-	@Id
+	@EmbeddedId
+	private RecordedProgramPK recordedProgramKey;
+
+	@Column(name = "recordid")
+	private String seriesId;
+
 	@Column(name = "programid", updatable=false, unique=false, insertable=false)
 	private String programId;
-
-	@Column(name = "chanid", updatable=false, unique=false, insertable=false)
-	private int channelId;
-
-	@Column(name = "starttime", updatable=false, unique=false, insertable=false)
-	private Timestamp startTime;
 
 	@Column(name = "endtime", updatable=false, unique=false, insertable=false)
 	private Timestamp endTime;
@@ -82,9 +81,21 @@ import javax.persistence.Transient;
 	@Column(name = "basename", updatable=false, unique=false, insertable=false)
 	private String filename;
 
-	@ManyToOne
-	@JoinColumn(name="recordid")
-	private RecordedSeries series;
+	public RecordedProgramPK getRecordedProgramKey() {
+		return recordedProgramKey;
+	}
+
+	public void setRecordedProgramKey(RecordedProgramPK recordedProgramKey) {
+		this.recordedProgramKey = recordedProgramKey;
+	}
+
+	public String getSeriesId() {
+		return seriesId;
+	}
+
+	public void setSeriesId(String seriesId) {
+		this.seriesId = seriesId;
+	}
 
 	public String getProgramId() {
 		return programId;
@@ -92,14 +103,6 @@ import javax.persistence.Transient;
 
 	public void setProgramId(String programId) {
 		this.programId = programId;
-	}
-
-	public Timestamp getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(Timestamp startTime) {
-		this.startTime = startTime;
 	}
 
 	public Timestamp getEndTime() {
@@ -150,22 +153,6 @@ import javax.persistence.Transient;
 		this.filesize = filesize;
 	}
 
-	public RecordedSeries getSeries() {
-		return series;
-	}
-
-	public void setSeries(RecordedSeries series) {
-		this.series = series;
-	}
-
-	public int getChannelId() {
-		return channelId;
-	}
-
-	public void setChannelId(int channelId) {
-		this.channelId = channelId;
-	}
-
 	public String getKey() {
 		return key;
 	}
@@ -176,9 +163,9 @@ import javax.persistence.Transient;
 
 	@PostLoad
 	public void postQuery() {
-		if (channelId >= 0 && startTime != null) {
+		if (recordedProgramKey.getChannelId() >= 0 && recordedProgramKey.getStartTime() != null) {
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHmmss");
-			key = Integer.toString(channelId) + "-" + formatter.format(startTime);
+			key = Integer.toString(recordedProgramKey.getChannelId()) + "-" + formatter.format(recordedProgramKey.getStartTime());
 		}
 	}
 
@@ -186,44 +173,21 @@ import javax.persistence.Transient;
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(Object o) {
-		if (this.startTime == null) {
+	public int compareTo(RecordedProgram o) {
+		if (this.recordedProgramKey.getStartTime() == null) {
 			return 1;
 		}
 
-		return (-1) * this.startTime.compareTo(((RecordedProgram) o).getStartTime());
+		return (-1) * this.recordedProgramKey.getStartTime().compareTo(o.recordedProgramKey.getStartTime());
 	}
 
-	/**
-	 * Constructs a <code>String</code> with all attributes
-	 * in name = value format.
-	 *
-	 * @return a <code>String</code> representation 
-	 * of this object.
-	 */
-	public String toString()
-	{
-		final String TAB = "    ";
-
-		String retValue = "";
-
-		retValue = "RecordedProgram ( "
-			+ super.toString() + TAB
-			+ "key = " + this.key + TAB
-			+ "programId = " + this.programId + TAB
-			+ "channelId = " + this.channelId + TAB
-			+ "startTime = " + this.startTime + TAB
-			+ "endTime = " + this.endTime + TAB
-			+ "title = " + this.title + TAB
-			+ "subtitle = " + this.subtitle + TAB
-			+ "description = " + this.description + TAB
-			+ "filesize = " + this.filesize + TAB
-			+ "filename = " + this.filename + TAB
-			+ "series = " + this.series + TAB
-			+ " )";
-
-		return retValue;
+	@Override
+	public String toString() {
+		return "RecordedProgram [description=" + description + ", endTime="
+		+ endTime + ", filename=" + filename + ", filesize=" + filesize
+		+ ", key=" + key + ", programId=" + programId
+		+ ", recordedProgramKey=" + recordedProgramKey + ", seriesId="
+		+ seriesId + ", subtitle=" + subtitle + ", title=" + title
+		+ "]";
 	}
-
-
 }
