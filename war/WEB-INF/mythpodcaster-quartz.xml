@@ -26,6 +26,8 @@
 		<property name="transcodingController" ref="transcodingController" />
 		<property name="clipLocator" ref="clipLocator" />
 		<property name="feedFileExtension" value="${feed.file.extension}" />
+		<property name="feedTransformationTemplateFile" value="${feed.transformation.template.file}" />
+		<property name="feedTransformationOutputFileExtension" value="${feed.transformation.output.file.extension}" />
 	</bean>
 
 	<bean id="ffmpegTranscoder"

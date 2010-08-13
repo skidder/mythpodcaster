@@ -24,12 +24,19 @@ package net.urlgrey.mythpodcaster.transcode;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.Channel;
@@ -64,6 +71,8 @@ import com.sun.syndication.io.SyndFeedOutput;
  */
 public class FeedFileAccessorImpl implements FeedFileAccessor {
 
+	static final String DEFAULT_FEED_TRANSFORMATION_TEMPLATE_XSLT = "feed_file_transformation.xslt";
+
 	private static final String PNG_EXTENSION = ".png";
 
 	private static final String PATH_SEPARATOR = "/";
@@ -76,6 +85,8 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 	private String feedFileExtension;
 	private TranscodingController transcodingController;
 	private TranscodingProfilesDAO transcodingProfilesDao;
+	private String feedTransformationOutputFileExtension;
+	private File feedTransformationTemplateFile;
 
 	/**
 	 * @param feedFile
@@ -92,6 +103,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 		defaultFeed.setLink(this.applicationURL + PATH_SEPARATOR + transcodingProfileId + PATH_SEPARATOR + seriesId + feedFileExtension);
 		defaultFeed.setDescription("Feed for the MythTV recordings of this program");
 
+		File transformedFeedFile = null;
 		try {
 			final File feedDirectory = feedFile.getParentFile();
 			if (!feedDirectory.exists()) {
@@ -102,17 +114,16 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 			FileWriter writer = new FileWriter(feedFile);
 			SyndFeedOutput output = new SyndFeedOutput();
 			output.output(defaultFeed, writer);
+			transformedFeedFile = this.generateTransformationFromFeed(feedFile, defaultFeed, seriesId);
 			return defaultFeed;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			LOGGER.error("Error rendering feed", e);
 			if (feedFile.canWrite()) {
 				feedFile.delete();
 			}
-			return null;
-		} catch (FeedException e) {
-			LOGGER.error("Error rendering feed", e);
-			if (feedFile.canWrite()) {
-				feedFile.delete();
+
+			if (transformedFeedFile != null && transformedFeedFile.canWrite()) {
+				transformedFeedFile.delete();
 			}
 			return null;
 		}
@@ -136,6 +147,12 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 		final File feedThumbnail = new File(encodingDirectory, seriesId + PNG_EXTENSION);
 		if (feedThumbnail.canWrite()) {
 			feedThumbnail.delete();
+		}
+
+		// delete feed transformation
+		final File feedTransformationFile = new File(encodingDirectory, seriesId + feedTransformationOutputFileExtension);
+		if (feedTransformationFile.canWrite()) {
+			feedTransformationFile.delete();
 		}
 
 		if (feed != null) {
@@ -332,6 +349,36 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 		feed.getEntries().add(entry);
 	}
 
+
+	public File generateTransformationFromFeed(File feedFile, SyndFeed feed, String seriesId) throws IOException {
+		final InputStream transform;
+		if (feedTransformationTemplateFile.canRead()) {
+			transform = new FileInputStream(feedTransformationTemplateFile);
+		} else {
+			transform = this.getClass().getResourceAsStream(DEFAULT_FEED_TRANSFORMATION_TEMPLATE_XSLT);
+			if (transform == null) {
+				LOGGER.warn("Feed Transformation template could not be found on classpath, skipping");
+				return null;
+			}
+		}
+
+		final File transformedOutputFile = new File(feedFile.getParentFile(), seriesId + feedTransformationOutputFileExtension);
+		try {
+			// Create a transform factory instance.
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			FileOutputStream fileOutputStream = new FileOutputStream(transformedOutputFile);
+			// Create a transformer for the stylesheet.
+			Transformer transformer = transformerFactory.newTransformer(new StreamSource(transform));
+			transformer.transform(new StreamSource(new FileInputStream(feedFile)), new StreamResult(fileOutputStream));
+			fileOutputStream.close();
+		} catch (Exception e) {
+			LOGGER.error("Error while applying XSLT to the feed", e);
+			throw new IOException("Error while applying XSLT to the feed");
+		}
+
+		return transformedOutputFile;
+	}
+
 	@Required
 	public void setApplicationURL(URL applicationURL) {
 		this.applicationURL = applicationURL;
@@ -361,5 +408,17 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 	public void setTranscodingProfilesDao(
 			TranscodingProfilesDAO transcodingProfilesDao) {
 		this.transcodingProfilesDao = transcodingProfilesDao;
+	}
+
+	@Required
+	public void setFeedTransformationOutputFileExtension(
+			String feedTransformationOutputFileExtension) {
+		this.feedTransformationOutputFileExtension = feedTransformationOutputFileExtension;
+	}
+
+	@Required
+	public void setFeedTransformationTemplateFile(
+			File feedTransformationTemplateFile) {
+		this.feedTransformationTemplateFile = feedTransformationTemplateFile;
 	}
 }

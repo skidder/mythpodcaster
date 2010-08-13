@@ -70,4 +70,15 @@ public interface FeedFileAccessor {
 	 * @throws IOException 
 	 */
 	SyndFeed readFeed(String seriesId, String transcodingProfileId, String title) throws IOException;
+
+	/**
+	 * 
+	 * @param feedFile
+	 * @param feed
+	 * @param seriesId
+	 * @return
+	 * @throws IOException
+	 */
+	public File generateTransformationFromFeed(File feedFile, SyndFeed feed, String seriesId)
+	throws IOException;
 }

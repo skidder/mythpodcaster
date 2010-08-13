@@ -29,6 +29,7 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc/mythpodcaster
 cd %{_topdir}/BUILD/%{name}-%{version}/src/main/conf 
 install -D -m 664 log4j.xml $RPM_BUILD_ROOT/etc/mythpodcaster/log4j.xml;
+install -D -m 664 feed_file_transformation.xslt $RPM_BUILD_ROOT/etc/mythpodcaster/feed_file_transformation.xslt;
 install -D -m 664 transcoding_profiles.xml $RPM_BUILD_ROOT/etc/mythpodcaster/transcoding_profiles.xml;
 install -D -m 664 subscriptions.xml $RPM_BUILD_ROOT/etc/mythpodcaster/subscriptions.xml;
 install -D -m 664 mythpodcaster.properties $RPM_BUILD_ROOT/etc/mythpodcaster/mythpodcaster.properties;
@@ -64,6 +65,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/mythpodcaster/mythpodcaster.properties
 %config(noreplace) /etc/mythpodcaster/subscriptions.xml
 %config(noreplace) /etc/mythpodcaster/transcoding_profiles.xml
+%config(noreplace) /etc/mythpodcaster/feed_file_transformation.xslt
 %config /etc/mythpodcaster/log4j.xml
 
 %dir /var/log/mythpodcaster
@@ -75,6 +77,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Thu Aug 12 2010 <kidder.scott@gmail.com> - 0.0.11
+Feature:
+33: Generate HTML5 video page instead of rss feed
+
 Bugfix:
 32: Certain shows not transcoding.
 

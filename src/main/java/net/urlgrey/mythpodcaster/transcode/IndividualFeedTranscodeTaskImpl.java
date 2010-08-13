@@ -24,7 +24,6 @@ package net.urlgrey.mythpodcaster.transcode;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -44,12 +43,10 @@ import net.urlgrey.mythpodcaster.domain.RecordedProgram;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
 import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
-import net.urlgrey.mythpodcaster.transcode.StatusBean.StatusMode;
 
 import com.sun.syndication.feed.synd.SyndEnclosure;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedOutput;
 
 /**
@@ -190,21 +187,25 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 				// sort the feed entries by published-date
 				Collections.sort(entries, entryComparator);
 
+				File transformedFeedFile = null;
 				try {
 					FileWriter writer = new FileWriter(feedFile);
 					SyndFeedOutput output = new SyndFeedOutput();
 					output.output(feed, writer);
-				} catch (IOException e) {
+
+					transformedFeedFile = feedFileAccessor.generateTransformationFromFeed(feedFile, feed, series.getSeriesId());
+				} catch (Exception e) {
 					LOGGER.error("Error rendering feed", e);
 					if (feedFile.canWrite()) {
 						feedFile.delete();
 					}
-				} catch (FeedException e) {
-					LOGGER.error("Error rendering feed", e);
-					if (feedFile.canWrite()) {
-						feedFile.delete();
+
+					if (transformedFeedFile != null && transformedFeedFile.canWrite()) {
+						transformedFeedFile.delete();
 					}
 				}
+
+
 			}
 		}
 	}
