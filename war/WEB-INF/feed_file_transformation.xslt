@@ -18,7 +18,7 @@
 	    <tr><td>Date:</td><td><xsl:value-of select="pubDate"/></td></tr>
 	    <tr><td>Channel:</td><td><xsl:value-of select="creator"/></td></tr>
 	    <tr><td>Media:</td><td><a><xsl:attribute name="href"><xsl:value-of select="enclosure/@url"/></xsl:attribute>Link</a></td></tr>
-	    <tr><td>Embedded:</td><td><video controls="controls"><xsl:attribute name="src"><xsl:value-of select="enclosure/@url"/></xsl:attribute></video></td></tr>
+	    <tr><td>Embedded:</td><td><video preload="none" controls="true"><xsl:attribute name="src"><xsl:value-of select="enclosure/@url"/></xsl:attribute><xsl:attribute name="type"><xsl:value-of select="enclosure/@type"/></xsl:attribute></video></td></tr>
 	  </table>
 	  <p/>  
 	  <p/>  
