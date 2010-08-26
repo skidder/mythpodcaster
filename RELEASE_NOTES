@@ -4,6 +4,7 @@ Release Notes
 * Thu Aug 26 2010 <kidder.scott@gmail.com> - 0.0.11
 Feature:
 33: Generate HTML5 video page instead of rss feed
+34: Rename the 'domain' Java package to 'xml' for improved clarity
 Bugfix:
 32: Certain shows not transcoding.
 
