@@ -76,10 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
-* Thu Aug 12 2010 <kidder.scott@gmail.com> - 0.0.11
+* Thu Aug 26 2010 <kidder.scott@gmail.com> - 0.0.11
 Feature:
 33: Generate HTML5 video page instead of rss feed
-
 Bugfix:
 32: Certain shows not transcoding.
 
