@@ -31,9 +31,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
-import net.urlgrey.mythpodcaster.dto.FeedSubscriptions;
 import net.urlgrey.mythpodcaster.transcode.FeedFileAccessor;
+import net.urlgrey.mythpodcaster.xml.FeedSubscriptionItem;
+import net.urlgrey.mythpodcaster.xml.FeedSubscriptions;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;

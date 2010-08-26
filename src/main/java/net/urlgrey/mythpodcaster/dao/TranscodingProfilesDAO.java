@@ -25,7 +25,7 @@ package net.urlgrey.mythpodcaster.dao;
 import java.io.IOException;
 import java.util.Map;
 
-import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
+import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
 
 /**
  * @author scottkidder

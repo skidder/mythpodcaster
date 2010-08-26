@@ -44,10 +44,10 @@ import net.urlgrey.mythpodcaster.dao.MythRecordingsDAO;
 import net.urlgrey.mythpodcaster.dao.SubscriptionsDAO;
 import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
-import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
-import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
 import net.urlgrey.mythpodcaster.transcode.StatusBean;
 import net.urlgrey.mythpodcaster.transcode.StatusBean.StatusMode;
+import net.urlgrey.mythpodcaster.xml.FeedSubscriptionItem;
+import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
 
 /**
  * @author scottkidder

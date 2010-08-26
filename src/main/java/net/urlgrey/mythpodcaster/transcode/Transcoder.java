@@ -24,7 +24,7 @@ package net.urlgrey.mythpodcaster.transcode;
 
 import java.io.File;
 
-import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.GenericTranscoderConfigurationItem;
 
 /**
  * @author scott

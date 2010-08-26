@@ -32,8 +32,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import net.urlgrey.mythpodcaster.dto.FFMpegTranscoderConfigurationItem;
-import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.FFMpegTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.GenericTranscoderConfigurationItem;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;

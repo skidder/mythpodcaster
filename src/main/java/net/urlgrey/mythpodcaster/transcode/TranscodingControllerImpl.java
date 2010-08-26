@@ -29,8 +29,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
-import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
-import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
+import net.urlgrey.mythpodcaster.xml.GenericTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
 
 /**
  * @author scottkidder

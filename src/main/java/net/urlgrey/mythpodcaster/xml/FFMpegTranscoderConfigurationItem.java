@@ -1,5 +1,5 @@
 /*
- * GenericTranscoderConfigurationItem.java
+ * FFMpegTranscoderConfigurationItem.java
  *
  * Created: Feb 18, 2010
  *
@@ -20,27 +20,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.urlgrey.mythpodcaster.dto;
+package net.urlgrey.mythpodcaster.xml;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author scottkidder
  *
  */
-public class GenericTranscoderConfigurationItem {
-	private long timeout = 900;
-	private int niceness = 19;
+public class FFMpegTranscoderConfigurationItem extends GenericTranscoderConfigurationItem {
 
-	public long getTimeout() {
-		return timeout;
-	}
-	public void setTimeout(long timeout) {
-		this.timeout = timeout;
-	}
-	public int getNiceness() {
-		return niceness;
-	}
-	public void setNiceness(int niceness) {
-		this.niceness = niceness;
-	}
+	private String encoderArguments;
+	private List<String> parsedEncoderArguments;
 
+	public String getEncoderArguments() {
+		return encoderArguments;
+	}
+	public void setEncoderArguments(String encoderArguments) {
+		this.encoderArguments = encoderArguments;
+		this.parsedEncoderArguments = Arrays.asList(encoderArguments.split(" "));
+	}
+	public List<String> getParsedEncoderArguments() {
+		return parsedEncoderArguments;
+	}
 }

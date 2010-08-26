@@ -42,7 +42,7 @@ import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.Channel;
 import net.urlgrey.mythpodcaster.domain.RecordedProgram;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
-import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
+import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;

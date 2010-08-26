@@ -34,8 +34,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.log4j.Logger;
 
-import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
-import net.urlgrey.mythpodcaster.dto.UserDefinedTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.GenericTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.UserDefinedTranscoderConfigurationItem;
 
 /**
  * @author scottkidder

@@ -41,8 +41,8 @@ import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.Channel;
 import net.urlgrey.mythpodcaster.domain.RecordedProgram;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
-import net.urlgrey.mythpodcaster.dto.FeedSubscriptionItem;
-import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
+import net.urlgrey.mythpodcaster.xml.FeedSubscriptionItem;
+import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
 
 import com.sun.syndication.feed.synd.SyndEnclosure;
 import com.sun.syndication.feed.synd.SyndEntry;

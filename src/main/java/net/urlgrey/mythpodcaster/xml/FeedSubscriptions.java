@@ -1,9 +1,9 @@
 /*
- * TranscodingProfileGroup.java
+ * FeedSubscriptions.java
  *
- * Created: Feb 17, 2010
+ * Created: Oct 7, 2009 7:24:11 PM
  *
- * Copyright (C) 2010 Scott Kidder
+ * Copyright (C) 2009 Scott Kidder
  * 
  * This file is part of MythPodcaster
  * 
@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.urlgrey.mythpodcaster.dto;
+package net.urlgrey.mythpodcaster.xml;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,21 +29,22 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+
 /**
- * @author scottkidder
+ * @author scott
  *
  */
-@XmlRootElement(name="transcoding-profiles")
+@XmlRootElement(name="feed-subscriptions")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TranscodingProfileGroup {
+public class FeedSubscriptions {
 
-	private List<TranscodingProfile> profiles = new ArrayList<TranscodingProfile>();
+	private List <FeedSubscriptionItem> subscriptions = new ArrayList<FeedSubscriptionItem>();
 
-	public List<TranscodingProfile> getProfiles() {
-		return profiles;
+	public List<FeedSubscriptionItem> getSubscriptions() {
+		return subscriptions;
 	}
 
-	public void setProfiles(List<TranscodingProfile> profiles) {
-		this.profiles = profiles;
+	public void setSubscriptions(List<FeedSubscriptionItem> subscriptions) {
+		this.subscriptions = subscriptions;
 	}
 }

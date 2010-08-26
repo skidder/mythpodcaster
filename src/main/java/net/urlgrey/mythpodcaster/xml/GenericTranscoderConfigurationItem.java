@@ -1,9 +1,9 @@
 /*
- * SubscriptionsDAO.java
+ * GenericTranscoderConfigurationItem.java
  *
- * Created: Oct 7, 2009 7:16:00 PM
+ * Created: Feb 18, 2010
  *
- * Copyright (C) 2009 Scott Kidder
+ * Copyright (C) 2010 Scott Kidder
  * 
  * This file is part of MythPodcaster
  * 
@@ -20,35 +20,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.urlgrey.mythpodcaster.dao;
-
-import java.io.IOException;
-import java.util.List;
-
-import net.urlgrey.mythpodcaster.xml.FeedSubscriptionItem;
+package net.urlgrey.mythpodcaster.xml;
 
 /**
- * @author scott
+ * @author scottkidder
  *
  */
-public interface SubscriptionsDAO {
+public class GenericTranscoderConfigurationItem {
+	private long timeout = 900;
+	private int niceness = 19;
 
-	/**
-	 * 
-	 */
-	List <FeedSubscriptionItem> findSubscriptions();
-
-	void addSubscription(FeedSubscriptionItem item) throws IOException;
-
-	/**
-	 * @param seriesId
-	 * @param transcodeProfileId 
-	 */
-	void removeSubscription(String seriesId, String transcodeProfileId);
-
-	/**
-	 * @param purgeList
-	 */
-	void purge(List<FeedSubscriptionItem> purgeList);
+	public long getTimeout() {
+		return timeout;
+	}
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
+	}
+	public int getNiceness() {
+		return niceness;
+	}
+	public void setNiceness(int niceness) {
+		this.niceness = niceness;
+	}
 
 }

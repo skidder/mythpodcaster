@@ -35,8 +35,8 @@ import java.util.concurrent.TimeoutException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
-import net.urlgrey.mythpodcaster.dto.SegmenterTranscoderConfigurationItem;
-import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.GenericTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.SegmenterTranscoderConfigurationItem;
 
 /**
  * @author scottkidder

@@ -36,13 +36,13 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
-import net.urlgrey.mythpodcaster.dto.FFMpegTranscoderConfigurationItem;
-import net.urlgrey.mythpodcaster.dto.FastStartTranscoderConfigurationItem;
-import net.urlgrey.mythpodcaster.dto.SegmenterTranscoderConfigurationItem;
-import net.urlgrey.mythpodcaster.dto.GenericTranscoderConfigurationItem;
-import net.urlgrey.mythpodcaster.dto.TranscodingProfile;
-import net.urlgrey.mythpodcaster.dto.TranscodingProfileGroup;
-import net.urlgrey.mythpodcaster.dto.UserDefinedTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.FFMpegTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.FastStartTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.GenericTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.SegmenterTranscoderConfigurationItem;
+import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
+import net.urlgrey.mythpodcaster.xml.TranscodingProfileGroup;
+import net.urlgrey.mythpodcaster.xml.UserDefinedTranscoderConfigurationItem;
 
 /**
  * @author scottkidder
