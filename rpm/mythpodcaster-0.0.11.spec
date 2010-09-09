@@ -1,5 +1,5 @@
 Name:		mythpodcaster
-Version:	0.0.11
+Version:	0.0.12
 Release:	1%{?dist}
 Summary:	A Java web application that transcodes MythTV recordings and publishes them through RSS feeds.
 
@@ -76,6 +76,10 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
+* Thu Sep 9 2010 <kidder.scott@gmail.com> - 0.0.12
+Bugfix:
+36: Default XSLT for HTML Output does not include the Channel in the Output
+
 * Thu Aug 26 2010 <kidder.scott@gmail.com> - 0.0.11
 Feature:
 33: Generate HTML5 video page instead of rss feed

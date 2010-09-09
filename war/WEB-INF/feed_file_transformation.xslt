@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet version="1.0"
-		xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+		xmlns:dc="http://purl.org/dc/elements/1.1/">
   <xsl:output method="html" />
   <xsl:template match="/">
     <html>
@@ -16,7 +17,7 @@
 	    <tr><td><b><h3>Title:</h3></b></td><td><b><xsl:value-of select="title"/></b></td></tr>
 	    <tr><td>Description:</td><td><xsl:value-of select="description"/></td></tr>
 	    <tr><td>Date:</td><td><xsl:value-of select="pubDate"/></td></tr>
-	    <tr><td>Channel:</td><td><xsl:value-of select="creator"/></td></tr>
+	    <tr><td>Channel:</td><td><xsl:value-of select="dc:creator"/></td></tr>
 	    <tr><td>Media:</td><td><a><xsl:attribute name="href"><xsl:value-of select="enclosure/@url"/></xsl:attribute>Link</a></td></tr>
 	    <tr><td>Embedded:</td><td><video preload="none" controls="true"><xsl:attribute name="src"><xsl:value-of select="enclosure/@url"/></xsl:attribute><xsl:attribute name="type"><xsl:value-of select="enclosure/@type"/></xsl:attribute></video></td></tr>
 	  </table>
