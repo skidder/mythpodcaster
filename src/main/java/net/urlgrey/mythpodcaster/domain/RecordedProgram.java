@@ -63,6 +63,9 @@ import javax.persistence.Transient;
 	@Column(name = "programid", updatable=false, unique=false, insertable=false)
 	private String programId;
 
+	@Column(name = "starttime", updatable=false, unique=false, insertable=false)
+	private Timestamp startTime;
+
 	@Column(name = "endtime", updatable=false, unique=false, insertable=false)
 	private Timestamp endTime;
 
@@ -74,6 +77,9 @@ import javax.persistence.Transient;
 
 	@Column(name = "description", updatable=false, unique=false, insertable=false)
 	private String description;
+
+	@Column(name = "category", updatable=false, unique=false, insertable=false)
+	private String category;
 
 	@Column(name = "filesize", updatable=false, unique=false, insertable=false)
 	private long filesize;
@@ -103,6 +109,14 @@ import javax.persistence.Transient;
 
 	public void setProgramId(String programId) {
 		this.programId = programId;
+	}
+
+	public Timestamp getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Timestamp startTime) {
+		this.startTime = startTime;
 	}
 
 	public Timestamp getEndTime() {
@@ -153,6 +167,14 @@ import javax.persistence.Transient;
 		this.filesize = filesize;
 	}
 
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
 	public String getKey() {
 		return key;
 	}
@@ -183,11 +205,12 @@ import javax.persistence.Transient;
 
 	@Override
 	public String toString() {
-		return "RecordedProgram [description=" + description + ", endTime="
-		+ endTime + ", filename=" + filename + ", filesize=" + filesize
-		+ ", key=" + key + ", programId=" + programId
-		+ ", recordedProgramKey=" + recordedProgramKey + ", seriesId="
-		+ seriesId + ", subtitle=" + subtitle + ", title=" + title
-		+ "]";
+		return "RecordedProgram [category=" + category + ", description="
+				+ description + ", endTime=" + endTime + ", filename="
+				+ filename + ", filesize=" + filesize + ", key=" + key
+				+ ", programId=" + programId + ", recordedProgramKey="
+				+ recordedProgramKey + ", seriesId=" + seriesId
+				+ ", startTime=" + startTime + ", subtitle=" + subtitle
+				+ ", title=" + title + "]";
 	}
 }

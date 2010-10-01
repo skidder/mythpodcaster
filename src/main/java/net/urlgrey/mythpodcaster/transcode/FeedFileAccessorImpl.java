@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,6 +54,12 @@ import com.sun.syndication.feed.module.itunes.EntryInformationImpl;
 import com.sun.syndication.feed.module.itunes.FeedInformation;
 import com.sun.syndication.feed.module.itunes.FeedInformationImpl;
 import com.sun.syndication.feed.module.itunes.types.Duration;
+import com.sun.syndication.feed.module.mediarss.MediaEntryModuleImpl;
+import com.sun.syndication.feed.module.mediarss.types.Category;
+import com.sun.syndication.feed.module.mediarss.types.MediaContent;
+import com.sun.syndication.feed.module.mediarss.types.Metadata;
+import com.sun.syndication.feed.module.mediarss.types.Thumbnail;
+import com.sun.syndication.feed.module.mediarss.types.UrlReference;
 import com.sun.syndication.feed.synd.SyndContentImpl;
 import com.sun.syndication.feed.synd.SyndEnclosure;
 import com.sun.syndication.feed.synd.SyndEnclosureImpl;
@@ -228,14 +235,10 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 		entry.setUri(program.getKey());
 		entry.setPublishedDate(program.getRecordedProgramKey().getStartTime());
 
-		final EntryInformation itunesEntryMetadata = new EntryInformationImpl();
-		itunesEntryMetadata.setDuration(new Duration(program.getEndTime().getTime() - program.getRecordedProgramKey().getStartTime().getTime()));
-		itunesEntryMetadata.setSummary(program.getDescription());
 
 		// set author info from the channel if available
 		if (channel != null) {
 			entry.setAuthor(channel.getName());
-			itunesEntryMetadata.setAuthor(channel.getName());
 		}
 
 		// Use the sub-title if no title can be found for the program
@@ -251,17 +254,18 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 		entry.setDescription(description);
 
 		// apply thumbnail for clip to the feed
+		final String feedImageUrl;
 		final File originalClipThumbnail = clipLocator.locateThumbnailForOriginalClip(program.getFilename());
 		if (originalClipThumbnail != null) {
 			final String seriesId = series.getSeriesId();
 			final File encodingDirectory = new File(feedFilePath, transcodingProfileId);
 			final File feedThumbnailFile = new File(encodingDirectory, seriesId + PNG_EXTENSION);
+			feedImageUrl = this.applicationURL + PATH_SEPARATOR + transcodingProfileId + PATH_SEPARATOR + seriesId + PNG_EXTENSION;
 
 			try {
 				FileOperations.copy(originalClipThumbnail, feedThumbnailFile);
 
 				final SyndImageImpl feedImage = new SyndImageImpl();
-				final String feedImageUrl = this.applicationURL + PATH_SEPARATOR + transcodingProfileId + PATH_SEPARATOR + seriesId + PNG_EXTENSION;
 				feedImage.setUrl(feedImageUrl);
 				feedImage.setTitle(series.getTitle());
 				feed.setImage(feedImage);
@@ -285,6 +289,8 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 					feed.setImage(null);
 				}
 			}
+		} else {
+			feedImageUrl = null;
 		}
 
 		// transcode
@@ -315,12 +321,43 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 						enclosures.add(enclosure);
 						entry.setEnclosures(enclosures);
 
+
 						// include iTunes-specific metadata
-						final Module module = entry.getModule("http://www.itunes.com/dtds/podcast-1.0.dtd");
-						if (module != null) {
-							entry.getModules().remove(module);
+						final Module itunesModule = entry.getModule("http://www.itunes.com/dtds/podcast-1.0.dtd");
+						if (itunesModule != null) {
+							entry.getModules().remove(itunesModule);
 						}
+						final EntryInformation itunesEntryMetadata = new EntryInformationImpl();
+						final Duration duration = new Duration(program.getEndTime().getTime() - program.getRecordedProgramKey().getStartTime().getTime());
+						itunesEntryMetadata.setDuration(duration);
+						itunesEntryMetadata.setSummary(program.getDescription());
+						if (program.getCategory() != null) {
+							itunesEntryMetadata.setKeywords(new String[] {program.getCategory()});
+						}
+						itunesEntryMetadata.setAuthor(channel.getName());
 						entry.getModules().add(itunesEntryMetadata);
+
+
+						// include Media RSS metadata
+						final MediaContent[] contents = new MediaContent[1];
+						final MediaContent mrssContent = new MediaContent(new UrlReference(link));
+						mrssContent.setFileSize(Long.valueOf(fileSize));
+						mrssContent.setType(profile.getEncodingMimeType());
+						final long durationInSeconds = (long)Math.ceil(duration.getMilliseconds() / 1000);
+						mrssContent.setDuration(durationInSeconds);
+						contents[0] = mrssContent;
+						Metadata md = new Metadata();
+						if (feedImageUrl != null) {
+							Thumbnail[] thumbs = new Thumbnail[1];
+							thumbs[0] = new Thumbnail(new URI(feedImageUrl));
+							md.setThumbnail(thumbs);
+						}
+						md.setDescription(program.getDescription());
+						md.setCategories(new Category[]{ new Category(program.getCategory()) });
+						mrssContent.setMetadata(md);
+						MediaEntryModuleImpl mrssModule = new MediaEntryModuleImpl();
+						mrssModule.setMediaContents(contents);
+						entry.getModules().add(mrssModule);
 					} else {
 						LOGGER.warn("Transcoded output file cannot be read, setting link to null: path[" + outputFile.getAbsolutePath() + "]");
 						entry.setLink(null);
