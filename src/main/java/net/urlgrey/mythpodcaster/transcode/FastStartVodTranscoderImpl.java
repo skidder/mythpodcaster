@@ -76,10 +76,10 @@ public class FastStartVodTranscoderImpl extends AbstractTranscoderImpl implement
 			List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
 			process.waitFor();
 			final int exitValue = process.exitValue();
-			LOG.debug("FastStart exit value: " + exitValue);
+			LOG.info("FastStart exit value: " + exitValue);
 			if (exitValue != 0) {
 				for (String line : result) {
-					LOG.debug(line);
+					LOG.error(line);
 				}
 				throw new Exception("FastStart return code indicated failure: " + exitValue);
 			}

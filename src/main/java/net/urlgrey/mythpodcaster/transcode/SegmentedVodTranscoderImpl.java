@@ -79,10 +79,10 @@ public class SegmentedVodTranscoderImpl extends AbstractTranscoderImpl implement
 			List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
 			process.waitFor();
 			final int exitValue = process.exitValue();
-			LOG.debug("Segmenter exit value: " + exitValue);
+			LOG.info("Segmenter exit value: " + exitValue);
 			if (exitValue != 0) {
 				for (String line : result) {
-					LOG.debug(line);
+					LOG.error(line);
 				}
 				throw new Exception("Segmenter return code indicated failure: " + exitValue);
 			}

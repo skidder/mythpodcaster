@@ -85,10 +85,10 @@ public class UserDefinedTranscoderImpl extends AbstractTranscoderImpl implements
 			List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
 			process.waitFor();
 			final int exitValue = process.exitValue();
-			LOG.debug("UserDefinedCommand exit value: " + exitValue);
+			LOG.info("UserDefinedCommand exit value: " + exitValue);
 			if (exitValue != 0) {
 				for (String line : result) {
-					LOG.debug(line);
+					LOG.error(line);
 				}
 				throw new Exception("UserDefinedCommand return code indicated failure: " + exitValue);
 			}

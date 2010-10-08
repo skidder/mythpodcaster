@@ -76,10 +76,10 @@ public class SymbolicLinkTranscoderImpl extends AbstractTranscoderImpl implement
 			List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
 			process.waitFor();
 			final int exitValue = process.exitValue();
-			LOG.debug("Link creation exit value: " + exitValue);
+			LOG.info("Link creation exit value: " + exitValue);
 			if (exitValue != 0) {
 				for (String line : result) {
-					LOG.debug(line);
+					LOG.error(line);
 				}
 				throw new Exception("Link return code indicated failure: " + exitValue);
 			}

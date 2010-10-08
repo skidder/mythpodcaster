@@ -79,10 +79,10 @@ public class FFMpegTranscoderImpl extends AbstractTranscoderImpl implements Tran
 			List<String> result = stdout.get(config.getTimeout(), TimeUnit.SECONDS);
 			process.waitFor();
 			final int exitValue = process.exitValue();
-			LOG.debug("FFMPEG exit value: " + exitValue);
+			LOG.info("FFMPEG exit value: " + exitValue);
 			if (exitValue != 0) {
 				for (String line : result) {
-					LOG.debug(line);
+					LOG.error(line);
 				}
 				throw new Exception("FFMpeg return code indicated failure: " + exitValue);
 			}
