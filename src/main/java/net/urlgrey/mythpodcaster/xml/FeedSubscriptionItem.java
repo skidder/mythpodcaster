@@ -23,6 +23,8 @@
 package net.urlgrey.mythpodcaster.xml;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -41,6 +43,9 @@ public class FeedSubscriptionItem implements Comparable<FeedSubscriptionItem> {
 	private Date dateAdded;
 	private boolean active = true;
 	private String transcodeProfile;
+	private ScopeEnum scope = ScopeEnum.ALL;
+	private int numberOfMostRecentToKeep = 0;
+	private Set<String> recordedProgramKeys = new HashSet<String>();
 
 	public String getTitle() {
 		return title;
@@ -71,6 +76,24 @@ public class FeedSubscriptionItem implements Comparable<FeedSubscriptionItem> {
 	}
 	public void setTranscodeProfile(String transcodeProfile) {
 		this.transcodeProfile = transcodeProfile;
+	}
+	public ScopeEnum getScope() {
+		return scope;
+	}
+	public void setScope(ScopeEnum scope) {
+		this.scope = scope;
+	}
+	public int getNumberOfMostRecentToKeep() {
+		return numberOfMostRecentToKeep;
+	}
+	public void setNumberOfMostRecentToKeep(int numberOfMostRecentToKeep) {
+		this.numberOfMostRecentToKeep = numberOfMostRecentToKeep;
+	}
+	public Set<String> getRecordedProgramKeys() {
+		return recordedProgramKeys;
+	}
+	public void setRecordedProgramKeys(Set<String> recordedProgramKeys) {
+		this.recordedProgramKeys = recordedProgramKeys;
 	}
 
 	@Override

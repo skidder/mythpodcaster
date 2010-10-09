@@ -55,4 +55,7 @@ public interface UIControllerServiceAsync {
 
 	void retrieveStatus(AsyncCallback<StatusDTO> callback);
 
+	void listRecordingsForSeries(String seriesId,
+			AsyncCallback<List<String[]>> asyncCallback);
+
 }

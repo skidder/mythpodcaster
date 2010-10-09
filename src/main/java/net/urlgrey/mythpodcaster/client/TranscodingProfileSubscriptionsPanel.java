@@ -22,27 +22,18 @@
  */
 package net.urlgrey.mythpodcaster.client;
 
-import java.util.Date;
 import java.util.List;
 
 import net.urlgrey.mythpodcaster.client.service.UIControllerService;
 import net.urlgrey.mythpodcaster.client.service.UIControllerServiceAsync;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -75,7 +66,7 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 		subscriptionsTable.setVisible(false);
 
 		subscriptionsPanel.setStyleName("mythpodcaster-SubscriptionsPanel");
-		addSubscriptionButton.addClickHandler(new AddSubscriptionHandler());
+		addSubscriptionButton.addClickHandler(new AddSubscriptionHandler(parent, seriesId, seriesTitle));
 
 		panel.add(subscriptionsPanel);
 		panel.add(addSubscriptionButton);
@@ -124,7 +115,7 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 					subscriptionsTable.setWidget(i, 1, new HTML("<a target=_blank href=\"" + applicationUrl + "/" + item.getTranscodeProfile() + "/" + seriesId + ".rss\">Feed</a>"));
 					subscriptionsTable.setWidget(i, 2, new HTML("<a target=_blank href=\"" + applicationUrl + "/" + item.getTranscodeProfile() + "/" + seriesId + ".html\">HTML</a>"));
 					final Button unsubscribeButton = new Button("Unsubscribe");
-					unsubscribeButton.addClickHandler(new UnsubscribeHandler(item.getTranscodeProfile()));
+					unsubscribeButton.addClickHandler(new UnsubscribeHandler(parent, seriesId, item.getTranscodeProfile()));
 					subscriptionsTable.setWidget(i++, 3, unsubscribeButton);
 				}
 
@@ -151,204 +142,5 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 			e.printStackTrace();
 		}
 
-	}
-
-	private class UnsubscribeHandler implements ClickHandler {
-		private String transcodingProfile;
-
-		public UnsubscribeHandler(String transcodingProfile) {
-			this.transcodingProfile = transcodingProfile;
-		}
-
-		@Override
-		public void onClick(ClickEvent event) {
-			// Create a dialog box and set the caption text
-			final DialogBox dialogBox = new DialogBox();
-			dialogBox.ensureDebugId("cwDialogBox");
-			dialogBox.setText("Unsubscribe?");
-
-			// Create a table to layout the content
-			VerticalPanel dialogContents = new VerticalPanel();
-			dialogContents.setSpacing(4);
-			dialogBox.setWidget(dialogContents);
-
-			// Add some text to the top of the dialog
-			HTML details = new HTML("Are you sure you want to unsubscribe?");
-			dialogContents.add(details);
-			dialogContents.setCellHorizontalAlignment(details,
-					HasHorizontalAlignment.ALIGN_CENTER);
-
-			// Add a cancel button at the bottom of the dialog
-			final Button cancelButton = new Button("Cancel",
-					new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					dialogBox.hide();
-				}
-			});
-
-			// Add a cancel button at the bottom of the dialog
-			final Button okButton = new Button("OK",
-					new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
-					try {
-						service.removeSubscription(seriesId, transcodingProfile, new AsyncCallback<Boolean>() {
-
-							@Override
-							public void onFailure(Throwable arg0) {
-								parent.refreshData();
-							}
-
-							@Override
-							public void onSuccess(Boolean arg0) {
-								parent.refreshData();
-							}
-						});
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
-					dialogBox.hide();
-				}
-			});
-
-			final SimplePanel buttonTopSpacer = new SimplePanel();
-			buttonTopSpacer.setHeight("20px");
-
-			final SimplePanel buttonSpacer = new SimplePanel();
-			buttonSpacer.setWidth("30px");
-
-			HorizontalPanel buttonRow = new HorizontalPanel();
-			buttonRow.add(cancelButton);
-			buttonRow.add(buttonSpacer);
-			buttonRow.add(okButton);
-			dialogContents.add(buttonTopSpacer);
-			dialogContents.add(buttonRow);
-			dialogContents.setCellHorizontalAlignment(buttonRow,
-					HasHorizontalAlignment.ALIGN_CENTER);
-			if (LocaleInfo.getCurrentLocale().isRTL()) {
-				dialogContents.setCellHorizontalAlignment(cancelButton,
-						HasHorizontalAlignment.ALIGN_LEFT);
-
-			} else {
-				dialogContents.setCellHorizontalAlignment(cancelButton,
-						HasHorizontalAlignment.ALIGN_RIGHT);
-			}
-
-			dialogBox.center();
-			dialogBox.show();
-		}
-
-	}
-
-	private class AddSubscriptionHandler implements ClickHandler {
-
-		@Override
-		public void onClick(ClickEvent arg0) {
-			// Create a dialog box and set the caption text
-			final DialogBox dialogBox = new DialogBox();
-			dialogBox.ensureDebugId("cwDialogBox");
-			dialogBox.setText("Add Transcoding Profile Subscription");
-
-			// Create a table to layout the content
-			VerticalPanel dialogContents = new VerticalPanel();
-			dialogContents.setSpacing(4);
-			dialogBox.setWidget(dialogContents);
-
-			// Add some text to the top of the dialog
-			HorizontalPanel listBoxPanel = new HorizontalPanel();
-			listBoxPanel.add(new HTML("Transcoding Profile:&nbsp;"));
-			final ListBox profileListBox = new ListBox();
-			listBoxPanel.add(profileListBox);
-			dialogContents.add(listBoxPanel);
-			dialogContents.setCellHorizontalAlignment(listBoxPanel,
-					HasHorizontalAlignment.ALIGN_CENTER);
-
-			// Add a cancel button at the bottom of the dialog
-			final Button cancelButton = new Button("Cancel",
-					new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					dialogBox.hide();
-				}
-			});
-
-			// Add a cancel button at the bottom of the dialog
-			final Button okButton = new Button("OK",
-					new ClickHandler() {
-
-				public void onClick(ClickEvent event) {
-					UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
-					try {
-						final FeedSubscriptionItemDTO item = new FeedSubscriptionItemDTO();
-						item.setDateAdded(new Date());
-						item.setSeriesId(seriesId);
-						item.setTitle(seriesTitle);
-						item.setTranscodeProfile(profileListBox.getValue(profileListBox.getSelectedIndex()));
-						service.addSubscription(item, new AsyncCallback<Boolean>() {
-
-							@Override
-							public void onFailure(Throwable arg0) {
-								parent.refreshData();
-							}
-
-							@Override
-							public void onSuccess(Boolean arg0) {
-								parent.refreshData();
-							}
-						});
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
-					dialogBox.hide();
-				}
-			});
-
-			final SimplePanel buttonTopSpacer = new SimplePanel();
-			buttonTopSpacer.setHeight("20px");
-
-			final SimplePanel buttonSpacer = new SimplePanel();
-			buttonSpacer.setWidth("30px");
-
-			HorizontalPanel buttonRow = new HorizontalPanel();
-			buttonRow.add(cancelButton);
-			buttonRow.add(buttonSpacer);
-			buttonRow.add(okButton);
-			dialogContents.add(buttonTopSpacer);
-			dialogContents.add(buttonRow);
-			dialogContents.setCellHorizontalAlignment(buttonRow,
-					HasHorizontalAlignment.ALIGN_CENTER);
-			if (LocaleInfo.getCurrentLocale().isRTL()) {
-				dialogContents.setCellHorizontalAlignment(cancelButton,
-						HasHorizontalAlignment.ALIGN_LEFT);
-
-			} else {
-				dialogContents.setCellHorizontalAlignment(cancelButton,
-						HasHorizontalAlignment.ALIGN_RIGHT);
-			}
-
-			UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
-			try {
-				service.findAvailableTranscodingProfilesForSeries(seriesId, new AsyncCallback<List<String[]>>() {
-
-					@Override
-					public void onFailure(Throwable arg0) {
-
-					}
-
-					@Override
-					public void onSuccess(List<String[]> profiles) {
-						for (String[] profile: profiles) {
-							profileListBox.addItem(profile[1], profile[0]);
-						}
-
-						dialogBox.center();
-						dialogBox.show();
-					}
-				});
-			} catch (Exception e) {
-			}
-
-		}
 	}
 }

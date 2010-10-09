@@ -43,10 +43,12 @@ import net.urlgrey.mythpodcaster.client.service.UIControllerService;
 import net.urlgrey.mythpodcaster.dao.MythRecordingsDAO;
 import net.urlgrey.mythpodcaster.dao.SubscriptionsDAO;
 import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
+import net.urlgrey.mythpodcaster.domain.RecordedProgram;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.transcode.StatusBean;
 import net.urlgrey.mythpodcaster.transcode.StatusBean.StatusMode;
 import net.urlgrey.mythpodcaster.xml.FeedSubscriptionItem;
+import net.urlgrey.mythpodcaster.xml.ScopeEnum;
 import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
 
 /**
@@ -177,6 +179,16 @@ public class UIControllerImpl implements UIControllerService {
 		item.setSeriesId(dto.getSeriesId());
 		item.setTitle(dto.getTitle());
 		item.setTranscodeProfile(dto.getTranscodeProfile());
+		item.setScope(ScopeEnum.valueOf(dto.getScope()));
+		if (ScopeEnum.MOST_RECENT.equals(item.getScope())) {
+			item.setNumberOfMostRecentToKeep(dto.getNumberOfMostRecentToKeep());
+		} else if (ScopeEnum.SPECIFIC_RECORDINGS.equals(item.getScope())) {
+			if (dto.getRecordedProgramKeys() != null && dto.getRecordedProgramKeys().length > 0) {
+				for (String recording : dto.getRecordedProgramKeys()) {
+					item.getRecordedProgramKeys().add(recording);
+				}
+			}
+		}
 
 		try {
 			this.subscriptionsDao.addSubscription(item);
@@ -257,6 +269,29 @@ public class UIControllerImpl implements UIControllerService {
 	@Override
 	public String retrieveApplicationUrl() {
 		return this.applicationUrl;
+	}
+
+	/* (non-Javadoc)
+	 * @see net.urlgrey.mythpodcaster.client.service.UIControllerService#listRecordingsForSeries(java.lang.String)
+	 */
+	@Override
+	public List<String[]> listRecordingsForSeries(String seriesId) {
+		LOGGER.debug("Finding recordings for seriesId[" + seriesId + "]");
+
+		final List<String[]> result = new ArrayList<String[]>();
+		final RecordedSeries seriesInfo = recordingsDao.findRecordedSeries(seriesId);
+		if (seriesInfo != null) {
+			Collections.sort(seriesInfo.getRecordedPrograms());
+			for (RecordedProgram program : seriesInfo.getRecordedPrograms()) {
+				String[] recordingInfo = new String[3];
+				recordingInfo[0] = program.getKey();
+				recordingInfo[1] = program.getSubtitle();
+				recordingInfo[2] = Long.toString(program.getStartTime().getTime());
+				result.add(recordingInfo);
+			}
+		}
+
+		return result;
 	}
 
 	public void setSubscriptionsDao(SubscriptionsDAO subscriptionsDao) {

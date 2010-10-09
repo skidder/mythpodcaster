@@ -54,4 +54,6 @@ public interface UIControllerService extends RemoteService {
 	String retrieveApplicationUrl();
 
 	StatusDTO retrieveStatus();
+
+	List<String[]> listRecordingsForSeries(String seriesId);
 }

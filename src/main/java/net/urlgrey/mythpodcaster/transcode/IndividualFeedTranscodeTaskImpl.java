@@ -42,6 +42,7 @@ import net.urlgrey.mythpodcaster.domain.Channel;
 import net.urlgrey.mythpodcaster.domain.RecordedProgram;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.xml.FeedSubscriptionItem;
+import net.urlgrey.mythpodcaster.xml.ScopeEnum;
 import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
 
 import com.sun.syndication.feed.synd.SyndEnclosure;
@@ -82,7 +83,7 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 			final RecordedSeries series = recordingsDao.findRecordedSeries(subscription.getSeriesId());
 
 			if (series == null) {
-				// if not occurences of the recorded series are found, then continue
+				// if not occurrences of the recorded series are found, then continue
 				LOGGER.debug("No recordings found for recordId[" + subscription.getSeriesId() + "]");
 			}
 
@@ -90,6 +91,13 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 				for (RecordedProgram program : series.getRecordedPrograms()) {
 					if (program.getEndTime() == null || program.getEndTime().after(new Date())) {
 						LOGGER.debug("Skipping recorded program, end-time is in future (still recording): programId[" + program.getProgramId() + "]");
+						continue;
+					}
+
+					if (ScopeEnum.SPECIFIC_RECORDINGS.equals(this.subscription.getScope()) && 
+							(false == this.subscription.getRecordedProgramKeys().contains(program.getKey())))
+					{
+						LOGGER.debug("Skipping recorded program, not specified as a recording to transcode for this subscription: key[" + program.getKey() + "]");
 						continue;
 					}
 

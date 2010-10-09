@@ -37,6 +37,9 @@ public class FeedSubscriptionItemDTO implements IsSerializable {
 	private boolean active = true;
 	private String transcodeProfile;
 	private String transcodeProfileDisplayName;
+	private String scope;
+	private int numberOfMostRecentToKeep;
+	private String[] recordedProgramKeys;
 
 	public String getTitle() {
 		return title;
@@ -74,5 +77,23 @@ public class FeedSubscriptionItemDTO implements IsSerializable {
 	}
 	public String getTranscodeProfileDisplayName() {
 		return transcodeProfileDisplayName;
+	}
+	public String getScope() {
+		return scope;
+	}
+	public void setScope(String scope) {
+		this.scope = scope;
+	}
+	public int getNumberOfMostRecentToKeep() {
+		return numberOfMostRecentToKeep;
+	}
+	public void setNumberOfMostRecentToKeep(int numberOfMostRecentToKeep) {
+		this.numberOfMostRecentToKeep = numberOfMostRecentToKeep;
+	}
+	public String[] getRecordedProgramKeys() {
+		return recordedProgramKeys;
+	}
+	public void setRecordedProgramKeys(String[] recordedProgramKeys) {
+		this.recordedProgramKeys = recordedProgramKeys;
 	}
 }
