@@ -61,11 +61,8 @@ public class AddSubscriptionHandler implements ClickHandler {
 	private String seriesId;
 	private String seriesTitle;
 	
-	public AddSubscriptionHandler(RecordingsPanel parent, String seriesId,
-			String seriesTitle) {
+	public AddSubscriptionHandler(RecordingsPanel parent) {
 		this.parent = parent;
-		this.seriesId = seriesId;
-		this.seriesTitle = seriesTitle;
 	}
 	
 	@Override
@@ -272,5 +269,21 @@ public class AddSubscriptionHandler implements ClickHandler {
 		} catch (Exception e) {
 		}
 
+	}
+
+	public String getSeriesId() {
+		return seriesId;
+	}
+
+	public void setSeriesId(String seriesId) {
+		this.seriesId = seriesId;
+	}
+
+	public String getSeriesTitle() {
+		return seriesTitle;
+	}
+
+	public void setSeriesTitle(String seriesTitle) {
+		this.seriesTitle = seriesTitle;
 	}
 }

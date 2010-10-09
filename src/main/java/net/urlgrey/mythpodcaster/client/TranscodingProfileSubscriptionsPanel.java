@@ -51,6 +51,7 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 	private String applicationUrl = null;
 	private String seriesId = null;
 	private String seriesTitle = null;
+	private AddSubscriptionHandler addSubscriptionHandler;
 
 	/**
 	 * 
@@ -66,7 +67,8 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 		subscriptionsTable.setVisible(false);
 
 		subscriptionsPanel.setStyleName("mythpodcaster-SubscriptionsPanel");
-		addSubscriptionButton.addClickHandler(new AddSubscriptionHandler(parent, seriesId, seriesTitle));
+		addSubscriptionHandler = new AddSubscriptionHandler(parent);
+		addSubscriptionButton.addClickHandler(addSubscriptionHandler);
 
 		panel.add(subscriptionsPanel);
 		panel.add(addSubscriptionButton);
@@ -76,6 +78,9 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 	public void update(String seriesId, String seriesTitle) {
 		this.seriesId = seriesId;
 		this.seriesTitle = seriesTitle;
+
+		this.addSubscriptionHandler.setSeriesId(seriesId);
+		this.addSubscriptionHandler.setSeriesTitle(seriesTitle);
 
 		refreshData();
 	}
