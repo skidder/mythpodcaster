@@ -58,7 +58,7 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 	 */
 	public TranscodingProfileSubscriptionsPanel(RecordingsPanel parent) {
 		this.parent = parent;
-		subscriptionsTable.resizeColumns(4);
+		subscriptionsTable.resizeColumns(5);
 		subscriptionsTable.setStyleName("mythpodcaster-SubscriptionsTable");
 
 		subscriptionsPanel.add(subscriptionsLabel);
@@ -119,9 +119,17 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 					subscriptionsTable.setText(i, 0, item.getTranscodeProfileDisplayName());
 					subscriptionsTable.setWidget(i, 1, new HTML("<a target=_blank href=\"" + applicationUrl + "/" + item.getTranscodeProfile() + "/" + seriesId + ".rss\">Feed</a>"));
 					subscriptionsTable.setWidget(i, 2, new HTML("<a target=_blank href=\"" + applicationUrl + "/" + item.getTranscodeProfile() + "/" + seriesId + ".html\">HTML</a>"));
+
+					final Button editButton = new Button("Edit");
+					editButton.addClickHandler(new AddSubscriptionHandler(parent, item.getTranscodeProfile(), seriesId, seriesTitle));
+					subscriptionsTable.setWidget(i, 3, editButton);
+
 					final Button unsubscribeButton = new Button("Unsubscribe");
 					unsubscribeButton.addClickHandler(new UnsubscribeHandler(parent, seriesId, item.getTranscodeProfile()));
-					subscriptionsTable.setWidget(i++, 3, unsubscribeButton);
+					subscriptionsTable.setWidget(i, 4, unsubscribeButton);
+					
+					// increment profile index counter
+					i++;
 				}
 
 				if (subscriptions.size() > 0) {

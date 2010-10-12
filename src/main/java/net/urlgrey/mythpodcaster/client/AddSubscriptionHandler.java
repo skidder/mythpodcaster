@@ -56,13 +56,24 @@ public class AddSubscriptionHandler implements ClickHandler {
 	private static final String SCOPE_ALL = "ALL";
 	private static final String SCOPE_MOST_RECENT = "MOST_RECENT";
 	private static final String SCOPE_SPECIFIC_RECORDINGS = "SPECIFIC_RECORDINGS";
+	protected static final int SCOPE_INDEX_ALL = 0;
+	protected static final int SCOPE_INDEX_MOST_RECENT = 1;
+	protected static final int SCOPE_INDEX_SPECIFIC_RECORDINGS = 2;
 
 	private RecordingsPanel parent;
 	private String seriesId;
 	private String seriesTitle;
+	private String transcodingProfile = null;
 	
 	public AddSubscriptionHandler(RecordingsPanel parent) {
 		this.parent = parent;
+	}
+	
+	public AddSubscriptionHandler(RecordingsPanel parent, String transcodingProfile, String seriesId, String seriesTitle) {
+		this.parent = parent;
+		this.transcodingProfile = transcodingProfile;
+		this.seriesId = seriesId;
+		this.seriesTitle = seriesTitle;
 	}
 	
 	@Override
@@ -77,12 +88,17 @@ public class AddSubscriptionHandler implements ClickHandler {
 		dialogContents.setSpacing(4);
 		dialogBox.setWidget(dialogContents);
 
-		// Add some text to the top of the dialog
-		HorizontalPanel listBoxPanel = new HorizontalPanel();
-		listBoxPanel.add(new HTML("Transcoding Profile:&nbsp;"));
-		final ListBox profileListBox = new ListBox();
-		listBoxPanel.add(profileListBox);
-		dialogContents.add(listBoxPanel);
+		// Transcoding Profile Selection
+		final ListBox profileListBox;
+		if (transcodingProfile == null) {
+			HorizontalPanel listBoxPanel = new HorizontalPanel();
+			listBoxPanel.add(new HTML("Transcoding Profile:&nbsp;"));
+			profileListBox = new ListBox();
+			listBoxPanel.add(profileListBox);
+			dialogContents.add(listBoxPanel);
+		} else {
+			profileListBox = null;
+		}
 
 		final HorizontalPanel mostRecentPanel = new HorizontalPanel();
 		mostRecentPanel.add(new HTML("Number of most recent to transcode:&nbsp;"));
@@ -119,16 +135,18 @@ public class AddSubscriptionHandler implements ClickHandler {
 
 			@Override
 			public void onChange(ChangeEvent arg0) {
-				final String selectedScopeValue = scopeListBox.getValue(scopeListBox.getSelectedIndex());
-				if (SCOPE_ALL.equals(selectedScopeValue)) {
+				switch (scopeListBox.getSelectedIndex()) {
+				case SCOPE_INDEX_ALL:
 					mostRecentPanel.setVisible(false);
 					specificRecordingsPanel.setVisible(false);
-				}
-				else if (SCOPE_MOST_RECENT.equals(selectedScopeValue)) {
+					dialogBox.center();
+					break;
+				case SCOPE_INDEX_MOST_RECENT:
 					mostRecentPanel.setVisible(true);
 					specificRecordingsPanel.setVisible(false);
-				}
-				else if (SCOPE_SPECIFIC_RECORDINGS.equals(selectedScopeValue)) {
+					dialogBox.center();
+					break;
+				case SCOPE_INDEX_SPECIFIC_RECORDINGS:
 					mostRecentPanel.setVisible(false);
 					UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
 
@@ -150,11 +168,14 @@ public class AddSubscriptionHandler implements ClickHandler {
 									recordingsListBox.addItem(label, recording[0]);
 								}
 								specificRecordingsPanel.setVisible(true);
+								dialogBox.center();
 							}
 						});
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					
+					break;
 				}
 			}
 		});
@@ -162,9 +183,6 @@ public class AddSubscriptionHandler implements ClickHandler {
 		dialogContents.add(scopePanel);
 		dialogContents.add(mostRecentPanel);
 		dialogContents.add(specificRecordingsPanel);
-
-		dialogContents.setCellHorizontalAlignment(listBoxPanel,
-				HasHorizontalAlignment.ALIGN_CENTER);
 
 		// Add a cancel button at the bottom of the dialog
 		final Button cancelButton = new Button("Cancel",
@@ -185,13 +203,18 @@ public class AddSubscriptionHandler implements ClickHandler {
 					item.setDateAdded(new Date());
 					item.setSeriesId(seriesId);
 					item.setTitle(seriesTitle);
-					item.setTranscodeProfile(profileListBox.getValue(profileListBox.getSelectedIndex()));
-					item.setScope(scopeListBox.getValue(scopeListBox.getSelectedIndex()));
-					if (SCOPE_MOST_RECENT.equals(item.getScope())) {
-						item.setNumberOfMostRecentToKeep(
-								Integer.parseInt(
-										mostRecentListBox.getValue(mostRecentListBox.getSelectedIndex())));
-					} else if (SCOPE_SPECIFIC_RECORDINGS.equals(item.getScope())) {
+					if (profileListBox != null) {
+						item.setTranscodeProfile(profileListBox.getValue(profileListBox.getSelectedIndex()));
+					} else {
+						item.setTranscodeProfile(transcodingProfile);
+					}
+
+					switch (scopeListBox.getSelectedIndex()) {
+					case SCOPE_INDEX_MOST_RECENT:
+						item.setScope(SCOPE_MOST_RECENT);
+						item.setNumberOfMostRecentToKeep(Integer.parseInt(mostRecentListBox.getValue(mostRecentListBox.getSelectedIndex())));
+						break;
+					case SCOPE_INDEX_SPECIFIC_RECORDINGS:
 						final Set <String> selectedRecordings = new HashSet<String>();
 						final int recordingCount = recordingsListBox.getItemCount();
 						for (int i=0; i < recordingCount; i++) {
@@ -201,9 +224,15 @@ public class AddSubscriptionHandler implements ClickHandler {
 						}
 
 						final String[] result = selectedRecordings.toArray(new String[0]);
+						item.setScope(SCOPE_SPECIFIC_RECORDINGS);
 						item.setRecordedProgramKeys(result);
+						break;
+					default:
+						item.setScope(SCOPE_ALL);
+						break;
 					}
 
+					// add subscription on the backend
 					service.addSubscription(item, new AsyncCallback<Boolean>() {
 
 						@Override
@@ -247,28 +276,99 @@ public class AddSubscriptionHandler implements ClickHandler {
 					HasHorizontalAlignment.ALIGN_RIGHT);
 		}
 
-		UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
-		try {
-			service.findAvailableTranscodingProfilesForSeries(seriesId, new AsyncCallback<List<String[]>>() {
+		if (profileListBox == null) {
+			// populate the dialog with the current settings in the backend
 
-				@Override
-				public void onFailure(Throwable arg0) {
-
-				}
-
-				@Override
-				public void onSuccess(List<String[]> profiles) {
-					for (String[] profile: profiles) {
-						profileListBox.addItem(profile[1], profile[0]);
+			UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
+			try {
+				service.retrieveSubscriptionDetails(seriesId, transcodingProfile, new AsyncCallback<FeedSubscriptionItemDTO>() {
+	
+					@Override
+					public void onFailure(Throwable arg0) {
+	
 					}
+	
+					@Override
+					public void onSuccess(final FeedSubscriptionItemDTO item) {
+						if (SCOPE_MOST_RECENT.equals(item.getScope())) {
+							scopeListBox.setSelectedIndex(SCOPE_INDEX_MOST_RECENT);
+							mostRecentListBox.setSelectedIndex(item.getNumberOfMostRecentToKeep() - 1);
+							mostRecentPanel.setVisible(true);
+							specificRecordingsPanel.setVisible(false);
+							dialogBox.center();
+						} else if (SCOPE_SPECIFIC_RECORDINGS.equals(item.getScope())) {
+							scopeListBox.setSelectedIndex(SCOPE_INDEX_SPECIFIC_RECORDINGS);
+							UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
 
-					dialogBox.center();
-					dialogBox.show();
-				}
-			});
-		} catch (Exception e) {
+							try {
+								service.listRecordingsForSeries(seriesId, new AsyncCallback<List<String[]>>() {
+
+									@Override
+									public void onFailure(Throwable arg0) {
+									}
+
+									@Override
+									public void onSuccess(List<String[]> recordings) {
+										recordingsListBox.clear();
+										final DateTimeFormat format = DateTimeFormat.getMediumDateTimeFormat();
+										int i=0;
+										for (String[] recording : recordings) {
+											Date d = new Date(Long.valueOf(recording[2]));
+											final String recordingTitle = (recording[1] != null && recording[1].trim().length() > 0) ? recording[1] : seriesTitle;
+											final String label = "[" + format.format(d) + "] " + recordingTitle;
+											recordingsListBox.addItem(label, recording[0]);
+											for (String id : item.getRecordedProgramKeys()) {
+												if (id.equals(recording[0])) {
+													recordingsListBox.setItemSelected(i, true);
+													break;
+												}
+											}
+											i++;
+										}
+										
+										dialogBox.center();
+									}
+								});
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							
+							mostRecentPanel.setVisible(false);
+							specificRecordingsPanel.setVisible(true);
+						} else {
+							scopeListBox.setSelectedIndex(SCOPE_INDEX_ALL);
+							mostRecentPanel.setVisible(false);
+							specificRecordingsPanel.setVisible(false);
+							dialogBox.center();
+						}
+					}
+				});
+			} catch (Exception e) {
+			}
+		} else {
+			// configure the dialog to show the transcoding profiles that are not already in use with this program
+			
+			UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
+			try {
+				service.findAvailableTranscodingProfilesForSeries(seriesId, new AsyncCallback<List<String[]>>() {
+	
+					@Override
+					public void onFailure(Throwable arg0) {
+	
+					}
+	
+					@Override
+					public void onSuccess(List<String[]> profiles) {
+						for (String[] profile: profiles) {
+							profileListBox.addItem(profile[1], profile[0]);
+						}
+	
+						dialogBox.center();
+					}
+				});
+			} catch (Exception e) {
+			}
 		}
-
 	}
 
 	public String getSeriesId() {

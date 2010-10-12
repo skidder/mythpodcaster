@@ -294,6 +294,31 @@ public class UIControllerImpl implements UIControllerService {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see net.urlgrey.mythpodcaster.client.service.UIControllerService#retrieveSubscriptionDetails(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public FeedSubscriptionItemDTO retrieveSubscriptionDetails(String seriesId,
+			String transcodingProfile) 
+	{
+		FeedSubscriptionItemDTO result = null;
+
+		for (FeedSubscriptionItem item : this.subscriptionsDao.findSubscriptions()) {
+			if (item.getSeriesId().equals(seriesId) && item.getTranscodeProfile().equals(transcodingProfile)) {
+				result = new FeedSubscriptionItemDTO();
+				result.setSeriesId(item.getSeriesId());
+				result.setScope(item.getScope().name());
+				result.setTitle(item.getTitle());
+				result.setRecordedProgramKeys(item.getRecordedProgramKeys().toArray(new String[0]));
+				result.setNumberOfMostRecentToKeep(item.getNumberOfMostRecentToKeep());
+				
+				break;
+			}
+		}
+
+		return result;
+	}
+
 	public void setSubscriptionsDao(SubscriptionsDAO subscriptionsDao) {
 		this.subscriptionsDao = subscriptionsDao;
 	}

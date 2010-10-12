@@ -90,13 +90,11 @@ public class SubscriptionsDAOImpl extends AbstractFileBasedDAO implements Subscr
 
 		final FeedSubscriptions subscriptionsDocument = loadSubscriptionDocument();
 		final List<FeedSubscriptionItem> subscriptions = subscriptionsDocument.getSubscriptions();
-		if (subscriptions.contains(item)) {
-			final int index = subscriptions.indexOf(item);
-			final FeedSubscriptionItem actualItem = subscriptions.get(index);
-			actualItem.setActive(true);
-		} else {
-			subscriptions.add(item);
-		}
+
+		// attempt to remove an existing copy of the subscription since this may be an update
+		subscriptions.remove(item);
+
+		subscriptions.add(item);
 
 		final File encodingDirectory = new File(feedFilePath, item.getTranscodeProfile());
 		final File feedFile = new File(encodingDirectory, seriesId + RSS_FILE_EXTENSION);

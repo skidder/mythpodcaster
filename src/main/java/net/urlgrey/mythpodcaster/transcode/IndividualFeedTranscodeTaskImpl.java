@@ -161,6 +161,13 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 							}
 						}
 					}
+					
+					// for a feed using specific recordings, delete those entries that are no longer required
+					if (ScopeEnum.SPECIFIC_RECORDINGS.equals(subscription.getScope()) && 
+							false == subscription.getRecordedProgramKeys().contains(episodeKey)) 
+					{
+						found = false;
+					}
 
 					// if the feed entry is no longer in the list of recorded programs, then remove
 					if (found) {

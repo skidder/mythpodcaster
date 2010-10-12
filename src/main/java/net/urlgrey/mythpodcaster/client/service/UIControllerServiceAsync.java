@@ -58,4 +58,8 @@ public interface UIControllerServiceAsync {
 	void listRecordingsForSeries(String seriesId,
 			AsyncCallback<List<String[]>> asyncCallback);
 
+	void retrieveSubscriptionDetails(String seriesId,
+			String transcodingProfile,
+			AsyncCallback<FeedSubscriptionItemDTO> asyncCallback);
+
 }

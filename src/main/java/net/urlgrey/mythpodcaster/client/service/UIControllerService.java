@@ -56,4 +56,7 @@ public interface UIControllerService extends RemoteService {
 	StatusDTO retrieveStatus();
 
 	List<String[]> listRecordingsForSeries(String seriesId);
+
+	FeedSubscriptionItemDTO retrieveSubscriptionDetails(String seriesId,
+			String transcodingProfile);
 }
