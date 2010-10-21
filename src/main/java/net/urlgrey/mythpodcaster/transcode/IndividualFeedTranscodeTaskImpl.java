@@ -208,7 +208,7 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 					SyndFeedOutput output = new SyndFeedOutput();
 					output.output(feed, writer);
 
-					transformedFeedFile = feedFileAccessor.generateTransformationFromFeed(feedFile, feed, series.getSeriesId());
+					transformedFeedFile = feedFileAccessor.generateTransformationFromFeed(feedFile, feed, subscription.getSeriesId());
 				} catch (Exception e) {
 					LOGGER.error("Error rendering feed", e);
 					if (feedFile.canWrite()) {
