@@ -79,6 +79,30 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 	}
 
 	/* (non-Javadoc)
+	 * @see net.urlgrey.mythpodcaster.dao.MythRecordingsDAO#findRecordedSeries(java.lang.String, int)
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public RecordedSeries findRecordedSeries(String seriesId,
+			int numberOfMostRecentRecordings) {
+		final Query namedQuery = entityManager.createNamedQuery("MYTH_RECORDINGS.findRecordedSeries");
+		namedQuery.setParameter("seriesId", seriesId);
+
+		final List<RecordedSeries> seriesResultsList = namedQuery.getResultList();
+		if (seriesResultsList != null && seriesResultsList.size() == 1) {
+			final Query seriesProgramsQuery = entityManager.createNamedQuery("MYTH_RECORDINGS.findRecordedProgramsForSeries");
+			seriesProgramsQuery.setParameter("seriesId", seriesId);
+			seriesProgramsQuery.setMaxResults(numberOfMostRecentRecordings);
+
+			final RecordedSeries series = seriesResultsList.get(0);
+			series.setRecordedPrograms(seriesProgramsQuery.getResultList());
+			return series;
+		}
+
+		return null;
+	}
+
+	/* (non-Javadoc)
 	 * @see net.urlgrey.mythpodcaster.dao.MythRecordingsDAO#findChannel(int)
 	 */
 	@Override

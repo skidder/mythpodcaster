@@ -80,7 +80,12 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 		if (subscription.isActive()) {
 			// identify series recordings not represented in the RSS Feed (transcode)
 			final List entries = feed.getEntries();
-			final RecordedSeries series = recordingsDao.findRecordedSeries(subscription.getSeriesId());
+			final RecordedSeries series;
+			if (ScopeEnum.MOST_RECENT.equals(subscription.getScope())) {
+				series = recordingsDao.findRecordedSeries(subscription.getSeriesId(), subscription.getNumberOfMostRecentToKeep());
+			} else {
+				series = recordingsDao.findRecordedSeries(subscription.getSeriesId());
+			}
 
 			if (series == null) {
 				// if not occurrences of the recorded series are found, then continue
