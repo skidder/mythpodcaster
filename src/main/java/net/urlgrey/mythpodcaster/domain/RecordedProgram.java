@@ -45,7 +45,7 @@ import javax.persistence.Transient;
 @NamedQueries({
 	@NamedQuery(
 			name = "MYTH_RECORDINGS.findRecordedProgramsForSeries",
-			query = "SELECT recordedprogram FROM RecordedProgram AS recordedprogram WHERE seriesId = :seriesId ORDER BY startTime DESCENDING",
+			query = "SELECT recordedprogram FROM RecordedProgram AS recordedprogram WHERE seriesId = :seriesId ORDER BY startTime DESC",
 			hints = {@QueryHint(name="org.hibernate.comment", value="MythPodcaster: MYTH_RECORDINGS.findRecordedProgramsForSeries")}	)})
 			public class RecordedProgram implements Comparable<RecordedProgram>, Serializable {
 
