@@ -1,8 +1,8 @@
 MythPodcaster
 Author: Scott Kidder (kidder.scott@gmail.com)
 Additional Patches provided by Simon Hyde
-Release: 0.0.10
-Date: 07 Aug 2010
+Release: 0.0.12
+Date: 27 Oct 2010
 
 For details on how to install and configure MythPodcaster, please refer to:
 
@@ -95,7 +95,7 @@ Installing from source requires that you have the following development tools co
 Use the following steps to compile:
 
    1. Extract the source archive:
-         1. tar -xzf mythpodcaster-0.0.10-src.tar.gz 
+         1. tar -xzf mythpodcaster-0.0.12-src.tar.gz 
    2. Build the package:
          1. cd mythpodcaster-src
          2. mvn clean package 

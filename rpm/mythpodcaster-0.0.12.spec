@@ -76,9 +76,14 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
-* Thu Sep 9 2010 <kidder.scott@gmail.com> - 0.0.12
+* Wed Oct 27 2010 <kidder.scott@gmail.com> - 0.0.12
+Feature:
+37: Generate RSS Files that use Media RSS Extensions
+38: A Way to Feed Only the Most Recent 5 Recordings
+39: Include execution output in the MythPodcaster log when execution fails 
 Bugfix:
 36: Default XSLT for HTML Output does not include the Channel in the Output
+40: Null-Pointer Exception when rendering RSS Transformation if no recordings are present 
 
 * Thu Aug 26 2010 <kidder.scott@gmail.com> - 0.0.11
 Feature:
