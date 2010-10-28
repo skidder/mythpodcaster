@@ -48,7 +48,7 @@ Installing the binary requires that you have the following tools configured:
     * Apache Tomcat
     * Apache HTTPD 
 
-Use the following steps to compile:
+Use the following steps to install:
 
    1. Install a Java 6 SDK (http://java.sun.com/javase/downloads/index.jsp)
    2. Install the Apache Tomcat 6 Servlet Container (http://tomcat.apache.org/)
@@ -64,24 +64,27 @@ Use the following steps to compile:
          1. sudo mkdir /etc/mythpodcaster
          2. sudo chown tomcat.tomcat /etc/mythpodcaster 
    8. Create the mythpodcaster directories:
-         1. sudo mkdir /var/mythpodcaster/rss
-         2. sudo chown tomcat.tomcat /etc/mythpodcaster
+         1. sudo mkdir -p /var/mythpodcaster/rss
+         2. sudo chown -R tomcat.tomcat /var/mythpodcaster
          3. sudo mkdir /var/www/html/mythpodcaster/
          4. sudo ln -s /var/mythpodcaster/rss /var/www/html/mythpodcaster/rss
          5. sudo mkdir /var/log/mythpodcaster
          6. sudo chown tomcat.tomcat /var/log/mythpodcaster 
    9. Copy the configuration files into place:
-         1. cp mythpodcaster.properties /etc/mythpodcaster/
-         2. cp transcoding_profiles.xml /etc/mythpodcaster
-         3. cp log4j.xml /etc/mythpodcaster
-         4. sudo chown -R tomcat.tomcat /etc/mythpodcaster 
+         1. sudo cp mythpodcaster.properties /etc/mythpodcaster/
+         2. sudo cp transcoding_profiles.xml /etc/mythpodcaster/
+         3. sudo cp log4j.xml /etc/mythpodcaster/
+         4. sudo cp feed_file_transformation.xslt /etc/mythpodcaster/
+         5. sudo chown -R tomcat.tomcat /etc/mythpodcaster/* 
   10. Edit the mythpodcaster.properties file to meet your requirements.
          1. sudo vi /etc/mythpodcaster/mythpodcaster.properties 
-  11. Copy the MythPodcaster WAR file to the Tomcat webapps directory
+  11. If upgrading, then remove the expanded WAR directory from the Tomcat directory
+         1. sudo rm -rf ${CATALINA_HOME}/webapps/MythPodcaster 
+  12. Copy the MythPodcaster WAR file to the Tomcat webapps directory
          1. sudo cp MythPodcaster.war ${CATALINA_HOME}/webapps/ 
-  12. Monitor the MythPodcaster log file to verify that it deploys successfully
-         1. tail -f /var/log/mythpodcaster.log 
-  13. Access the MythPodcaster web application to create your subscriptions.
+  13. Monitor the MythPodcaster log file to verify that it deploys successfully
+         1. tail -f /var/log/mythpodcaster/mythpodcaster.log 
+  14. Access the MythPodcaster web application to create your subscriptions.
          1. Example: http://localhost:8080/MythPodcaster/ 
 
 
