@@ -19,6 +19,15 @@
             </property>
     </bean>
 
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+	    <property name="configLocation" value="WEB-INF/ehcache.xml"/>
+	</bean>
+	
+	<bean name="recordingDirectoriesCache" class="net.urlgrey.mythpodcaster.dao.EhCacheWrapper">
+	    <constructor-arg value="recording.directories.cache"/>
+	    <constructor-arg ref="cacheManager"/>
+	</bean>
+
   	<bean id="ds" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
 		<property name="driverClass" value="${hibernate.connection.driver_class}" />
 		<property name="jdbcUrl" value="${hibernate.connection.url}" />
@@ -62,6 +71,7 @@
 	</bean>
 
 	<bean id="recordingsDao" class="net.urlgrey.mythpodcaster.dao.MythRecordingsDAOImpl">
+		<property name="cache" ref="recordingDirectoriesCache"></property>
 	</bean>
 
 	<bean id="transcodingProfilesDao" class="net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAOImpl">

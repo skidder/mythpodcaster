@@ -34,14 +34,19 @@ import net.urlgrey.mythpodcaster.domain.Channel;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
 
 public class MythRecordingsDAOImpl implements MythRecordingsDAO {
+
+	private static final String RECORDING_DIRECTORIES_CACHE_LABEL = "recording.directories";
 
 	protected static final Logger LOGGER = Logger.getLogger(MythRecordingsDAOImpl.class);
 
 	@PersistenceContext
 	private EntityManager entityManager;
+
+    private CacheWrapper<String, List<String>> cache;
 
 
 	/* (non-Javadoc)
@@ -116,10 +121,14 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 	 */
 	@Override
 	public List<String> findRecordingDirectories() {
-		final Query nativeQuery = entityManager.createNativeQuery("SELECT DISTINCT dirname FROM storagegroup");
-		nativeQuery.setHint("org.hibernate.comment", "MythPodcaster: findRecordingDirectories");
+        List<String> resultsList;
+		if ((resultsList = cache.get(RECORDING_DIRECTORIES_CACHE_LABEL)) == null) {
+        	final Query nativeQuery = entityManager.createNativeQuery("SELECT DISTINCT dirname FROM storagegroup");
+        	nativeQuery.setHint("org.hibernate.comment", "MythPodcaster: findRecordingDirectories");
 
-		final List<String> resultsList = nativeQuery.getResultList();
+        	resultsList = nativeQuery.getResultList();
+            cache.put(RECORDING_DIRECTORIES_CACHE_LABEL, resultsList);
+		}
 		return resultsList;
 	}
 
@@ -131,4 +140,8 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 		return entityManager;
 	}
 
+    @Required
+    public void setCache(CacheWrapper<String, List<String>> cache) {
+        this.cache = cache;
+    }
 }
