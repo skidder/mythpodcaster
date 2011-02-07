@@ -334,9 +334,11 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 						if (program.getCategory() != null) {
 							itunesEntryMetadata.setKeywords(new String[] {program.getCategory()});
 						}
-						itunesEntryMetadata.setAuthor(channel.getName());
-						entry.getModules().add(itunesEntryMetadata);
+						if (channel != null) {
+							itunesEntryMetadata.setAuthor(channel.getName());
+						}
 
+						entry.getModules().add(itunesEntryMetadata);
 
 						// include Media RSS metadata
 						final MediaContent[] contents = new MediaContent[1];
