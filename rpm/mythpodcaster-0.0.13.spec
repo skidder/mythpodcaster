@@ -76,11 +76,14 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 
 %changelog
-* Wed Dec 08 2010 <kidder.scott@gmail.com> - 0.0.13
+* Mon Feb 07 2011 <kidder.scott@gmail.com> - 0.0.13
 Feature:
 44: Cache the Storage Directories from Database
 45: Upgrade to GWT 2.1.0
 46: Removed unused dependencies from Maven POM
+Bugfix:
+48: Latest ffmpeg seems to not work
+49: Transcoding Fails for Programs without Channel Information
 
 * Wed Oct 27 2010 <kidder.scott@gmail.com> - 0.0.12
 Feature:

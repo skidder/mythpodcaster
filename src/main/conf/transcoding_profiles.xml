@@ -177,7 +177,7 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-croptop 4 -vf scale=640:480 -v 1 -y -map 0:0 -map 0:1 -er 4 -f mpegts -acodec libfaac -ac 2 -ab 128k -ar 48000 -deinterlace -vcodec libx264 -b 600k -vpre medium -vpre ipod640 -bt 600k -maxrate 600k -bufsize 600k -level 30 -r 30 -g 90 -async 2 -threads 0</encoderArguments>
+      <encoderArguments>-vf scale=640:480,crop=in_w:in_h-4:(in_w-out_w)/2:4 -v 1 -y -map 0:0 -map 0:1 -er 4 -f mpegts -acodec libfaac -ac 2 -ab 128k -ar 48000 -deinterlace -vcodec libx264 -b 600k -vpre medium -vpre ipod640 -bt 600k -maxrate 600k -bufsize 600k -level 30 -r 30 -g 90 -async 2 -threads 0</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
       <niceness>19</niceness>
@@ -198,7 +198,7 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-croptop 4 -vf scale=640:480 -v 1 -y -map 0:0 -map 0:1 -er 4 -f mpegts -acodec libfaac -ac 2 -ab 128k -ar 48000 -deinterlace -vcodec libx264 -b 400k -vpre medium -vpre ipod640 -bt 400k -maxrate 400k -bufsize 400k -level 30 -r 30 -g 90 -async 2 -threads 0</encoderArguments>
+      <encoderArguments>-vf scale=640:480,crop=in_w:in_h-4:(in_w-out_w)/2:4 -v 1 -y -map 0:0 -map 0:1 -er 4 -f mpegts -acodec libfaac -ac 2 -ab 128k -ar 48000 -deinterlace -vcodec libx264 -b 400k -vpre medium -vpre ipod640 -bt 400k -maxrate 400k -bufsize 400k -level 30 -r 30 -g 90 -async 2 -threads 0</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
       <niceness>19</niceness>
@@ -219,7 +219,7 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-croptop 4 -vf scale=640:480 -v 1 -y -map 0:0 -map 0:1 -er 4 -f mpegts -acodec libfaac -ac 2 -ab 48k -ar 48000 -deinterlace -vcodec libx264 -b 110k -vpre medium -vpre ipod640 -bt 110k -maxrate 110k -bufsize 110k -level 30 -r 10 -g 30 -async 2 -threads 0</encoderArguments>
+      <encoderArguments>-vf scale=640:480,crop=in_w:in_h-4:(in_w-out_w)/2:4 -v 1 -y -map 0:0 -map 0:1 -er 4 -f mpegts -acodec libfaac -ac 2 -ab 48k -ar 48000 -deinterlace -vcodec libx264 -b 110k -vpre medium -vpre ipod640 -bt 110k -maxrate 110k -bufsize 110k -level 30 -r 10 -g 30 -async 2 -threads 0</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="segmenterTranscoderConfigurationItem">
       <niceness>19</niceness>
@@ -240,7 +240,7 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>7200</timeout>
-      <encoderArguments>-croptop 4 -vf scale=640:480 -v 1 -y -map 0:0 -map 0:1 -er 4 -f ipod -acodec libfaac -ac 2 -ab 128k -ar 48000 -deinterlace -vcodec libx264 -vpre medium -vpre main -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -async 2 -threads 0</encoderArguments>
+      <encoderArguments>-vf scale=640:480,crop=in_w:in_h-4:(in_w-out_w)/2:4 -v 1 -y -map 0:0 -map 0:1 -er 4 -f ipod -acodec libfaac -ac 2 -ab 128k -ar 48000 -deinterlace -vcodec libx264 -vpre medium -vpre main -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -async 2 -threads 0</encoderArguments>
     </transcoderConfigurationItems>
     <mode>ONE_PASS</mode>
     <encodingFileExtension>.m4v</encodingFileExtension>
@@ -266,12 +266,12 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>14400</timeout>
-      <encoderArguments>-croptop 4 -vf scale=640:480 -v 1 -y -map 0:0 -er 4 -f ipod -pass 1 -deinterlace -vcodec libx264 -vpre medium_firstpass -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -an -threads 0</encoderArguments>
+      <encoderArguments>-vf scale=640:480,crop=in_w:in_h-4:(in_w-out_w)/2:4 -v 1 -y -map 0:0 -er 4 -f ipod -pass 1 -deinterlace -vcodec libx264 -vpre medium_firstpass -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -an -threads 0</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>14400</timeout>
-      <encoderArguments>-croptop 4 -vf scale=640:480 -v 1 -y -map 0:0 -map 0:1 -er 4 -f ipod -pass 2 -acodec libfaac -ac 2 -ab 128k -ar 48000 -deinterlace -vcodec libx264 -vpre medium -vpre main -flags2 +mixed_refs -trellis 1 -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -async 2 -threads 0</encoderArguments>
+      <encoderArguments>-vf scale=640:480,crop=in_w:in_h-4:(in_w-out_w)/2:4 -v 1 -y -map 0:0 -map 0:1 -er 4 -f ipod -pass 2 -acodec libfaac -ac 2 -ab 128k -ar 48000 -deinterlace -vcodec libx264 -vpre medium -vpre main -flags2 +mixed_refs -trellis 1 -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -async 2 -threads 0</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="fastStartTranscoderConfigurationItem">
       <niceness>19</niceness>
@@ -288,12 +288,12 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>14400</timeout>
-      <encoderArguments>-croptop 4 -vf scale=640:480 -v 1 -y -map 0:0 -er 4 -f ipod -pass 1 -deinterlace -vcodec libx264 -vpre superfast_firstpass -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -an -threads 0</encoderArguments>
+      <encoderArguments>-vf scale=640:480,crop=in_w:in_h-4:(in_w-out_w)/2:4 -v 1 -y -map 0:0 -er 4 -f ipod -pass 1 -deinterlace -vcodec libx264 -vpre superfast_firstpass -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -an -threads 0</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>14400</timeout>
-      <encoderArguments>-croptop 4 -vf scale=640:480 -v 1 -y -map 0:0 -map 0:1 -er 4 -f ipod -pass 2 -acodec libfaac -ac 2 -ab 128k -ar 48000 -deinterlace -vcodec libx264 -vpre superfast -vpre main -flags2 +mixed_refs -trellis 1 -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -async 2 -threads 0</encoderArguments>
+      <encoderArguments>-vf scale=640:480,crop=in_w:in_h-4:(in_w-out_w)/2:4 -v 1 -y -map 0:0 -map 0:1 -er 4 -f ipod -pass 2 -acodec libfaac -ac 2 -ab 128k -ar 48000 -deinterlace -vcodec libx264 -vpre superfast -vpre main -flags2 +mixed_refs -trellis 1 -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -async 2 -threads 0</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="fastStartTranscoderConfigurationItem">
       <niceness>19</niceness>
@@ -332,12 +332,12 @@
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>14400</timeout>
-      <encoderArguments>-croptop 4 -vf scale=640:480 -v 1 -y -map 0:0 -er 4 -f ipod -pass 1 -deinterlace -vcodec libx264 -vpre slow_firstpass -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -an -threads 0</encoderArguments>
+      <encoderArguments>-vf scale=640:480,crop=in_w:in_h-4:(in_w-out_w)/2:4 -v 1 -y -map 0:0 -er 4 -f ipod -pass 1 -deinterlace -vcodec libx264 -vpre slow_firstpass -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -an -threads 0</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ffMpegTranscoderConfigurationItem">
       <niceness>19</niceness>
       <timeout>14400</timeout>
-      <encoderArguments>-croptop 4 -vf scale=640:480 -v 1 -y -map 0:0 -map 0:1 -er 4 -f ipod -pass 2 -acodec libfaac -ac 2 -ab 128k -ar 48000 -deinterlace -vcodec libx264 -vpre slow -vpre main -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -async 2 -threads 0</encoderArguments>
+      <encoderArguments>-vf scale=640:480,crop=in_w:in_h-4:(in_w-out_w)/2:4 -v 1 -y -map 0:0 -map 0:1 -er 4 -f ipod -pass 2 -acodec libfaac -ac 2 -ab 128k -ar 48000 -deinterlace -vcodec libx264 -vpre slow -vpre main -b 1200k -bt 1200k -maxrate 1200k -bufsize 1200k -level 30 -r 30 -g 90 -async 2 -threads 0</encoderArguments>
     </transcoderConfigurationItems>
     <transcoderConfigurationItems xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="fastStartTranscoderConfigurationItem">
       <niceness>19</niceness>
