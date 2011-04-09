@@ -51,7 +51,9 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 		TWO_PASS_FAST_START, 
 		HTTP_SEGMENTED_VOD, 
 		USER_DEFINED,
-		SYMBOLIC_LINK }
+		SYMBOLIC_LINK, 
+		ONE_PASS_HTTP_SEGMENTED_VOD, 
+		TWO_PASS_HTTP_SEGMENTED_VOD }
 
 	private String id;
 	private String displayName;
@@ -82,6 +84,8 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 			outputFile = new File(encodingDirectory, programKey + this.encodingFileExtension);
 			break;
 		case HTTP_SEGMENTED_VOD:
+		case ONE_PASS_HTTP_SEGMENTED_VOD:
+		case TWO_PASS_HTTP_SEGMENTED_VOD:
 			SegmenterTranscoderConfigurationItem segmenterConfig = (SegmenterTranscoderConfigurationItem) this.transcoderConfigurationItems.get(1);
 
 			File outputDirectory = new File(encodingDirectory, programKey);
@@ -104,7 +108,10 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 	public String generateOutputFileURL(URL applicationURL, File outputFile) {
 		final String link;
 
-		if (mode == TranscoderType.HTTP_SEGMENTED_VOD) {
+		if (mode == TranscoderType.HTTP_SEGMENTED_VOD ||
+				mode == TranscoderType.ONE_PASS_HTTP_SEGMENTED_VOD ||
+				mode == TranscoderType.TWO_PASS_HTTP_SEGMENTED_VOD) 
+		{
 			link = applicationURL.toExternalForm() + PATH_SEPARATOR + this.id + PATH_SEPARATOR + outputFile.getParentFile().getName() + PATH_SEPARATOR + outputFile.getName();
 		} else {
 			link = applicationURL.toExternalForm() + PATH_SEPARATOR + this.id + PATH_SEPARATOR + outputFile.getName();
@@ -119,7 +126,10 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 	 * @param uid
 	 */
 	public void deleteEncoding(String feedFilePath, String url, String uid) {
-		if (mode == TranscoderType.HTTP_SEGMENTED_VOD) {
+		if (mode == TranscoderType.HTTP_SEGMENTED_VOD ||
+				mode == TranscoderType.ONE_PASS_HTTP_SEGMENTED_VOD ||
+				mode == TranscoderType.TWO_PASS_HTTP_SEGMENTED_VOD) 
+		{
 			final File encodingDir = new File(feedFilePath, this.id);
 			final File entryDir = new File(encodingDir, uid);
 

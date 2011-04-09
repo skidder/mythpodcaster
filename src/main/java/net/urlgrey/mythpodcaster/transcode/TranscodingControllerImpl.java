@@ -66,7 +66,11 @@ public class TranscodingControllerImpl implements TranscodingController {
 			encodeFastStart(profile, outputFile);
 			break;
 		case HTTP_SEGMENTED_VOD:
-			encodeSegmented(profile, inputFile, outputFile);
+		case ONE_PASS_HTTP_SEGMENTED_VOD:
+			encodeOnePassSegmented(profile, inputFile, outputFile);
+			break;
+		case TWO_PASS_HTTP_SEGMENTED_VOD:
+			encodeTwoPassSegmented(profile, inputFile, outputFile);
 			break;
 		case USER_DEFINED:
 			encodeUserDefined(profile, inputFile, outputFile);
@@ -189,10 +193,10 @@ public class TranscodingControllerImpl implements TranscodingController {
 	}
 
 
-	private void encodeSegmented(TranscodingProfile profile, File inputFile,
+	private void encodeOnePassSegmented(TranscodingProfile profile, File inputFile,
 			File outputFile) throws Exception {
 
-		LOGGER.info("Starting segmented vod encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
+		LOGGER.info("Starting one-pass segmented vod encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
 		File workingDirectory = FileOperations.createTempDir();		
 		File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
 
@@ -214,6 +218,36 @@ public class TranscodingControllerImpl implements TranscodingController {
 		}
 	}
 
+
+	private void encodeTwoPassSegmented(TranscodingProfile profile, File inputFile,
+			File outputFile) throws Exception {
+
+		LOGGER.info("Starting two-pass segmented vod encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
+		File workingDirectory = FileOperations.createTempDir();
+		File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
+
+		try {
+			final GenericTranscoderConfigurationItem pass1Config = profile.getTranscoderConfigurationItems().get(0);
+			ffmpegTranscoder.transcode(workingDirectory, pass1Config, inputFile, tempOutputFile);
+
+			final GenericTranscoderConfigurationItem pass2Config = profile.getTranscoderConfigurationItems().get(1);
+			ffmpegTranscoder.transcode(workingDirectory, pass2Config, inputFile, tempOutputFile);
+
+			final GenericTranscoderConfigurationItem segmentedVodConfig = profile.getTranscoderConfigurationItems().get(2);
+			segmentedVodTranscoder.transcode(workingDirectory, segmentedVodConfig, tempOutputFile, outputFile);
+		} catch (Exception e) {
+			FileOperations.deleteDir(outputFile.getParentFile());
+			throw e;
+		} finally {
+			FileOperations.deleteDir(workingDirectory);
+
+			if (tempOutputFile.exists()) {
+				tempOutputFile.delete();
+			}
+		}
+	}
+
+	
 	@Required
 	public void setFfmpegTranscoder(Transcoder ffmpegTranscoder) {
 		this.ffmpegTranscoder = ffmpegTranscoder;

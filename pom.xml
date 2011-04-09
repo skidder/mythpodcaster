@@ -5,7 +5,7 @@
 	<artifactId>MythPodcaster</artifactId>
 	<packaging>war</packaging>
 	<name>mythpodcaster</name>
-	<version>0.0.13</version>
+	<version>0.0.14</version>
 	<licenses>
 		<license>
 			<name>GNU General Public License (GPL)</name>

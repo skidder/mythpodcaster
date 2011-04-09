@@ -1,5 +1,5 @@
 Name:		mythpodcaster
-Version:	0.0.13
+Version:	0.0.14
 Release:	1%{?dist}
 Summary:	A Java web application that transcodes MythTV recordings and publishes them through RSS feeds.
 
