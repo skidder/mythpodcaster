@@ -86,7 +86,7 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 		case HTTP_SEGMENTED_VOD:
 		case ONE_PASS_HTTP_SEGMENTED_VOD:
 		case TWO_PASS_HTTP_SEGMENTED_VOD:
-			SegmenterTranscoderConfigurationItem segmenterConfig = (SegmenterTranscoderConfigurationItem) this.transcoderConfigurationItems.get(1);
+			SegmenterTranscoderConfigurationItem segmenterConfig = (SegmenterTranscoderConfigurationItem) this.transcoderConfigurationItems.get(this.transcoderConfigurationItems.size() - 1);
 
 			File outputDirectory = new File(encodingDirectory, programKey);
 			outputDirectory.mkdirs();
