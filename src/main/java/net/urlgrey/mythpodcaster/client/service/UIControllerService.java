@@ -37,6 +37,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("uiController.rpc")
 public interface UIControllerService extends RemoteService {
+	static final String UNRECOGNIZED_PROFILE_LABEL = "Unrecognized Profile";
 
 	List<FeedSubscriptionItemDTO> findSubscriptions();
 

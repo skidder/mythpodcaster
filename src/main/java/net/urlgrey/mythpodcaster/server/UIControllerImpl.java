@@ -147,7 +147,15 @@ public class UIControllerImpl implements UIControllerService {
 			dto.setSeriesId(item.getSeriesId());
 			dto.setTranscodeProfile(item.getTranscodeProfile());
 			final TranscodingProfile transcodingProfile = profiles.get(item.getTranscodeProfile());
-			dto.setTranscodeProfileDisplayName(transcodingProfile.getDisplayName());
+
+			// handle the case where a subscription exists for a transcoding profile that's not 
+			// found in the transcoding profiles configuration.  By including the subscription in the UI
+			// we can allow for the subscription to be deleted.
+			if (transcodingProfile != null) {
+			    dto.setTranscodeProfileDisplayName(transcodingProfile.getDisplayName());
+			} else {
+			    dto.setTranscodeProfileDisplayName(UNRECOGNIZED_PROFILE_LABEL + " (" + item.getTranscodeProfile() + ")");
+			}
 			results.add(dto);
 		}
 

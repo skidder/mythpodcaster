@@ -120,9 +120,14 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 					subscriptionsTable.setWidget(i, 1, new HTML("<a target=_blank href=\"" + applicationUrl + "/" + item.getTranscodeProfile() + "/" + seriesId + ".rss\">Feed</a>"));
 					subscriptionsTable.setWidget(i, 2, new HTML("<a target=_blank href=\"" + applicationUrl + "/" + item.getTranscodeProfile() + "/" + seriesId + ".html\">HTML</a>"));
 
-					final Button editButton = new Button("Edit");
-					editButton.addClickHandler(new AddSubscriptionHandler(parent, item.getTranscodeProfile(), seriesId, seriesTitle));
-					subscriptionsTable.setWidget(i, 3, editButton);
+					// allow editing of the subscription only if it's a recognized transcoding profile
+					if ((item.getTranscodeProfileDisplayName() != null) && 
+						(false == item.getTranscodeProfileDisplayName().startsWith(UIControllerService.UNRECOGNIZED_PROFILE_LABEL))) 
+					{
+        					final Button editButton = new Button("Edit");
+        					editButton.addClickHandler(new AddSubscriptionHandler(parent, item.getTranscodeProfile(), seriesId, seriesTitle));
+        					subscriptionsTable.setWidget(i, 3, editButton);
+					}
 
 					final Button unsubscribeButton = new Button("Unsubscribe");
 					unsubscribeButton.addClickHandler(new UnsubscribeHandler(parent, seriesId, item.getTranscodeProfile()));
