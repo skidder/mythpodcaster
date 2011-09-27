@@ -44,6 +44,7 @@ import net.urlgrey.mythpodcaster.domain.Channel;
 import net.urlgrey.mythpodcaster.domain.RecordedProgram;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
+import net.urlgrey.mythpodcaster.xml.TranscodingProfile.TranscoderType;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -176,7 +177,20 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 						encUrl = encUrl.substring(encUrl.lastIndexOf('/')+1);
 
 						final TranscodingProfile profile = transcodingProfilesDao.findAllProfiles().get(transcodingProfileId);
-						profile.deleteEncoding(this.feedFilePath, enclosure.getUrl(), entry.getUri());
+						if (profile != null) {
+							profile.deleteEncoding(this.feedFilePath, enclosure.getUrl(), entry.getUri());
+						} else {
+							// fabricate a profile for the purpose of deleting the encoding output
+							final TranscodingProfile fakeProfile = new TranscodingProfile();
+							fakeProfile.setId(transcodingProfileId);
+							if (enclosure.getUrl().endsWith(".m3u8")) {
+								fakeProfile.setMode(TranscoderType.ONE_PASS_HTTP_SEGMENTED_VOD);
+							} else {
+								fakeProfile.setMode(TranscoderType.ONE_PASS);								
+							}
+
+							fakeProfile.deleteEncoding(this.feedFilePath, enclosure.getUrl(), entry.getUri());
+						}
 					}
 				} else {
 					LOGGER.debug("No enclosures specified in the entry, continuing");

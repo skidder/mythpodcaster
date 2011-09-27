@@ -126,11 +126,12 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 	 * @param uid
 	 */
 	public void deleteEncoding(String feedFilePath, String url, String uid) {
+		final File encodingDir = new File(feedFilePath, this.id);
+
 		if (mode == TranscoderType.HTTP_SEGMENTED_VOD ||
 				mode == TranscoderType.ONE_PASS_HTTP_SEGMENTED_VOD ||
 				mode == TranscoderType.TWO_PASS_HTTP_SEGMENTED_VOD) 
 		{
-			final File encodingDir = new File(feedFilePath, this.id);
 			final File entryDir = new File(encodingDir, uid);
 
 			for (File child : entryDir.listFiles()) {
@@ -140,7 +141,6 @@ public class TranscodingProfile implements Comparable<TranscodingProfile> {
 			LOGGER.debug("Deleted encoding directory: " + entryDir.getPath());
 		} else {
 			final String encodingFileName = url.substring(url.lastIndexOf(PATH_SEPARATOR)+1);
-			final File encodingDir = new File(feedFilePath, this.id);
 			final File encodingFile = new File(encodingDir, encodingFileName);
 			encodingFile.delete();
 			LOGGER.debug("Deleted encoding file: " + encodingFile.getPath());
