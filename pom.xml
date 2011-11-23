@@ -172,7 +172,8 @@
       <url>http://nexus.codehaus.org/snapshots</url>
       <snapshots><enabled>true</enabled></snapshots>
       <releases><enabled>false</enabled></releases>
-  </pluginRepository>	</pluginRepositories>
+    </pluginRepository>
+  </pluginRepositories>
   <build>
     <plugins>
       <!-- Run this by: hibernate3:hbm2ddl -->
