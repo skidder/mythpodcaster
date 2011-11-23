@@ -1,6 +1,23 @@
 Release Notes
 --------------------------
 
+Tue Nov 22 2011 <kidder.scott@gmail.com> - 0.0.14
+Feature:
+51: Add Two-Pass Segmented Encoding Transcoder Option
+54: No longer package GWT Libraries with source package
+55: Generate RPM using Maven, not the RPM Spec
+Bugfix:
+53: Existing Subscriptions are not visible in Web UI when one of the Subscription uses an unknown encoding
+
+* Wed Feb 09 2011 <kidder.scott@gmail.com> - 0.0.13
+Feature:
+44: Cache the Storage Directories from Database
+45: Upgrade to GWT 2.1.1
+46: Removed unused dependencies from Maven POM
+Bugfix:
+48: Latest ffmpeg seems to not work
+49: Transcoding Fails for Programs without Channel Information
+
 * Wed Oct 27 2010 <kidder.scott@gmail.com> - 0.0.12
 Feature:
 37: Generate RSS Files that use Media RSS Extensions
