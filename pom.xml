@@ -5,7 +5,7 @@
   <artifactId>MythPodcaster</artifactId>
   <packaging>war</packaging>
   <name>mythpodcaster</name>
-  <version>0.0.14</version>
+  <version>0.0.15</version>
   <licenses>
     <license>
       <name>GNU General Public License (GPL)</name>
@@ -253,7 +253,7 @@
         <configuration>
 	  <name>mythpodcaster</name>
 	  <group>Applications/Multimedia</group>
-	  <license>2009-2011</license>
+	  <license>2009-2012</license>
 	  <copyright>GPLv3</copyright>
 	  <description>A Java web application that transcodes MythTV recordings and publishes them through RSS feeds.</description>
           <mappings>
