@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 
 import net.urlgrey.mythpodcaster.client.FeedSubscriptionItemDTO;
 import net.urlgrey.mythpodcaster.client.RecordedSeriesDTO;
@@ -257,7 +258,8 @@ public class UIControllerImpl implements UIControllerService {
 
 		if (status.getMode() == StatusMode.IDLE) {
 			try {
-				Trigger trigger = scheduler.getTrigger(triggerName, triggerGroup);
+				TriggerKey triggerKey = new TriggerKey(triggerName, triggerGroup);
+				Trigger trigger = scheduler.getTrigger(triggerKey);
 				dto.setNextTriggerStart(trigger.getNextFireTime());
 			} catch (SchedulerException e) {
 				LOGGER.warn("Unable to find Quartz trigger for job", e);
