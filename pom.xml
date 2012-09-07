@@ -30,7 +30,7 @@
 	</developers>
 
 	<properties>
-		<gwt.version>2.4.0</gwt.version>
+		<gwt.version>2.5.0-rc1</gwt.version>
 		<mysql.version>5.1.21</mysql.version>
 		<spring.version>2.5.6.SEC03</spring.version>
 	</properties>
@@ -152,6 +152,11 @@
 			<version>3.2.1</version>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
@@ -239,7 +244,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
-				<version>${gwt.version}-SNAPSHOT</version>
+				<version>${gwt.version}</version>
 				<executions>
 					<execution>
 						<configuration>

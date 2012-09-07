@@ -52,6 +52,7 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 	/* (non-Javadoc)
 	 * @see net.urlgrey.mythpodcaster.dao.MythRecordingsDAO#findAllRecordedSeries()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(readOnly=true)
 	public List<RecordedSeries> findAllRecordedSeries() {
@@ -64,6 +65,7 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 	/* (non-Javadoc)
 	 * @see net.urlgrey.mythpodcaster.dao.MythRecordingsDAO#findRecordedSeries(java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(readOnly=true)
 	public RecordedSeries findRecordedSeries(String seriesId) {
@@ -86,6 +88,7 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 	/* (non-Javadoc)
 	 * @see net.urlgrey.mythpodcaster.dao.MythRecordingsDAO#findRecordedSeries(java.lang.String, int)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(readOnly=true)
 	public RecordedSeries findRecordedSeries(String seriesId,
@@ -119,6 +122,7 @@ public class MythRecordingsDAOImpl implements MythRecordingsDAO {
 	/* (non-Javadoc)
 	 * @see net.urlgrey.mythpodcaster.dao.MythRecordingsDAO#findRecordingDirectories()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findRecordingDirectories() {
         List<String> resultsList;

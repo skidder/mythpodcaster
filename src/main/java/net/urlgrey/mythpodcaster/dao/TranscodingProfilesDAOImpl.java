@@ -54,6 +54,7 @@ public class TranscodingProfilesDAOImpl extends AbstractFileBasedDAO implements 
 	private String transcodingProfilesFilePath;
 	private JAXBContext jaxbContext;
 
+	@SuppressWarnings("rawtypes")
 	public TranscodingProfilesDAOImpl() {
 		try {
 			final Class[] jaxbClasses = new Class[] {TranscodingProfile.class, 

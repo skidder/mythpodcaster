@@ -160,7 +160,7 @@ public class AddSubscriptionHandler implements ClickHandler {
 							@Override
 							public void onSuccess(List<String[]> recordings) {
 								recordingsListBox.clear();
-								final DateTimeFormat format = DateTimeFormat.getMediumDateTimeFormat();
+								final DateTimeFormat format = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM);
 								for (String[] recording : recordings) {
 									Date d = new Date(Long.valueOf(recording[2]));
 									final String recordingTitle = (recording[1] != null && recording[1].trim().length() > 0) ? recording[1] : seriesTitle;
@@ -310,7 +310,7 @@ public class AddSubscriptionHandler implements ClickHandler {
 									@Override
 									public void onSuccess(List<String[]> recordings) {
 										recordingsListBox.clear();
-										final DateTimeFormat format = DateTimeFormat.getMediumDateTimeFormat();
+										final DateTimeFormat format = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM);
 										int i=0;
 										for (String[] recording : recordings) {
 											Date d = new Date(Long.valueOf(recording[2]));

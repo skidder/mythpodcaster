@@ -54,7 +54,7 @@ public class StatusPanel extends Composite {
 	private Label transcodingProgramNameValueLabel;
 	private Label transcodingProgramEpisodeNameLabel;
 	private Label transcodingProgramEpisodeNameValueLabel;
-	private DateTimeFormat dateFormatter = DateTimeFormat.getMediumDateTimeFormat();
+	private DateTimeFormat dateFormatter = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM);
 	private Timer timer;
 
 	/**

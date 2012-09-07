@@ -74,6 +74,7 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 		this.feed = feed;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void run() {
 		boolean feedUpdated = false;

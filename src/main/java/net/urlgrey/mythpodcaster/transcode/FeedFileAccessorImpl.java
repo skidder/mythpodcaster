@@ -46,6 +46,7 @@ import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
 import net.urlgrey.mythpodcaster.xml.TranscodingProfile.TranscoderType;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -142,6 +143,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 	 * @param transcodingProfileId
 	 * @param feed 
 	 */
+	@SuppressWarnings("rawtypes")
 	public void purgeFeed(String seriesId, String transcodingProfileId, SyndFeed feed) {
 		final File encodingDirectory = new File(feedFilePath, transcodingProfileId);
 
@@ -243,6 +245,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 	 * @param feed
 	 * @param transcoderProfile
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addProgramToFeed(RecordedSeries series, RecordedProgram program, Channel channel, SyndFeed feed, String transcodingProfileId) {
 		LOGGER.info("Transcoding new feed entry: programId[" + program.getProgramId() + "], key[" +  program.getKey() + "], title[" + program.getTitle() + "], channel[" + (channel != null ? channel.getName() : "") + "], transcodingProfileId[" + transcodingProfileId + "]");
 		final SyndEntryImpl entry = new SyndEntryImpl();
@@ -391,11 +394,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 				LOGGER.error(msg);
 			}
 		} else {
-			if (originalClip != null) {
-				LOGGER.warn("Original clip does not exist or cannot be read: " + originalClip.getAbsolutePath());
-			} else {
-				LOGGER.warn("Original clip could not be found in content paths");
-			}
+			LOGGER.warn("Original clip could not be found in content paths");
 			entry.setLink(null);
 		}
 
@@ -404,31 +403,41 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 
 
 	public File generateTransformationFromFeed(File feedFile, SyndFeed feed, String seriesId) throws IOException {
-		final InputStream transform;
-		if (feedTransformationTemplateFile.canRead()) {
-			transform = new FileInputStream(feedTransformationTemplateFile);
-		} else {
-			transform = this.getClass().getResourceAsStream(DEFAULT_FEED_TRANSFORMATION_TEMPLATE_XSLT);
-			if (transform == null) {
-				LOGGER.warn("Feed Transformation template could not be found on classpath, skipping");
-				return null;
-			}
-		}
+		InputStream transform = null;
+		final File transformedOutputFile;
 
-		final File transformedOutputFile = new File(feedFile.getParentFile(), seriesId + feedTransformationOutputFileExtension);
 		try {
-			// Create a transform factory instance.
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			FileOutputStream fileOutputStream = new FileOutputStream(transformedOutputFile);
-			// Create a transformer for the stylesheet.
-			Transformer transformer = transformerFactory.newTransformer(new StreamSource(transform));
-			transformer.transform(new StreamSource(new FileInputStream(feedFile)), new StreamResult(fileOutputStream));
-			fileOutputStream.close();
-		} catch (Exception e) {
-			LOGGER.error("Error while applying XSLT to the feed", e);
-			throw new IOException("Error while applying XSLT to the feed");
+			if (feedTransformationTemplateFile.canRead()) {
+				transform = new FileInputStream(feedTransformationTemplateFile);
+			} else {
+				transform = this.getClass().getResourceAsStream(
+						DEFAULT_FEED_TRANSFORMATION_TEMPLATE_XSLT);
+				if (transform == null) {
+					LOGGER.warn("Feed Transformation template could not be found on classpath, skipping");
+					return null;
+				}
+			}
+			transformedOutputFile = new File(feedFile.getParentFile(), seriesId
+					+ feedTransformationOutputFileExtension);
+			try {
+				// Create a transform factory instance.
+				TransformerFactory transformerFactory = TransformerFactory
+						.newInstance();
+				FileOutputStream fileOutputStream = new FileOutputStream(
+						transformedOutputFile);
+				// Create a transformer for the stylesheet.
+				Transformer transformer = transformerFactory
+						.newTransformer(new StreamSource(transform));
+				transformer.transform(new StreamSource(new FileInputStream(
+						feedFile)), new StreamResult(fileOutputStream));
+				fileOutputStream.close();
+			} catch (Exception e) {
+				LOGGER.error("Error while applying XSLT to the feed", e);
+				throw new IOException("Error while applying XSLT to the feed");
+			}
+		} finally {
+			IOUtils.closeQuietly(transform);
 		}
-
 		return transformedOutputFile;
 	}
 

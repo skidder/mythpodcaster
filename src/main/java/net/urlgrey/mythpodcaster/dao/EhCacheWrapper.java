@@ -47,7 +47,8 @@ public class EhCacheWrapper<K, V> implements CacheWrapper<K, V>
         getCache().put(new Element(key, value));
     }
 
-    public V get(final K key) 
+    @SuppressWarnings("unchecked")
+	public V get(final K key) 
     {
         Element element = getCache().get(key);
         if (element != null) {

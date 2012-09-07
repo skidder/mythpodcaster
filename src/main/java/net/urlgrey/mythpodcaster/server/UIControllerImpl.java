@@ -131,6 +131,7 @@ public class UIControllerImpl implements UIControllerService {
 		return resultList;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public List<FeedSubscriptionItemDTO> findSubscriptionsForSeries(
 			String seriesId) {
