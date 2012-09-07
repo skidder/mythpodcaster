@@ -307,6 +307,7 @@
 
 						<mapping>
 							<directory>/var/mythpodcaster/rss</directory>
+							<directoryIncluded>true</directoryIncluded>
 							<filemode>755</filemode>
 							<username>tomcat</username>
 							<groupname>tomcat</groupname>
