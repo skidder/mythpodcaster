@@ -104,8 +104,8 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 					// This can be determine by comparing the program end-time with the current time (the comparison must use the same timezone for both dates)
 					// See http://code.google.com/p/mythpodcaster/issues/detail?id=65
 					final GregorianCalendar programCal = new GregorianCalendar();
-					programCal.setTime(program.getEndTime());
-					final GregorianCalendar localTimeCal = new GregorianCalendar(programCal.getTimeZone());
+					programCal.setTimeInMillis(program.getEndTime().getTime());
+					final GregorianCalendar localTimeCal = new GregorianCalendar();
 					if (programCal.before(localTimeCal)) {
 						LOGGER.debug("Skipping recorded program, end-time is in future (still recording): programId[" + program.getProgramId() + "]");
 						continue;
