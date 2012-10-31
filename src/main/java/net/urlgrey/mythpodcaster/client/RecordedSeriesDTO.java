@@ -32,6 +32,7 @@ public class RecordedSeriesDTO implements IsSerializable {
 	private String title;
 	private String seriesId;
 	private boolean active = false;
+	private String sortTitle;
 
 	public RecordedSeriesDTO() {
 	}
@@ -45,6 +46,7 @@ public class RecordedSeriesDTO implements IsSerializable {
 	}
 	public void setTitle(String title) {
 		this.title = title;
+		this.sortTitle = removeIgnoredPrefixes(title);
 	}
 	public String getSeriesId() {
 		return seriesId;
@@ -57,6 +59,24 @@ public class RecordedSeriesDTO implements IsSerializable {
 	}
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public String getSortTitle() {
+		return sortTitle;
+	}
+
+	/**
+	 * Removes prefixes from the sortTitle field that ought to be ignored.
+	 * 
+	 * @param title
+	 * @return
+	 */
+	private String removeIgnoredPrefixes(String title) {
+		if (title != null) {
+			return this.title.replaceAll("^(?i)the ", "").replaceAll("^(?i)an ", "").replaceAll("^(?i)a  ", "");
+		}
+		
+		return null;
 	}
 
 	/* (non-Javadoc)

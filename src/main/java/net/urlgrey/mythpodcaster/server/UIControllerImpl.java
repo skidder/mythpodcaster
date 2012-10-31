@@ -120,11 +120,11 @@ public class UIControllerImpl implements UIControllerService {
 
 			@Override
 			public int compare(RecordedSeriesDTO o1, RecordedSeriesDTO o2) {
-				if (o1 == null || o1.getTitle() == null) {
+				if (o1 == null || o1.getSortTitle() == null) {
 					return -1;
 				}
 
-				return o1.getTitle().compareTo(o2.getTitle());
+				return o1.getSortTitle().compareTo(o2.getSortTitle());
 			}
 		});
 
