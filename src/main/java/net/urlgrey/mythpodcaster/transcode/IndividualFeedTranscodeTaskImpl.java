@@ -27,14 +27,12 @@ import java.io.FileWriter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Required;
 
 import net.urlgrey.mythpodcaster.dao.MythRecordingsDAO;
 import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
@@ -44,6 +42,9 @@ import net.urlgrey.mythpodcaster.domain.RecordedSeries;
 import net.urlgrey.mythpodcaster.xml.FeedSubscriptionItem;
 import net.urlgrey.mythpodcaster.xml.ScopeEnum;
 import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Required;
 
 import com.sun.syndication.feed.synd.SyndEnclosure;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -95,7 +96,17 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 
 			if (series != null) {
 				for (RecordedProgram program : series.getRecordedPrograms()) {
-					if (program.getEndTime() == null || program.getEndTime().after(new Date())) {
+					if (program.getEndTime() == null) {
+						LOGGER.debug("Skipping program, end-time is not set (possibly still recording): programId[" + program.getProgramId() + "]");
+					}
+
+					// We should determine whether the program is finished.
+					// This can be determine by comparing the program end-time with the current time (the comparison must use the same timezone for both dates)
+					// See http://code.google.com/p/mythpodcaster/issues/detail?id=65
+					final GregorianCalendar programCal = new GregorianCalendar();
+					programCal.setTime(program.getEndTime());
+					final GregorianCalendar localTimeCal = new GregorianCalendar(programCal.getTimeZone());
+					if (programCal.before(localTimeCal)) {
 						LOGGER.debug("Skipping recorded program, end-time is in future (still recording): programId[" + program.getProgramId() + "]");
 						continue;
 					}
