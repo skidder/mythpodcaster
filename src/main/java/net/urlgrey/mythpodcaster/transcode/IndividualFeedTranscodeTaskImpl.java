@@ -98,6 +98,7 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 				for (RecordedProgram program : series.getRecordedPrograms()) {
 					if (program.getEndTime() == null) {
 						LOGGER.debug("Skipping program, end-time is not set (possibly still recording): programId[" + program.getProgramId() + "]");
+						continue;
 					}
 
 					// We should determine whether the program is finished.
@@ -106,7 +107,7 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 					final GregorianCalendar programCal = new GregorianCalendar();
 					programCal.setTimeInMillis(program.getEndTime().getTime());
 					final GregorianCalendar localTimeCal = new GregorianCalendar();
-					if (programCal.before(localTimeCal)) {
+					if (programCal.after(localTimeCal)) {
 						LOGGER.debug("Skipping recorded program, end-time is in future (still recording): programId[" + program.getProgramId() + "]");
 						continue;
 					}
