@@ -1,6 +1,16 @@
 Release Notes
 --------------------------
 
+Thu Mar 21 2013 <kidder.scott@gmail.com> - 0.0.15
+Feature:
+58: Upgrade to GWT 2.4.0
+59: Upgrade GWT to 2.5
+Bugfix:
+20: db connection fails without mythtv as password
+60: Input Stream not closed in generateTransformationFromFeed method
+65: Starts transcoding before program ends with myth 0.26 (Timezone related)
+66: Ignore words like 'The' at the start of program titles for the sorting of programs in the Web UI
+
 Tue Nov 22 2011 <kidder.scott@gmail.com> - 0.0.14
 Feature:
 51: Add Two-Pass Segmented Encoding Transcoder Option
