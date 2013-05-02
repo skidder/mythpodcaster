@@ -421,8 +421,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 					+ feedTransformationOutputFileExtension);
 			try {
 				// Create a transform factory instance.
-				TransformerFactory transformerFactory = TransformerFactory
-						.newInstance();
+				TransformerFactory transformerFactory = new net.sf.saxon.TransformerFactoryImpl();
 				FileOutputStream fileOutputStream = new FileOutputStream(
 						transformedOutputFile);
 				// Create a transformer for the stylesheet.
