@@ -349,19 +349,6 @@
 						</mapping>
 
 						<mapping>
-							<directory>/var/mythpodcaster/rss/video-js</directory>
-							<directoryIncluded>true</directoryIncluded>
-							<filemode>0755</filemode>
-							<username>tomcat</username>
-							<groupname>tomcat</groupname>
-							<sources>
-								<source>
-									<location>${basedir}/src/main/conf/video-js</location>
-								</source>
-							</sources>
-						</mapping>
-
-						<mapping>
 							<directory>/usr/share/tomcat6/webapps/MythPodcaster</directory>
 							<directoryIncluded>true</directoryIncluded>
 							<filemode>0755</filemode>

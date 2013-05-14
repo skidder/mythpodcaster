@@ -4,19 +4,12 @@
 		xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		xmlns:fn="http://www.w3.org/2005/xpath-functions"
 		xmlns:dc="http://purl.org/dc/elements/1.1/">
-
-  <xsl:variable name="tz" select="xs:dayTimeDuration(fn:timezone-from-dateTime(fn:current-dateTime()))" />
-
   <xsl:output method="html" />
+  <xsl:variable name="tz" select="xs:dayTimeDuration(fn:timezone-from-dateTime(fn:current-dateTime()))" />
   <xsl:template match="/">
     <html>
       <head>
 	<title><xsl:value-of select="/rss/channel/title"/></title>
-	<link href="../../video-js/video-js.css" rel="stylesheet" />
-	  <script src="../../video-js/video.js"></script>
-	  <script>
-	    videojs.options.flash.swf = "../../video-js/video-js.swf"
-	  </script>
       </head>
       <body>
 	<h2><xsl:value-of select="/rss/channel/title"/></h2>
@@ -29,19 +22,7 @@
 	    <tr><td>Date:</td><td><xsl:value-of select="fn:format-dateTime(fn:adjust-dateTime-to-timezone(dc:date, $tz), '[D] [MNn] [Y] [h]:[m01][PN,*-2] [ZN,*-3]', (), (), 'us')"/></td></tr>
 	    <tr><td>Channel:</td><td><xsl:value-of select="dc:creator"/></td></tr>
 	    <tr><td>Media:</td><td><a><xsl:attribute name="href"><xsl:value-of select="enclosure/@url"/></xsl:attribute>Link</a></td></tr>
-	    <tr><td>Embedded:</td><td>
-		<video class="video-js vjs-default-skin" preload="none">
-		  <xsl:attribute name="id"><xsl:value-of select="guid"/></xsl:attribute>
-		  <xsl:attribute name="data-setup">
-		    <xsl:text disable-output-escaping="yes">{controls: true, autoplay: false}</xsl:text>
-		  </xsl:attribute>
-		  
-		  <source>
-		    <xsl:attribute name="src"><xsl:value-of select="enclosure/@url"/></xsl:attribute>
-		    <xsl:attribute name="type"><xsl:value-of select="enclosure/@type"/></xsl:attribute>
-		  </source>
-		</video>
-	    </td></tr>
+	    <tr><td>Embedded:</td><td><video preload="none"><xsl:attribute name="src"><xsl:value-of select="enclosure/@url"/></xsl:attribute><xsl:attribute name="type"><xsl:value-of select="enclosure/@type"/></xsl:attribute><xsl:attribute name="controls"/></video></td></tr>
 	  </table>
 	  <p/>  
 	  <p/>  
