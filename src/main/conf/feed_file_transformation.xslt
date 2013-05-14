@@ -30,10 +30,10 @@
 	    <tr><td>Channel:</td><td><xsl:value-of select="dc:creator"/></td></tr>
 	    <tr><td>Media:</td><td><a><xsl:attribute name="href"><xsl:value-of select="enclosure/@url"/></xsl:attribute>Link</a></td></tr>
 	    <tr><td>Embedded:</td><td>
-		<video class="video-js vjs-default-skin">
+		<video class="video-js vjs-default-skin" preload="none">
 		  <xsl:attribute name="id"><xsl:value-of select="guid"/></xsl:attribute>
 		  <xsl:attribute name="data-setup">
-		    <xsl:text disable-output-escaping="yes">{"controls": true, "autoplay": false, "preload": "none"}</xsl:text>
+		    <xsl:text disable-output-escaping="yes">{controls: true, autoplay: false}</xsl:text>
 		  </xsl:attribute>
 		  
 		  <source>
