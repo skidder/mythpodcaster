@@ -87,7 +87,7 @@ public class JobHistoryPanel extends RemoteComposite {
 			@Override
 			public String getValue(JobHistoryItemDTO object) {
 				final DateTimeFormat dateFormatter = DateTimeFormat
-						.getFormat(DateTimeFormat.PredefinedFormat.DATE_SHORT);
+						.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM);
 				return dateFormatter.format(object.getStartedAt());
 			}
 		};
@@ -97,7 +97,7 @@ public class JobHistoryPanel extends RemoteComposite {
 			@Override
 			public String getValue(JobHistoryItemDTO object) {
 				final DateTimeFormat dateFormatter = DateTimeFormat
-						.getFormat(DateTimeFormat.PredefinedFormat.DATE_SHORT);
+						.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM);
 				return dateFormatter.format(object.getFinishedAt());
 			}
 		};
