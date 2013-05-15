@@ -22,14 +22,18 @@
  */
 package net.urlgrey.mythpodcaster.client;
 
+import java.util.Comparator;
 import java.util.List;
 
 import net.urlgrey.mythpodcaster.client.service.UIControllerService;
 import net.urlgrey.mythpodcaster.client.service.UIControllerServiceAsync;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -42,6 +46,7 @@ public class JobHistoryPanel extends RemoteComposite {
 
 	private VerticalPanel panel = new VerticalPanel();
 	private CellTable<JobHistoryItemDTO> table = new CellTable<JobHistoryItemDTO>();
+	private HandlerRegistration columnSortHandlerRef;
 
 	/**
 	 * 
@@ -125,6 +130,22 @@ public class JobHistoryPanel extends RemoteComposite {
 
 			@Override
 			public void onSuccess(List<JobHistoryItemDTO> history) {
+				// remove the existing handler, not sure if this is necessary, but the handler is initialized with the list, so...
+				if (columnSortHandlerRef != null)
+					columnSortHandlerRef.removeHandler();
+
+				final ListHandler<JobHistoryItemDTO> listHandler = new ColumnSortEvent.ListHandler<JobHistoryItemDTO>(history);
+				listHandler.setComparator(table.getColumn(4), new Comparator<JobHistoryItemDTO>() {
+					
+					@Override
+					public int compare(JobHistoryItemDTO o1, JobHistoryItemDTO o2) {
+						if (o1.getStartedAt() != null) {
+							return (-1) * o1.getStartedAt().compareTo(o2.getStartedAt());
+						}
+						return -1;
+					}
+				});
+				columnSortHandlerRef = table.addColumnSortHandler(listHandler);
 				table.setRowData(history);
 				table.setVisible(true);
 			}

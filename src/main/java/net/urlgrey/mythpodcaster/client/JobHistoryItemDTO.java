@@ -30,7 +30,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * @author skidder
  *
  */
-public class JobHistoryItemDTO implements IsSerializable, Comparable<JobHistoryItemDTO> {
+public class JobHistoryItemDTO implements IsSerializable {
 	private String transcodingProfileName;
 	private String transcodingProgramEpisodeName;
 	private String transcodingProgramName;
@@ -85,17 +85,5 @@ public class JobHistoryItemDTO implements IsSerializable, Comparable<JobHistoryI
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	@Override
-	public int compareTo(JobHistoryItemDTO arg0) {
-		if (arg0 == null)
-			return -1;
-		
-		if (this.startedAt != null) {
-			return (-1) * this.startedAt.compareTo(arg0.startedAt);
-		}
-
-		return 1;
 	}
 }
