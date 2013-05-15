@@ -86,9 +86,13 @@ public class JobHistoryPanel extends RemoteComposite {
 		TextColumn<JobHistoryItemDTO> startedAtColumn = new TextColumn<JobHistoryItemDTO>() {
 			@Override
 			public String getValue(JobHistoryItemDTO object) {
-				final DateTimeFormat dateFormatter = DateTimeFormat
-						.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
-				return dateFormatter.format(object.getStartedAt());
+				if (object.getStartedAt() != null) {
+					final DateTimeFormat dateFormatter = DateTimeFormat
+							.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
+					return dateFormatter.format(object.getStartedAt());
+				} else {
+					return "";
+				}
 			}
 		};
 		table.addColumn(startedAtColumn, "Start-Time");
@@ -96,9 +100,13 @@ public class JobHistoryPanel extends RemoteComposite {
 		TextColumn<JobHistoryItemDTO> finishedAtColumn = new TextColumn<JobHistoryItemDTO>() {
 			@Override
 			public String getValue(JobHistoryItemDTO object) {
-				final DateTimeFormat dateFormatter = DateTimeFormat
-						.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
-				return dateFormatter.format(object.getFinishedAt());
+				if (object.getFinishedAt() != null) {
+					final DateTimeFormat dateFormatter = DateTimeFormat
+							.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
+					return dateFormatter.format(object.getFinishedAt());
+				} else {
+					return "";
+				}
 			}
 		};
 		table.addColumn(finishedAtColumn, "End-Time");
