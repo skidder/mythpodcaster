@@ -87,7 +87,7 @@ public class JobHistoryPanel extends RemoteComposite {
 			@Override
 			public String getValue(JobHistoryItemDTO object) {
 				final DateTimeFormat dateFormatter = DateTimeFormat
-						.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM);
+						.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
 				return dateFormatter.format(object.getStartedAt());
 			}
 		};
@@ -97,7 +97,7 @@ public class JobHistoryPanel extends RemoteComposite {
 			@Override
 			public String getValue(JobHistoryItemDTO object) {
 				final DateTimeFormat dateFormatter = DateTimeFormat
-						.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM);
+						.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
 				return dateFormatter.format(object.getFinishedAt());
 			}
 		};
@@ -117,16 +117,7 @@ public class JobHistoryPanel extends RemoteComposite {
 
 			@Override
 			public void onSuccess(List<JobHistoryItemDTO> history) {
-
-
-				// Set the total row count. This isn't strictly necessary, but
-				// it affects
-				// paging calculations, so its good habit to keep the row count
-				// up to date.
-				table.setRowCount(history.size(), true);
-
-				// Push the data into the widget.
-				table.setRowData(0, history);
+				table.setRowData(history);
 				table.setVisible(true);
 			}
 
