@@ -28,7 +28,8 @@ import java.util.Date;
 import java.util.List;
 
 import net.urlgrey.mythpodcaster.dao.SubscriptionsDAO;
-import net.urlgrey.mythpodcaster.transcode.StatusBean.StatusMode;
+import net.urlgrey.mythpodcaster.jobs.StatusBean;
+import net.urlgrey.mythpodcaster.jobs.StatusBean.StatusMode;
 import net.urlgrey.mythpodcaster.xml.FeedSubscriptionItem;
 
 import org.apache.log4j.Logger;

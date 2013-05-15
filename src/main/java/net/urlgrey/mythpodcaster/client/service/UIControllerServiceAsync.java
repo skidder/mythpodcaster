@@ -25,6 +25,7 @@ package net.urlgrey.mythpodcaster.client.service;
 import java.util.List;
 
 import net.urlgrey.mythpodcaster.client.FeedSubscriptionItemDTO;
+import net.urlgrey.mythpodcaster.client.JobHistoryItemDTO;
 import net.urlgrey.mythpodcaster.client.RecordedSeriesDTO;
 import net.urlgrey.mythpodcaster.client.StatusDTO;
 
@@ -61,5 +62,7 @@ public interface UIControllerServiceAsync {
 	void retrieveSubscriptionDetails(String seriesId,
 			String transcodingProfile,
 			AsyncCallback<FeedSubscriptionItemDTO> asyncCallback);
+
+	void retrieveJobHistory(AsyncCallback<List<JobHistoryItemDTO>> callback);
 
 }

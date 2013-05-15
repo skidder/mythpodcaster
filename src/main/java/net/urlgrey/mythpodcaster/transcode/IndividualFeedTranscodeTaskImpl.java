@@ -39,6 +39,7 @@ import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.Channel;
 import net.urlgrey.mythpodcaster.domain.RecordedProgram;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
+import net.urlgrey.mythpodcaster.jobs.StatusBean;
 import net.urlgrey.mythpodcaster.xml.FeedSubscriptionItem;
 import net.urlgrey.mythpodcaster.xml.ScopeEnum;
 import net.urlgrey.mythpodcaster.xml.TranscodingProfile;

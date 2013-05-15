@@ -37,6 +37,7 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 
 import net.urlgrey.mythpodcaster.client.FeedSubscriptionItemDTO;
+import net.urlgrey.mythpodcaster.client.JobHistoryItemDTO;
 import net.urlgrey.mythpodcaster.client.RecordedSeriesDTO;
 import net.urlgrey.mythpodcaster.client.StatusDTO;
 import net.urlgrey.mythpodcaster.client.service.UIControllerService;
@@ -45,18 +46,21 @@ import net.urlgrey.mythpodcaster.dao.SubscriptionsDAO;
 import net.urlgrey.mythpodcaster.dao.TranscodingProfilesDAO;
 import net.urlgrey.mythpodcaster.domain.RecordedProgram;
 import net.urlgrey.mythpodcaster.domain.RecordedSeries;
-import net.urlgrey.mythpodcaster.transcode.StatusBean;
-import net.urlgrey.mythpodcaster.transcode.StatusBean.StatusMode;
+import net.urlgrey.mythpodcaster.jobs.JobHistoryCollectionBean;
+import net.urlgrey.mythpodcaster.jobs.JobHistoryItemBean;
+import net.urlgrey.mythpodcaster.jobs.StatusBean;
+import net.urlgrey.mythpodcaster.jobs.StatusBean.StatusMode;
 import net.urlgrey.mythpodcaster.xml.FeedSubscriptionItem;
 import net.urlgrey.mythpodcaster.xml.ScopeEnum;
 import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
 
 /**
  * @author scottkidder
- *
+ * 
  */
 public class UIControllerImpl implements UIControllerService {
-	private static final Logger LOGGER = Logger.getLogger(UIControllerImpl.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(UIControllerImpl.class);
 
 	private SubscriptionsDAO subscriptionsDao;
 	private MythRecordingsDAO recordingsDao;
@@ -66,18 +70,21 @@ public class UIControllerImpl implements UIControllerService {
 	private Scheduler scheduler;
 	private String triggerName;
 	private String triggerGroup;
+	private JobHistoryCollectionBean jobHistory;
 
 	@Override
 	public List<FeedSubscriptionItemDTO> findSubscriptions() {
-		final List <FeedSubscriptionItemDTO> results = new ArrayList<FeedSubscriptionItemDTO>();
-		final Map<String, TranscodingProfile> profiles = transcodingProfilesDao.findAllProfiles();
+		final List<FeedSubscriptionItemDTO> results = new ArrayList<FeedSubscriptionItemDTO>();
+		final Map<String, TranscodingProfile> profiles = transcodingProfilesDao
+				.findAllProfiles();
 
 		for (FeedSubscriptionItem item : subscriptionsDao.findSubscriptions()) {
 			FeedSubscriptionItemDTO dto = new FeedSubscriptionItemDTO();
 			dto.setTitle(item.getTitle());
 			dto.setSeriesId(item.getSeriesId());
 			dto.setTranscodeProfile(item.getTranscodeProfile());
-			dto.setTranscodeProfileDisplayName(profiles.get(item.getTranscodeProfile()).getDisplayName());
+			dto.setTranscodeProfileDisplayName(profiles.get(
+					item.getTranscodeProfile()).getDisplayName());
 			results.add(dto);
 		}
 
@@ -87,7 +94,8 @@ public class UIControllerImpl implements UIControllerService {
 	@Override
 	public List<RecordedSeriesDTO> findAllRecordedSeries() {
 		final Set<RecordedSeriesDTO> results = new HashSet<RecordedSeriesDTO>();
-		final List<FeedSubscriptionItem> subscriptions = subscriptionsDao.findSubscriptions();
+		final List<FeedSubscriptionItem> subscriptions = subscriptionsDao
+				.findSubscriptions();
 
 		// begin with all of the current subscriptions
 		for (FeedSubscriptionItem subscription : subscriptions) {
@@ -95,7 +103,7 @@ public class UIControllerImpl implements UIControllerService {
 			dto.setSeriesId(subscription.getSeriesId());
 			dto.setTitle(subscription.getTitle());
 			dto.setActive(subscription.isActive());
-			results.add(dto);			
+			results.add(dto);
 		}
 
 		// add all remaining recorded series
@@ -105,8 +113,10 @@ public class UIControllerImpl implements UIControllerService {
 				continue;
 			}
 
-			// add the item only if it's not already present in the subscriptions set
-			final RecordedSeriesDTO dto = new RecordedSeriesDTO(item.getSeriesId());
+			// add the item only if it's not already present in the
+			// subscriptions set
+			final RecordedSeriesDTO dto = new RecordedSeriesDTO(
+					item.getSeriesId());
 			if (results.contains(dto)) {
 				continue;
 			}
@@ -115,7 +125,8 @@ public class UIControllerImpl implements UIControllerService {
 		}
 
 		// sort the recorded series entries using the program title
-		final ArrayList<RecordedSeriesDTO> resultList = new ArrayList<RecordedSeriesDTO>(results);
+		final ArrayList<RecordedSeriesDTO> resultList = new ArrayList<RecordedSeriesDTO>(
+				results);
 		Collections.sort(resultList, new Comparator<RecordedSeriesDTO>() {
 
 			@Override
@@ -135,11 +146,13 @@ public class UIControllerImpl implements UIControllerService {
 	@Override
 	public List<FeedSubscriptionItemDTO> findSubscriptionsForSeries(
 			String seriesId) {
-		final List <FeedSubscriptionItemDTO> results = new ArrayList<FeedSubscriptionItemDTO>();
-		final Map<String, TranscodingProfile> profiles = transcodingProfilesDao.findAllProfiles();
+		final List<FeedSubscriptionItemDTO> results = new ArrayList<FeedSubscriptionItemDTO>();
+		final Map<String, TranscodingProfile> profiles = transcodingProfilesDao
+				.findAllProfiles();
 
 		for (FeedSubscriptionItem item : subscriptionsDao.findSubscriptions()) {
-			if (item.getSeriesId().equals(seriesId) == false || item.isActive() == false) {
+			if (item.getSeriesId().equals(seriesId) == false
+					|| item.isActive() == false) {
 				continue;
 			}
 
@@ -147,15 +160,20 @@ public class UIControllerImpl implements UIControllerService {
 			dto.setTitle(item.getTitle());
 			dto.setSeriesId(item.getSeriesId());
 			dto.setTranscodeProfile(item.getTranscodeProfile());
-			final TranscodingProfile transcodingProfile = profiles.get(item.getTranscodeProfile());
+			final TranscodingProfile transcodingProfile = profiles.get(item
+					.getTranscodeProfile());
 
-			// handle the case where a subscription exists for a transcoding profile that's not 
-			// found in the transcoding profiles configuration.  By including the subscription in the UI
+			// handle the case where a subscription exists for a transcoding
+			// profile that's not
+			// found in the transcoding profiles configuration. By including the
+			// subscription in the UI
 			// we can allow for the subscription to be deleted.
 			if (transcodingProfile != null) {
-			    dto.setTranscodeProfileDisplayName(transcodingProfile.getDisplayName());
+				dto.setTranscodeProfileDisplayName(transcodingProfile
+						.getDisplayName());
 			} else {
-			    dto.setTranscodeProfileDisplayName(UNRECOGNIZED_PROFILE_LABEL + " (" + item.getTranscodeProfile() + ")");
+				dto.setTranscodeProfileDisplayName(UNRECOGNIZED_PROFILE_LABEL
+						+ " (" + item.getTranscodeProfile() + ")");
 			}
 			results.add(dto);
 		}
@@ -167,7 +185,8 @@ public class UIControllerImpl implements UIControllerService {
 				FeedSubscriptionItemDTO p1 = (FeedSubscriptionItemDTO) o1;
 				FeedSubscriptionItemDTO p2 = (FeedSubscriptionItemDTO) o2;
 
-				return p1.getTranscodeProfileDisplayName().compareTo(p2.getTranscodeProfileDisplayName());
+				return p1.getTranscodeProfileDisplayName().compareTo(
+						p2.getTranscodeProfileDisplayName());
 			}
 
 		});
@@ -192,7 +211,8 @@ public class UIControllerImpl implements UIControllerService {
 		if (ScopeEnum.MOST_RECENT.equals(item.getScope())) {
 			item.setNumberOfMostRecentToKeep(dto.getNumberOfMostRecentToKeep());
 		} else if (ScopeEnum.SPECIFIC_RECORDINGS.equals(item.getScope())) {
-			if (dto.getRecordedProgramKeys() != null && dto.getRecordedProgramKeys().length > 0) {
+			if (dto.getRecordedProgramKeys() != null
+					&& dto.getRecordedProgramKeys().length > 0) {
 				for (String recording : dto.getRecordedProgramKeys()) {
 					item.getRecordedProgramKeys().add(recording);
 				}
@@ -210,20 +230,19 @@ public class UIControllerImpl implements UIControllerService {
 
 	@Override
 	public List<String[]> findAvailableTranscodingProfilesForSeries(
-			String seriesId) 
-			{
-		final Set <String> activeProfiles = new HashSet<String>();
-		final List <TranscodingProfile> availableProfiles = new ArrayList<TranscodingProfile>();
+			String seriesId) {
+		final Set<String> activeProfiles = new HashSet<String>();
+		final List<TranscodingProfile> availableProfiles = new ArrayList<TranscodingProfile>();
 		final List<String[]> result = new ArrayList<String[]>();
-		final Map<String, TranscodingProfile> allTranscodingProfiles = this.transcodingProfilesDao.findAllProfiles();
-		final List<FeedSubscriptionItem> allSubscriptions = this.subscriptionsDao.findSubscriptions();
-
+		final Map<String, TranscodingProfile> allTranscodingProfiles = this.transcodingProfilesDao
+				.findAllProfiles();
+		final List<FeedSubscriptionItem> allSubscriptions = this.subscriptionsDao
+				.findSubscriptions();
 
 		// remove those profiles already in use
 		for (FeedSubscriptionItem subscription : allSubscriptions) {
-			if (subscription.getSeriesId().equals(seriesId) &&
-					subscription.isActive() == true) 
-			{
+			if (subscription.getSeriesId().equals(seriesId)
+					&& subscription.isActive() == true) {
 				activeProfiles.add(subscription.getTranscodeProfile());
 			}
 		}
@@ -236,20 +255,23 @@ public class UIControllerImpl implements UIControllerService {
 		}
 
 		// sort the profiles by display name
-		Collections.sort(availableProfiles, new Comparator<TranscodingProfile>() {
+		Collections.sort(availableProfiles,
+				new Comparator<TranscodingProfile>() {
 
-			@Override
-			public int compare(TranscodingProfile o1, TranscodingProfile o2) {
-				return o1.getDisplayName().compareTo(o2.getDisplayName());
-			}
-		});
+					@Override
+					public int compare(TranscodingProfile o1,
+							TranscodingProfile o2) {
+						return o1.getDisplayName().compareTo(
+								o2.getDisplayName());
+					}
+				});
 
 		for (TranscodingProfile profile : availableProfiles) {
 			result.add(new String[] { profile.getId(), profile.getDisplayName() });
 		}
 
 		return result;
-			}
+	}
 
 	@Override
 	public StatusDTO retrieveStatus() {
@@ -258,7 +280,8 @@ public class UIControllerImpl implements UIControllerService {
 
 		if (status.getMode() == StatusMode.IDLE) {
 			try {
-				Trigger trigger = scheduler.getTrigger(triggerName, triggerGroup);
+				Trigger trigger = scheduler.getTrigger(triggerName,
+						triggerGroup);
 				dto.setNextTriggerStart(trigger.getNextFireTime());
 			} catch (SchedulerException e) {
 				LOGGER.warn("Unable to find Quartz trigger for job", e);
@@ -268,7 +291,8 @@ public class UIControllerImpl implements UIControllerService {
 			dto.setCurrentTriggerStart(status.getCurrentTriggerStart());
 			dto.setCurrentTranscodeStart(status.getCurrentTranscodeStart());
 			dto.setTranscodingProfileName(status.getTranscodingProfileName());
-			dto.setTranscodingProgramEpisodeName(status.getTranscodingProgramEpisodeName());
+			dto.setTranscodingProgramEpisodeName(status
+					.getTranscodingProgramEpisodeName());
 			dto.setTranscodingProgramName(status.getTranscodingProgramName());
 		}
 
@@ -276,26 +300,55 @@ public class UIControllerImpl implements UIControllerService {
 	}
 
 	@Override
+	public List<JobHistoryItemDTO> retrieveJobHistory() {
+		final List<JobHistoryItemDTO> result = new ArrayList<JobHistoryItemDTO>();
+
+		for (JobHistoryItemBean historyItem : this.jobHistory.getJobs()) {
+			final JobHistoryItemDTO dto = new JobHistoryItemDTO();
+
+			if (historyItem.getStartedAt() != null)
+				dto.setStartedAt(historyItem.getStartedAt().getTime());
+
+			if (historyItem.getFinishedAt() != null)
+				dto.setFinishedAt(historyItem.getFinishedAt().getTime());
+
+			dto.setTranscodingProfileName(historyItem.getTranscodingProfileName());
+			dto.setTranscodingProgramEpisodeName(historyItem.getTranscodingProgramEpisodeName());
+			dto.setTranscodingProgramName(historyItem.getTranscodingProgramName());
+			dto.setStatus(historyItem.getStatus().name());
+
+			result.add(dto);
+		}
+
+		return result;
+	}
+
+	@Override
 	public String retrieveApplicationUrl() {
 		return this.applicationUrl;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.urlgrey.mythpodcaster.client.service.UIControllerService#listRecordingsForSeries(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see net.urlgrey.mythpodcaster.client.service.UIControllerService#
+	 * listRecordingsForSeries(java.lang.String)
 	 */
 	@Override
 	public List<String[]> listRecordingsForSeries(String seriesId) {
 		LOGGER.debug("Finding recordings for seriesId[" + seriesId + "]");
 
 		final List<String[]> result = new ArrayList<String[]>();
-		final RecordedSeries seriesInfo = recordingsDao.findRecordedSeries(seriesId);
+		final RecordedSeries seriesInfo = recordingsDao
+				.findRecordedSeries(seriesId);
 		if (seriesInfo != null) {
 			Collections.sort(seriesInfo.getRecordedPrograms());
 			for (RecordedProgram program : seriesInfo.getRecordedPrograms()) {
 				String[] recordingInfo = new String[3];
 				recordingInfo[0] = program.getKey();
 				recordingInfo[1] = program.getSubtitle();
-				recordingInfo[2] = Long.toString(program.getStartTime().getTime());
+				recordingInfo[2] = Long.toString(program.getStartTime()
+						.getTime());
 				result.add(recordingInfo);
 			}
 		}
@@ -303,24 +356,30 @@ public class UIControllerImpl implements UIControllerService {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.urlgrey.mythpodcaster.client.service.UIControllerService#retrieveSubscriptionDetails(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see net.urlgrey.mythpodcaster.client.service.UIControllerService#
+	 * retrieveSubscriptionDetails(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public FeedSubscriptionItemDTO retrieveSubscriptionDetails(String seriesId,
-			String transcodingProfile) 
-	{
+			String transcodingProfile) {
 		FeedSubscriptionItemDTO result = null;
 
-		for (FeedSubscriptionItem item : this.subscriptionsDao.findSubscriptions()) {
-			if (item.getSeriesId().equals(seriesId) && item.getTranscodeProfile().equals(transcodingProfile)) {
+		for (FeedSubscriptionItem item : this.subscriptionsDao
+				.findSubscriptions()) {
+			if (item.getSeriesId().equals(seriesId)
+					&& item.getTranscodeProfile().equals(transcodingProfile)) {
 				result = new FeedSubscriptionItemDTO();
 				result.setSeriesId(item.getSeriesId());
 				result.setScope(item.getScope().name());
 				result.setTitle(item.getTitle());
-				result.setRecordedProgramKeys(item.getRecordedProgramKeys().toArray(new String[0]));
-				result.setNumberOfMostRecentToKeep(item.getNumberOfMostRecentToKeep());
-				
+				result.setRecordedProgramKeys(item.getRecordedProgramKeys()
+						.toArray(new String[0]));
+				result.setNumberOfMostRecentToKeep(item
+						.getNumberOfMostRecentToKeep());
+
 				break;
 			}
 		}
@@ -345,6 +404,10 @@ public class UIControllerImpl implements UIControllerService {
 		this.status = status;
 	}
 
+	public void setJobHistory(JobHistoryCollectionBean jobHistory) {
+		this.jobHistory = jobHistory;
+	}
+
 	public void setApplicationUrl(String applicationUrl) {
 		this.applicationUrl = applicationUrl;
 	}
@@ -360,5 +423,4 @@ public class UIControllerImpl implements UIControllerService {
 	public void setTriggerGroup(String triggerGroup) {
 		this.triggerGroup = triggerGroup;
 	}
-
 }

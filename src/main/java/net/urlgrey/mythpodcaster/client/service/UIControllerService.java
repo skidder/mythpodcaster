@@ -25,6 +25,7 @@ package net.urlgrey.mythpodcaster.client.service;
 import java.util.List;
 
 import net.urlgrey.mythpodcaster.client.FeedSubscriptionItemDTO;
+import net.urlgrey.mythpodcaster.client.JobHistoryItemDTO;
 import net.urlgrey.mythpodcaster.client.RecordedSeriesDTO;
 import net.urlgrey.mythpodcaster.client.StatusDTO;
 
@@ -60,4 +61,6 @@ public interface UIControllerService extends RemoteService {
 
 	FeedSubscriptionItemDTO retrieveSubscriptionDetails(String seriesId,
 			String transcodingProfile);
+
+	List<JobHistoryItemDTO> retrieveJobHistory();
 }

@@ -22,6 +22,8 @@
  */
 package net.urlgrey.mythpodcaster.client;
 
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -32,10 +34,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  *
  */
 public class MainWindow extends Composite {
+	final int RECORDINGS_TAB_INDEX = 0;
+	final int JOB_HISTORY_TAB_INDEX = 1;
 
 	private Label logoLabel = new Label();
 	private TabPanel tabPanel = new TabPanel();
 	private StatusPanel statusPanel = new StatusPanel();
+	private JobHistoryPanel jobHistoryPanel = new JobHistoryPanel();
+	private RecordingsPanel recordingsPanel = new RecordingsPanel();
 
 	public MainWindow() {
 		super();
@@ -44,10 +50,25 @@ public class MainWindow extends Composite {
 		mainPanel.setStyleName("mythpodcaster-MainPanel");
 		logoLabel.setText("MythPodcaster");
 		logoLabel.setStyleName("mythpodcaster-Header");
-		tabPanel.add(new RecordingsPanel(), "Recordings");
-		tabPanel.selectTab(0);
+		tabPanel.add(recordingsPanel, "Recordings");
+		tabPanel.add(jobHistoryPanel, "Job History");
+		tabPanel.selectTab(RECORDINGS_TAB_INDEX);
 		tabPanel.setSize("100%", "100%");
-
+		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<Integer> event) {
+				switch (event.getSelectedItem()) {
+				case RECORDINGS_TAB_INDEX:
+					recordingsPanel.refreshData();
+					break;
+				case JOB_HISTORY_TAB_INDEX:
+					jobHistoryPanel.refreshData();
+					break;
+				}
+			}
+		});
+		
 		mainPanel.add(logoLabel);
 		mainPanel.add(statusPanel);
 		mainPanel.add(tabPanel);

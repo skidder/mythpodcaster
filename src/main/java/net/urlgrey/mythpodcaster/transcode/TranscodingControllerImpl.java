@@ -24,73 +24,96 @@ package net.urlgrey.mythpodcaster.transcode;
 
 import java.io.File;
 import java.rmi.server.UID;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
+import net.urlgrey.mythpodcaster.jobs.JobHistoryCollectionBean;
+import net.urlgrey.mythpodcaster.jobs.JobHistoryItemBean;
+import net.urlgrey.mythpodcaster.jobs.JobHistoryItemBean.JobStatus;
 import net.urlgrey.mythpodcaster.xml.GenericTranscoderConfigurationItem;
 import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
 
 /**
  * @author scottkidder
- *
+ * 
  */
 public class TranscodingControllerImpl implements TranscodingController {
 
-	private static final Logger LOGGER = Logger.getLogger(TranscodingControllerImpl.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(TranscodingControllerImpl.class);
 	private Transcoder ffmpegTranscoder;
 	private Transcoder segmentedVodTranscoder;
 	private Transcoder fastStartVodTranscoder;
 	private Transcoder userDefinedTranscoder;
 	private Transcoder symbolicLinkTranscoder;
-
+	private JobHistoryCollectionBean jobHistory;
 
 	@Override
-	public void transcode(TranscodingProfile profile, File inputFile,
+	public void transcode(TranscodingProfile profile, String programEpisodeName, String programName, File inputFile,
 			File outputFile) throws Exception {
 
-		switch (profile.getMode()) {
-		case ONE_PASS:
-			encodeOnePass(profile, inputFile, outputFile);
-			break;
-		case ONE_PASS_FAST_START:
-			encodeOnePass(profile, inputFile, outputFile);
-			encodeFastStart(profile, outputFile);
-			break;
-		case TWO_PASS:
-			encodeTwoPass(profile, inputFile, outputFile);
-			break;
-		case TWO_PASS_FAST_START:
-			encodeTwoPass(profile, inputFile, outputFile);
-			encodeFastStart(profile, outputFile);
-			break;
-		case HTTP_SEGMENTED_VOD:
-		case ONE_PASS_HTTP_SEGMENTED_VOD:
-			encodeOnePassSegmented(profile, inputFile, outputFile);
-			break;
-		case TWO_PASS_HTTP_SEGMENTED_VOD:
-			encodeTwoPassSegmented(profile, inputFile, outputFile);
-			break;
-		case USER_DEFINED:
-			encodeUserDefined(profile, inputFile, outputFile);
-			break;
-		case SYMBOLIC_LINK:
-			encodeSymbolicLink(profile, inputFile, outputFile);
-			break;
-		default:
-			break;
+		// construct a new Job History Item bean to represent the active job
+		final JobHistoryItemBean jobHistoryItem = new JobHistoryItemBean();
+		jobHistoryItem.setStartedAt(Calendar.getInstance());
+		jobHistoryItem.setStatus(JobStatus.TRANSCODING);
+		jobHistoryItem.setTranscodingProfileName(profile.getDisplayName());
+		jobHistoryItem.setTranscodingProgramEpisodeName(programEpisodeName);
+		jobHistoryItem.setTranscodingProgramName(programName);
+		this.jobHistory.addJobHistoryItemBean(jobHistoryItem);
+
+		try {
+			switch (profile.getMode()) {
+			case ONE_PASS:
+				encodeOnePass(profile, inputFile, outputFile);
+				break;
+			case ONE_PASS_FAST_START:
+				encodeOnePass(profile, inputFile, outputFile);
+				encodeFastStart(profile, outputFile);
+				break;
+			case TWO_PASS:
+				encodeTwoPass(profile, inputFile, outputFile);
+				break;
+			case TWO_PASS_FAST_START:
+				encodeTwoPass(profile, inputFile, outputFile);
+				encodeFastStart(profile, outputFile);
+				break;
+			case HTTP_SEGMENTED_VOD:
+			case ONE_PASS_HTTP_SEGMENTED_VOD:
+				encodeOnePassSegmented(profile, inputFile, outputFile);
+				break;
+			case TWO_PASS_HTTP_SEGMENTED_VOD:
+				encodeTwoPassSegmented(profile, inputFile, outputFile);
+				break;
+			case USER_DEFINED:
+				encodeUserDefined(profile, inputFile, outputFile);
+				break;
+			case SYMBOLIC_LINK:
+				encodeSymbolicLink(profile, inputFile, outputFile);
+				break;
+			default:
+				break;
+			}
+			
+			jobHistoryItem.setStatus(JobStatus.FINISHED);
+		} catch (Exception e) {
+			jobHistoryItem.setStatus(JobStatus.ERROR);
+		} finally {
+			jobHistoryItem.setFinishedAt(Calendar.getInstance());			
 		}
 	}
 
-
 	private void encodeSymbolicLink(TranscodingProfile profile, File inputFile,
 			File outputFile) throws Exception {
-		LOGGER.info("Starting symbolic-link encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
+		LOGGER.info("Starting symbolic-link encoding: inputFile["
+				+ inputFile.getAbsolutePath() + "]");
 
 		final File workingDirectory = FileOperations.createTempDir();
 		final GenericTranscoderConfigurationItem config;
-		if (profile.getTranscoderConfigurationItems() == null || profile.getTranscoderConfigurationItems().size() == 0) {
+		if (profile.getTranscoderConfigurationItems() == null
+				|| profile.getTranscoderConfigurationItems().size() == 0) {
 			config = new GenericTranscoderConfigurationItem();
 			config.setTimeout(60);
 		} else {
@@ -98,23 +121,25 @@ public class TranscodingControllerImpl implements TranscodingController {
 		}
 
 		try {
-			symbolicLinkTranscoder.transcode(workingDirectory, config, inputFile, outputFile);
+			symbolicLinkTranscoder.transcode(workingDirectory, config,
+					inputFile, outputFile);
 		} finally {
 			FileOperations.deleteDir(workingDirectory);
 		}
 	}
 
-
 	private void encodeUserDefined(TranscodingProfile profile, File inputFile,
 			File outputFile) throws Exception {
 
-		LOGGER.info("Starting user-defined encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
+		LOGGER.info("Starting user-defined encoding: inputFile["
+				+ inputFile.getAbsolutePath() + "]");
 		final File workingDirectory = FileOperations.createTempDir();
 
 		try {
 			File tempInputFile = null;
 			File tempOutputFile = null;
-			final List<GenericTranscoderConfigurationItem> configItems = profile.getTranscoderConfigurationItems();
+			final List<GenericTranscoderConfigurationItem> configItems = profile
+					.getTranscoderConfigurationItems();
 			for (GenericTranscoderConfigurationItem config : configItems) {
 				if (tempOutputFile == null) {
 					// first run, use the original input
@@ -125,11 +150,15 @@ public class TranscodingControllerImpl implements TranscodingController {
 				}
 
 				if (config.equals(configItems.get(configItems.size() - 1))) {
-					tempOutputFile = File.createTempFile(new UID().toString(), profile.getEncodingFileExtension(), workingDirectory);
+					tempOutputFile = File.createTempFile(new UID().toString(),
+							profile.getEncodingFileExtension(),
+							workingDirectory);
 				} else {
-					tempOutputFile = File.createTempFile(new UID().toString(), "tmp", workingDirectory);
+					tempOutputFile = File.createTempFile(new UID().toString(),
+							"tmp", workingDirectory);
 				}
-				userDefinedTranscoder.transcode(workingDirectory, config, tempInputFile, tempOutputFile);
+				userDefinedTranscoder.transcode(workingDirectory, config,
+						tempInputFile, tempOutputFile);
 			}
 
 			FileOperations.copy(tempOutputFile, outputFile);
@@ -138,14 +167,18 @@ public class TranscodingControllerImpl implements TranscodingController {
 		}
 	}
 
-
-	private void encodeFastStart(TranscodingProfile profile, File inputFile) throws Exception {
-		LOGGER.info("Starting fast-start optimization of clip: inputFile[" + inputFile.getAbsolutePath() + "]");
+	private void encodeFastStart(TranscodingProfile profile, File inputFile)
+			throws Exception {
+		LOGGER.info("Starting fast-start optimization of clip: inputFile["
+				+ inputFile.getAbsolutePath() + "]");
 		File workingDirectory = FileOperations.createTempDir();
 		File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
 		try {
-			final GenericTranscoderConfigurationItem config = profile.getTranscoderConfigurationItems().get(profile.getTranscoderConfigurationItems().size() - 1);
-			fastStartVodTranscoder.transcode(workingDirectory, config, inputFile, tempOutputFile);
+			final GenericTranscoderConfigurationItem config = profile
+					.getTranscoderConfigurationItems()
+					.get(profile.getTranscoderConfigurationItems().size() - 1);
+			fastStartVodTranscoder.transcode(workingDirectory, config,
+					inputFile, tempOutputFile);
 
 			// replace the input-file with the fast-start optimized version
 			FileOperations.copy(tempOutputFile, inputFile);
@@ -161,80 +194,61 @@ public class TranscodingControllerImpl implements TranscodingController {
 		}
 	}
 
-
 	private void encodeOnePass(TranscodingProfile profile, File inputFile,
 			File outputFile) throws Exception {
 
-		LOGGER.info("Starting 1-pass encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
+		LOGGER.info("Starting 1-pass encoding: inputFile["
+				+ inputFile.getAbsolutePath() + "]");
 		File workingDirectory = FileOperations.createTempDir();
 
 		try {
-			ffmpegTranscoder.transcode(workingDirectory, profile.getTranscoderConfigurationItems().get(0), inputFile, outputFile);
+			ffmpegTranscoder.transcode(workingDirectory, profile
+					.getTranscoderConfigurationItems().get(0), inputFile,
+					outputFile);
 		} finally {
 			FileOperations.deleteDir(workingDirectory);
 		}
 	}
-
 
 	private void encodeTwoPass(TranscodingProfile profile, File inputFile,
 			File outputFile) throws Exception {
 
-		LOGGER.info("Starting 2-pass encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
-		File workingDirectory = FileOperations.createTempDir();		
+		LOGGER.info("Starting 2-pass encoding: inputFile["
+				+ inputFile.getAbsolutePath() + "]");
+		File workingDirectory = FileOperations.createTempDir();
 		try {
-			final GenericTranscoderConfigurationItem pass1Config = profile.getTranscoderConfigurationItems().get(0);
-			ffmpegTranscoder.transcode(workingDirectory, pass1Config, inputFile, outputFile);
+			final GenericTranscoderConfigurationItem pass1Config = profile
+					.getTranscoderConfigurationItems().get(0);
+			ffmpegTranscoder.transcode(workingDirectory, pass1Config,
+					inputFile, outputFile);
 
-			final GenericTranscoderConfigurationItem pass2Config = profile.getTranscoderConfigurationItems().get(1);
-			ffmpegTranscoder.transcode(workingDirectory, pass2Config, inputFile, outputFile);
+			final GenericTranscoderConfigurationItem pass2Config = profile
+					.getTranscoderConfigurationItems().get(1);
+			ffmpegTranscoder.transcode(workingDirectory, pass2Config,
+					inputFile, outputFile);
 		} finally {
 			FileOperations.deleteDir(workingDirectory);
 		}
 	}
 
+	private void encodeOnePassSegmented(TranscodingProfile profile,
+			File inputFile, File outputFile) throws Exception {
 
-	private void encodeOnePassSegmented(TranscodingProfile profile, File inputFile,
-			File outputFile) throws Exception {
-
-		LOGGER.info("Starting one-pass segmented vod encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
-		File workingDirectory = FileOperations.createTempDir();		
-		File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
-
-		try {
-			final GenericTranscoderConfigurationItem pass1Config = profile.getTranscoderConfigurationItems().get(0);
-			ffmpegTranscoder.transcode(workingDirectory, pass1Config, inputFile, tempOutputFile);
-
-			final GenericTranscoderConfigurationItem segmentedVodConfig = profile.getTranscoderConfigurationItems().get(1);
-			segmentedVodTranscoder.transcode(workingDirectory, segmentedVodConfig, tempOutputFile, outputFile);
-		} catch (Exception e) {
-			FileOperations.deleteDir(outputFile.getParentFile());
-			throw e;
-		} finally {
-			FileOperations.deleteDir(workingDirectory);
-
-			if (tempOutputFile.exists()) {
-				tempOutputFile.delete();
-			}
-		}
-	}
-
-
-	private void encodeTwoPassSegmented(TranscodingProfile profile, File inputFile,
-			File outputFile) throws Exception {
-
-		LOGGER.info("Starting two-pass segmented vod encoding: inputFile[" + inputFile.getAbsolutePath() + "]");
+		LOGGER.info("Starting one-pass segmented vod encoding: inputFile["
+				+ inputFile.getAbsolutePath() + "]");
 		File workingDirectory = FileOperations.createTempDir();
 		File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
 
 		try {
-			final GenericTranscoderConfigurationItem pass1Config = profile.getTranscoderConfigurationItems().get(0);
-			ffmpegTranscoder.transcode(workingDirectory, pass1Config, inputFile, tempOutputFile);
+			final GenericTranscoderConfigurationItem pass1Config = profile
+					.getTranscoderConfigurationItems().get(0);
+			ffmpegTranscoder.transcode(workingDirectory, pass1Config,
+					inputFile, tempOutputFile);
 
-			final GenericTranscoderConfigurationItem pass2Config = profile.getTranscoderConfigurationItems().get(1);
-			ffmpegTranscoder.transcode(workingDirectory, pass2Config, inputFile, tempOutputFile);
-
-			final GenericTranscoderConfigurationItem segmentedVodConfig = profile.getTranscoderConfigurationItems().get(2);
-			segmentedVodTranscoder.transcode(workingDirectory, segmentedVodConfig, tempOutputFile, outputFile);
+			final GenericTranscoderConfigurationItem segmentedVodConfig = profile
+					.getTranscoderConfigurationItems().get(1);
+			segmentedVodTranscoder.transcode(workingDirectory,
+					segmentedVodConfig, tempOutputFile, outputFile);
 		} catch (Exception e) {
 			FileOperations.deleteDir(outputFile.getParentFile());
 			throw e;
@@ -247,34 +261,68 @@ public class TranscodingControllerImpl implements TranscodingController {
 		}
 	}
 
-	
+	private void encodeTwoPassSegmented(TranscodingProfile profile,
+			File inputFile, File outputFile) throws Exception {
+
+		LOGGER.info("Starting two-pass segmented vod encoding: inputFile["
+				+ inputFile.getAbsolutePath() + "]");
+		File workingDirectory = FileOperations.createTempDir();
+		File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
+
+		try {
+			final GenericTranscoderConfigurationItem pass1Config = profile
+					.getTranscoderConfigurationItems().get(0);
+			ffmpegTranscoder.transcode(workingDirectory, pass1Config,
+					inputFile, tempOutputFile);
+
+			final GenericTranscoderConfigurationItem pass2Config = profile
+					.getTranscoderConfigurationItems().get(1);
+			ffmpegTranscoder.transcode(workingDirectory, pass2Config,
+					inputFile, tempOutputFile);
+
+			final GenericTranscoderConfigurationItem segmentedVodConfig = profile
+					.getTranscoderConfigurationItems().get(2);
+			segmentedVodTranscoder.transcode(workingDirectory,
+					segmentedVodConfig, tempOutputFile, outputFile);
+		} catch (Exception e) {
+			FileOperations.deleteDir(outputFile.getParentFile());
+			throw e;
+		} finally {
+			FileOperations.deleteDir(workingDirectory);
+
+			if (tempOutputFile.exists()) {
+				tempOutputFile.delete();
+			}
+		}
+	}
+
 	@Required
 	public void setFfmpegTranscoder(Transcoder ffmpegTranscoder) {
 		this.ffmpegTranscoder = ffmpegTranscoder;
 	}
 
-
 	@Required
-	public void setSegmentedVodTranscoder(
-			Transcoder segmentedVodTranscoder) {
+	public void setSegmentedVodTranscoder(Transcoder segmentedVodTranscoder) {
 		this.segmentedVodTranscoder = segmentedVodTranscoder;
 	}
-
 
 	@Required
 	public void setFastStartVodTranscoder(Transcoder fastStartTranscoder) {
 		this.fastStartVodTranscoder = fastStartTranscoder;
 	}
 
-
 	@Required
 	public void setUserDefinedTranscoder(Transcoder userDefinedTranscoder) {
 		this.userDefinedTranscoder = userDefinedTranscoder;
 	}
 
-
 	@Required
 	public void setSymbolicLinkTranscoder(Transcoder symbolicLinkTranscoder) {
 		this.symbolicLinkTranscoder = symbolicLinkTranscoder;
+	}
+
+	@Required
+	public void setJobHistory(JobHistoryCollectionBean jobHistory) {
+		this.jobHistory = jobHistory;
 	}
 }

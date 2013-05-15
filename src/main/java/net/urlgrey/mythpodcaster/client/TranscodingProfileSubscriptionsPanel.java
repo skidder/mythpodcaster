@@ -30,7 +30,6 @@ import net.urlgrey.mythpodcaster.client.service.UIControllerServiceAsync;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -38,9 +37,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * @author scottkidder
- *
+ * 
  */
-public class TranscodingProfileSubscriptionsPanel extends Composite {
+public class TranscodingProfileSubscriptionsPanel extends RemoteComposite {
 
 	private RecordingsPanel parent;
 	private VerticalPanel panel = new VerticalPanel();
@@ -48,7 +47,6 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 	private Label subscriptionsLabel = new Label("Subscriptions:");
 	private Grid subscriptionsTable = new Grid();
 	private Button addSubscriptionButton = new Button("Add Subscription");
-	private String applicationUrl = null;
 	private String seriesId = null;
 	private String seriesTitle = null;
 	private AddSubscriptionHandler addSubscriptionHandler;
@@ -87,28 +85,10 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 
 	public void refreshData() {
 		if (this.applicationUrl == null) {
-			UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
-			try {
-				service.retrieveApplicationUrl(new AsyncCallback<String>() {
-
-					@Override
-					public void onSuccess(String arg0) {
-						applicationUrl = arg0;
-					}
-
-					@Override
-					public void onFailure(Throwable arg0) {
-
-					}
-				});
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
+			retrieveApplicationURL();
 		}
 
 		AsyncCallback<List<FeedSubscriptionItemDTO>> callback = new AsyncCallback<List<FeedSubscriptionItemDTO>>() {
-
 
 			@Override
 			public void onSuccess(List<FeedSubscriptionItemDTO> subscriptions) {
@@ -116,23 +96,36 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 
 				int i = 0;
 				for (FeedSubscriptionItemDTO item : subscriptions) {
-					subscriptionsTable.setText(i, 0, item.getTranscodeProfileDisplayName());
-					subscriptionsTable.setWidget(i, 1, new HTML("<a target=_blank href=\"" + applicationUrl + "/" + item.getTranscodeProfile() + "/" + seriesId + ".rss\">Feed</a>"));
-					subscriptionsTable.setWidget(i, 2, new HTML("<a target=_blank href=\"" + applicationUrl + "/" + item.getTranscodeProfile() + "/" + seriesId + ".html\">HTML</a>"));
+					subscriptionsTable.setText(i, 0,
+							item.getTranscodeProfileDisplayName());
+					subscriptionsTable.setWidget(i, 1, new HTML(
+							"<a target=_blank href=\"" + applicationUrl + "/"
+									+ item.getTranscodeProfile() + "/"
+									+ seriesId + ".rss\">Feed</a>"));
+					subscriptionsTable.setWidget(i, 2, new HTML(
+							"<a target=_blank href=\"" + applicationUrl + "/"
+									+ item.getTranscodeProfile() + "/"
+									+ seriesId + ".html\">HTML</a>"));
 
-					// allow editing of the subscription only if it's a recognized transcoding profile
-					if ((item.getTranscodeProfileDisplayName() != null) && 
-						(false == item.getTranscodeProfileDisplayName().startsWith(UIControllerService.UNRECOGNIZED_PROFILE_LABEL))) 
-					{
-        					final Button editButton = new Button("Edit");
-        					editButton.addClickHandler(new AddSubscriptionHandler(parent, item.getTranscodeProfile(), seriesId, seriesTitle));
-        					subscriptionsTable.setWidget(i, 3, editButton);
+					// allow editing of the subscription only if it's a
+					// recognized transcoding profile
+					if ((item.getTranscodeProfileDisplayName() != null)
+							&& (false == item
+									.getTranscodeProfileDisplayName()
+									.startsWith(
+											UIControllerService.UNRECOGNIZED_PROFILE_LABEL))) {
+						final Button editButton = new Button("Edit");
+						editButton.addClickHandler(new AddSubscriptionHandler(
+								parent, item.getTranscodeProfile(), seriesId,
+								seriesTitle));
+						subscriptionsTable.setWidget(i, 3, editButton);
 					}
 
 					final Button unsubscribeButton = new Button("Unsubscribe");
-					unsubscribeButton.addClickHandler(new UnsubscribeHandler(parent, seriesId, item.getTranscodeProfile()));
+					unsubscribeButton.addClickHandler(new UnsubscribeHandler(
+							parent, seriesId, item.getTranscodeProfile()));
 					subscriptionsTable.setWidget(i, 4, unsubscribeButton);
-					
+
 					// increment profile index counter
 					i++;
 				}
@@ -153,7 +146,8 @@ public class TranscodingProfileSubscriptionsPanel extends Composite {
 		subscriptionsLabel.setVisible(false);
 		subscriptionsTable.setVisible(false);
 
-		UIControllerServiceAsync service = (UIControllerServiceAsync) GWT.create(UIControllerService.class);
+		UIControllerServiceAsync service = (UIControllerServiceAsync) GWT
+				.create(UIControllerService.class);
 		try {
 			service.findSubscriptionsForSeries(seriesId, callback);
 		} catch (Exception e) {

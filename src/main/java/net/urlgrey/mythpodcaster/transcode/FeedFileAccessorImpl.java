@@ -320,7 +320,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 				try {
 
 					LOGGER.info("Transcode STARTING: profile[" + profile.getId() + "]");
-					transcodingController.transcode(profile, originalClip, outputFile);
+					transcodingController.transcode(profile, program.getKey(), series.getTitle(), originalClip, outputFile);
 					LOGGER.info("Transcode FINISHED: profile[" + profile.getId() + "]");
 
 					if (outputFile.canRead()) {
