@@ -123,6 +123,7 @@
 	</bean>
 
 	<bean id="jobHistory" class="net.urlgrey.mythpodcaster.jobs.JobHistoryCollectionBean">
+		<constructor-arg value="100"></constructor-arg>
 	</bean>
 
 </beans>
