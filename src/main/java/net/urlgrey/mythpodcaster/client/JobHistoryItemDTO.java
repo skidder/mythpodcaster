@@ -93,17 +93,7 @@ public class JobHistoryItemDTO implements IsSerializable, Comparable<JobHistoryI
 			return -1;
 		
 		if (this.startedAt != null) {
-			final int startedAtComparisonResult = this.startedAt.compareTo(arg0.startedAt);
-			if (startedAtComparisonResult == 0) {
-				final int finishedAtComparisonResult = this.finishedAt.compareTo(arg0.finishedAt);
-				if (finishedAtComparisonResult == 0) {
-					return this.transcodingProgramName.compareTo(arg0.transcodingProgramName);
-				} else {
-					return (-1) * finishedAtComparisonResult;
-				}
-			} else {
-				return (-1) * startedAtComparisonResult;
-			}
+			return (-1) * this.startedAt.compareTo(arg0.startedAt);
 		}
 
 		return 1;
