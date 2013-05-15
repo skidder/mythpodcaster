@@ -64,6 +64,7 @@
 		<property name="fastStartVodTranscoder" ref="fastStartVodTranscoder" />
 		<property name="userDefinedTranscoder" ref="userDefinedTranscoder" />
 		<property name="symbolicLinkTranscoder" ref="symbolicLinkTranscoder" />
+		<property name="jobHistory" ref="jobHistory" />
 	</bean>
 
 	<bean id="taskExecutor"
@@ -118,7 +119,11 @@
 		</property>
 	</bean>
 
-	<bean id="status" class="net.urlgrey.mythpodcaster.transcode.StatusBean">
+	<bean id="status" class="net.urlgrey.mythpodcaster.jobs.StatusBean">
+	</bean>
+
+	<bean id="jobHistory" class="net.urlgrey.mythpodcaster.jobs.JobHistoryCollectionBean">
+		<constructor-arg value="100"></constructor-arg>
 	</bean>
 
 </beans>

@@ -27,6 +27,7 @@
 		<property name="remoteService">
 			<bean class="net.urlgrey.mythpodcaster.server.UIControllerImpl">
 				<property name="status" ref="status" />
+				<property name="jobHistory" ref="jobHistory" />
 				<property name="subscriptionsDao" ref="subscriptionsDao"></property>
 				<property name="recordingsDao" ref="recordingsDao"></property>
 				<property name="transcodingProfilesDao" ref="transcodingProfilesDao"></property>
