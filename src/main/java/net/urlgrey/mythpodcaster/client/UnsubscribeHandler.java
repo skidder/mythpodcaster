@@ -60,8 +60,7 @@ public class UnsubscribeHandler implements ClickHandler {
 	@Override
 	public void onClick(ClickEvent event) {
 		// Create a dialog box and set the caption text
-		final boolean autohide = true;
-		final DialogBox dialogBox = new DialogBox(autohide);
+		final DialogBox dialogBox = new DialogBox();
 		dialogBox.ensureDebugId("cwDialogBox");
 		dialogBox.setText("Unsubscribe?");
 

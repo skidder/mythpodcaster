@@ -79,8 +79,7 @@ public class AddSubscriptionHandler implements ClickHandler {
 	@Override
 	public void onClick(ClickEvent arg0) {
 		// Create a dialog box and set the caption text
-		final boolean autohide = true;
-		final DialogBox dialogBox = new DialogBox(autohide);
+		final DialogBox dialogBox = new DialogBox();
 		dialogBox.ensureDebugId("cwDialogBox");
 		dialogBox.setText("Add Transcoding Profile Subscription");
 
