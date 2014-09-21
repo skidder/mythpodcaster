@@ -79,7 +79,6 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void run() {
-		boolean feedUpdated = false;
 		if (subscription.isActive()) {
 			// identify series recordings not represented in the RSS Feed (transcode)
 			final List entries = feed.getEntries();
@@ -148,7 +147,7 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 
 						final Channel channel = this.recordingsDao.findChannel(program.getRecordedProgramKey().getChannelId());
 						feedFileAccessor.addProgramToFeed(series, program, channel, feed, subscription.getTranscodeProfile());
-						feedUpdated = true;
+						writeFeedFile(entries);
 						status.setCurrentTranscodeStart(null);
 					}
 				}	
@@ -163,7 +162,6 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 				while (it.hasNext()) {
 					final SyndEntry entry = (SyndEntry) it.next();
 					if (entry.getUri() == null) {
-						feedUpdated = true;
 						entryRemovalSet.add(entry);
 						LOGGER.debug("Feed entry has null URI (GUID), removing because it cannot be identified");
 						continue;
@@ -193,7 +191,6 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 						LOGGER.debug("Feed entry is current, continuing: uid[" + entry.getUri() + "]");
 					} else {
 						LOGGER.debug("Feed entry will be deleted: uid[" + entry.getUri() + "]");
-						feedUpdated = true;
 						entryRemovalSet.add(entry);
 
 						final List enclosures = entry.getEnclosures();
@@ -210,41 +207,46 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 
 				// remove all of the entries flagged for removal
 				entries.removeAll(entryRemovalSet);
+                writeFeedFile(entries);
 			}			
-
-			if (feedUpdated) {
-				// write the updated RSS feed for the series
-				final File encodingDirectory = new File(feedFilePath, subscription.getTranscodeProfile());
-				final File feedFile = new File(encodingDirectory, subscription.getSeriesId() + feedFileExtension);
-				LOGGER.debug("Changes made to feed, updating feed file: path[" + feedFile.getAbsolutePath() + "]");
-
-				// sort the feed entries by published-date
-				Collections.sort(entries, entryComparator);
-
-				File transformedFeedFile = null;
-				try {
-					FileWriter writer = new FileWriter(feedFile);
-					SyndFeedOutput output = new SyndFeedOutput();
-					output.output(feed, writer);
-
-					transformedFeedFile = feedFileAccessor.generateTransformationFromFeed(feedFile, feed, subscription.getSeriesId());
-				} catch (Exception e) {
-					LOGGER.error("Error rendering feed", e);
-					if (feedFile.canWrite()) {
-						feedFile.delete();
-					}
-
-					if (transformedFeedFile != null && transformedFeedFile.canWrite()) {
-						transformedFeedFile.delete();
-					}
-				}
-
-
-			}
 		}
 	}
 
-	private class FeedEntryComparator implements Comparator<SyndEntry> {
+	/**
+	 * Write the syndication feed entries to the file.
+	 * 
+	 * @param entries Entry list 
+     * 
+     */
+    private void writeFeedFile(List<SyndEntry> entries) {
+        // write the updated RSS feed for the series
+        final File encodingDirectory = new File(feedFilePath, subscription.getTranscodeProfile());
+        final File feedFile = new File(encodingDirectory, subscription.getSeriesId() + feedFileExtension);
+        LOGGER.debug("Changes made to feed, updating feed file: path[" + feedFile.getAbsolutePath() + "]");
+
+        // sort the feed entries by published-date
+        Collections.sort(entries, entryComparator);
+
+        File transformedFeedFile = null;
+        try {
+            FileWriter writer = new FileWriter(feedFile);
+            SyndFeedOutput output = new SyndFeedOutput();
+            output.output(feed, writer);
+
+            transformedFeedFile = feedFileAccessor.generateTransformationFromFeed(feedFile, feed, subscription.getSeriesId());
+        } catch (Exception e) {
+            LOGGER.error("Error rendering feed", e);
+            if (feedFile.canWrite()) {
+                feedFile.delete();
+            }
+
+            if (transformedFeedFile != null && transformedFeedFile.canWrite()) {
+                transformedFeedFile.delete();
+            }
+        }
+    }
+
+    private class FeedEntryComparator implements Comparator<SyndEntry> {
 
 		/* (non-Javadoc)
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
