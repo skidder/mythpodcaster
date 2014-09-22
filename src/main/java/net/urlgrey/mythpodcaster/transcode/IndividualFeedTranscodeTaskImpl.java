@@ -142,7 +142,8 @@ public class IndividualFeedTranscodeTaskImpl implements Runnable {
 					} else {
 						status.setTranscodingProfileName(transcodingProfilesDao.findAllProfiles().get(subscription.getTranscodeProfile()).getDisplayName());
 						status.setTranscodingProgramEpisodeName(program.getKey());
-						status.setTranscodingProgramName(series.getTitle());
+                        status.setTranscodingSeriesTitle(series.getTitle());
+                        status.setTranscodingProgramName(program.getProgramTitle());
 						status.setCurrentTranscodeStart(new Date());
 
 						final Channel channel = this.recordingsDao.findChannel(program.getRecordedProgramKey().getChannelId());

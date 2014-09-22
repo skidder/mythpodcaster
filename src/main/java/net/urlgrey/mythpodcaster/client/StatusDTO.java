@@ -34,7 +34,8 @@ public class StatusDTO implements IsSerializable {
 
 	private String mode = "IDLE";
 	private String transcodingProfileName = "";
-	private String transcodingProgramName = "";
+    private String transcodingSeriesTitle = "";
+    private String transcodingProgramName = "";
 	private String transcodingProgramEpisodeName = "";
 	private Date currentTriggerStart = null;
 	private Date nextTriggerStart = null;
@@ -58,7 +59,13 @@ public class StatusDTO implements IsSerializable {
 	public void setTranscodingProgramName(String transcodingProgramName) {
 		this.transcodingProgramName = transcodingProgramName;
 	}
-	public String getTranscodingProgramEpisodeName() {
+	public String getTranscodingSeriesTitle() {
+        return transcodingSeriesTitle;
+    }
+    public void setTranscodingSeriesTitle(String transcodingSeriesTitle) {
+        this.transcodingSeriesTitle = transcodingSeriesTitle;
+    }
+    public String getTranscodingProgramEpisodeName() {
 		return transcodingProgramEpisodeName;
 	}
 	public void setTranscodingProgramEpisodeName(

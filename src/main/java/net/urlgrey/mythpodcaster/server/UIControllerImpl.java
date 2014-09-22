@@ -293,7 +293,8 @@ public class UIControllerImpl implements UIControllerService {
 			dto.setTranscodingProfileName(status.getTranscodingProfileName());
 			dto.setTranscodingProgramEpisodeName(status
 					.getTranscodingProgramEpisodeName());
-			dto.setTranscodingProgramName(status.getTranscodingProgramName());
+            dto.setTranscodingProgramName(status.getTranscodingProgramName());
+            dto.setTranscodingSeriesTitle(status.getTranscodingSeriesTitle());
 		}
 
 		return dto;
@@ -315,6 +316,7 @@ public class UIControllerImpl implements UIControllerService {
 			dto.setTranscodingProfileName(historyItem.getTranscodingProfileName());
 			dto.setTranscodingProgramEpisodeName(historyItem.getTranscodingProgramEpisodeName());
 			dto.setTranscodingProgramName(historyItem.getTranscodingProgramName());
+			dto.setTranscodingSeriesTitle(historyItem.getTranscodingSeriesTitle());
 			dto.setStatus(historyItem.getStatus().name());
 
 			result.add(dto);

@@ -59,14 +59,23 @@ public class JobHistoryPanel extends RemoteComposite {
 		statusColumn.setSortable(false);
 		table.addColumn(statusColumn, "Status");
 
-		TextColumn<JobHistoryItemDTO> programNameColumn = new TextColumn<JobHistoryItemDTO>() {
-			@Override
-			public String getValue(JobHistoryItemDTO object) {
-				return object.getTranscodingProgramName();
-			}
-		};
-		programNameColumn.setSortable(false);
-		table.addColumn(programNameColumn, "Program Name");
+        TextColumn<JobHistoryItemDTO> seriesTitleColumn = new TextColumn<JobHistoryItemDTO>() {
+            @Override
+            public String getValue(JobHistoryItemDTO object) {
+                return object.getTranscodingSeriesTitle();
+            }
+        };
+        seriesTitleColumn.setSortable(false);
+        table.addColumn(seriesTitleColumn, "Series");
+
+        TextColumn<JobHistoryItemDTO> programNameColumn = new TextColumn<JobHistoryItemDTO>() {
+            @Override
+            public String getValue(JobHistoryItemDTO object) {
+                return object.getTranscodingProgramName();
+            }
+        };
+        programNameColumn.setSortable(false);
+        table.addColumn(programNameColumn, "Program Name");
 
 		TextColumn<JobHistoryItemDTO> programIDColumn = new TextColumn<JobHistoryItemDTO>() {
 			@Override

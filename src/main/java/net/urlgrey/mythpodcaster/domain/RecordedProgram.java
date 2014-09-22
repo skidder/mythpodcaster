@@ -183,6 +183,19 @@ import javax.persistence.Transient;
 		this.key = key;
 	}
 
+	/**
+	 * Sometimes the subtitle field isn't populated, in which case we should 
+	 * use the program title.
+	 * 
+	 * @return
+	 */
+	public String getProgramTitle() {
+	    if (this.subtitle != null && this.subtitle.trim().length() > 0)
+	        return this.subtitle;
+	    else
+	        return this.title;
+	}
+	
 	@PostLoad
 	public void postQuery() {
 		if (recordedProgramKey.getChannelId() >= 0 && recordedProgramKey.getStartTime() != null) {

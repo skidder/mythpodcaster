@@ -33,7 +33,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class JobHistoryItemDTO implements IsSerializable {
 	private String transcodingProfileName;
 	private String transcodingProgramEpisodeName;
-	private String transcodingProgramName;
+    private String transcodingProgramName;
+    private String transcodingSeriesTitle;
 	private Date startedAt;
 	private Date finishedAt;
 	private String status;
@@ -63,7 +64,15 @@ public class JobHistoryItemDTO implements IsSerializable {
 		this.transcodingProgramName = transcodingProgramName;
 	}
 
-	public Date getStartedAt() {
+	public String getTranscodingSeriesTitle() {
+        return transcodingSeriesTitle;
+    }
+
+    public void setTranscodingSeriesTitle(String transcodingSeriesTitle) {
+        this.transcodingSeriesTitle = transcodingSeriesTitle;
+    }
+
+    public Date getStartedAt() {
 		return startedAt;
 	}
 

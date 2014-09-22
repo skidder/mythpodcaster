@@ -258,12 +258,7 @@ public class FeedFileAccessorImpl implements FeedFileAccessor {
 			entry.setAuthor(channel.getName());
 		}
 
-		// Use the sub-title if no title can be found for the program
-		if (program.getSubtitle() != null && program.getSubtitle().trim().length() > 0) {
-			entry.setTitle(program.getSubtitle());
-		} else {
-			entry.setTitle(program.getTitle());
-		}
+		entry.setTitle(program.getProgramTitle());
 
 		final SyndContentImpl description = new SyndContentImpl();
 		description.setType("text/plain");

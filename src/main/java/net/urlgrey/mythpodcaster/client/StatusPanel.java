@@ -50,6 +50,8 @@ public class StatusPanel extends Composite {
 	private Label currentTranscodeStartValueLabel;
 	private Label transcodingProfileLabel;
 	private Label transcodingProfileValueLabel;
+    private Label transcodingSeriesTitleLabel;
+    private Label transcodingSeriesTitleValueLabel;
 	private Label transcodingProgramNameLabel;
 	private Label transcodingProgramNameValueLabel;
 	private Label transcodingProgramEpisodeNameLabel;
@@ -116,15 +118,25 @@ public class StatusPanel extends Composite {
 		transcodingProfileRow.add(transcodingProfileValueLabel);
 		panel.add(transcodingProfileRow);
 
-		transcodingProgramNameLabel = new Label("Program Name:");
-		transcodingProgramNameLabel.setStyleName("mythpodcaster-StatusPanelLabel");
-		transcodingProgramNameValueLabel = new Label();
-		transcodingProgramNameValueLabel.setStyleName("mythpodcaster-StatusPanelValue");
+		transcodingSeriesTitleLabel = new Label("Series:");
+		transcodingSeriesTitleLabel.setStyleName("mythpodcaster-StatusPanelLabel");
+        transcodingSeriesTitleValueLabel = new Label();
+        transcodingSeriesTitleValueLabel.setStyleName("mythpodcaster-StatusPanelValue");
 
-		HorizontalPanel transcodingProgramNameRow = new HorizontalPanel();
-		transcodingProgramNameRow.add(transcodingProgramNameLabel);
-		transcodingProgramNameRow.add(transcodingProgramNameValueLabel);
-		panel.add(transcodingProgramNameRow);
+        HorizontalPanel transcodingSeriesTitleRow = new HorizontalPanel();
+        transcodingSeriesTitleRow.add(transcodingSeriesTitleLabel);
+        transcodingSeriesTitleRow.add(transcodingSeriesTitleValueLabel);
+        panel.add(transcodingSeriesTitleRow);
+
+        transcodingProgramNameLabel = new Label("Program Name:");
+        transcodingProgramNameLabel.setStyleName("mythpodcaster-StatusPanelLabel");
+        transcodingProgramNameValueLabel = new Label();
+        transcodingProgramNameValueLabel.setStyleName("mythpodcaster-StatusPanelValue");
+
+        HorizontalPanel transcodingProgramNameRow = new HorizontalPanel();
+        transcodingProgramNameRow.add(transcodingProgramNameLabel);
+        transcodingProgramNameRow.add(transcodingProgramNameValueLabel);
+        panel.add(transcodingProgramNameRow);
 
 		transcodingProgramEpisodeNameLabel = new Label("Program Id:");
 		transcodingProgramEpisodeNameLabel.setStyleName("mythpodcaster-StatusPanelLabel");
@@ -152,7 +164,7 @@ public class StatusPanel extends Composite {
 	private void refreshData() {
 		AsyncCallback<StatusDTO> callback = new AsyncCallback<StatusDTO>() {
 
-			@Override
+            @Override
 			public void onSuccess(StatusDTO status) {
 				if ("IDLE".equalsIgnoreCase(status.getMode())) {
 					statusValueLabel.setText("Idle");
@@ -187,8 +199,10 @@ public class StatusPanel extends Composite {
 						transcodingProgramEpisodeNameValueLabel.setText(status.getTranscodingProgramEpisodeName());
 						transcodingProgramEpisodeNameValueLabel.setVisible(true);
 						transcodingProgramNameLabel.setVisible(true);
-						transcodingProgramNameValueLabel.setText(status.getTranscodingProgramName());
-						transcodingProgramNameValueLabel.setVisible(true);
+                        transcodingProgramNameValueLabel.setText(status.getTranscodingProgramName());
+                        transcodingProgramNameValueLabel.setVisible(true);
+                        transcodingSeriesTitleValueLabel.setText(status.getTranscodingSeriesTitle());
+                        transcodingSeriesTitleValueLabel.setVisible(true);
 					} else {
 						currentTranscodeStartLabel.setVisible(false);
 						currentTranscodeStartValueLabel.setVisible(false);
@@ -198,6 +212,7 @@ public class StatusPanel extends Composite {
 						transcodingProgramEpisodeNameValueLabel.setVisible(false);
 						transcodingProgramNameLabel.setVisible(false);
 						transcodingProgramNameValueLabel.setVisible(false);
+						transcodingSeriesTitleValueLabel.setVisible(false);
 					}
 				}
 			}

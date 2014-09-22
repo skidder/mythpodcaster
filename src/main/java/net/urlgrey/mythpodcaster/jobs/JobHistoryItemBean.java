@@ -35,7 +35,8 @@ public class JobHistoryItemBean {
 
 	private String transcodingProfileName;
 	private String transcodingProgramEpisodeName;
-	private String transcodingProgramName;
+    private String transcodingProgramName;
+    private String transcodingSeriesTitle;
 	private Calendar startedAt;
 	private Calendar finishedAt;
 	private JobStatus status;
@@ -65,7 +66,15 @@ public class JobHistoryItemBean {
 		this.transcodingProgramName = transcodingProgramName;
 	}
 
-	public Calendar getStartedAt() {
+	public String getTranscodingSeriesTitle() {
+        return transcodingSeriesTitle;
+    }
+
+    public void setTranscodingSeriesTitle(String transcodingSeriesTitle) {
+        this.transcodingSeriesTitle = transcodingSeriesTitle;
+    }
+
+    public Calendar getStartedAt() {
 		return startedAt;
 	}
 
