@@ -319,7 +319,7 @@ public class UIControllerImpl implements UIControllerService {
 			dto.setTranscodingSeriesTitle(historyItem.getTranscodingSeriesTitle());
 			dto.setStatus(historyItem.getStatus().name());
 
-			result.add(dto);
+			result.add(0, dto);
 		}
 
 		return result;

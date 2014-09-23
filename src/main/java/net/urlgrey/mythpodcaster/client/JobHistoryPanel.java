@@ -116,8 +116,7 @@ public class JobHistoryPanel extends RemoteComposite {
 				}
 			}
 		};
-		startedAtColumn.setSortable(true);
-		startedAtColumn.setDefaultSortAscending(true);
+		startedAtColumn.setSortable(false);
 		table.addColumn(startedAtColumn, "Start-Time");
 
         finishedAtColumn = new TextColumn<JobHistoryItemDTO>() {
@@ -150,28 +149,7 @@ public class JobHistoryPanel extends RemoteComposite {
 			@Override
 			public void onSuccess(List<JobHistoryItemDTO> history) {
 				table.setRowData(history);
-				table.setVisible(true);
-
-		        // Add a ColumnSortEvent.ListHandler to connect sorting to the
-		        // java.util.List.
-		        ListHandler<JobHistoryItemDTO> columnSortHandler = new ListHandler<JobHistoryItemDTO>(
-		            history);
-		        columnSortHandler.setComparator(startedAtColumn,
-		            new Comparator<JobHistoryItemDTO>() {
-		              public int compare(JobHistoryItemDTO o1, JobHistoryItemDTO o2) {
-		                if (o1 == o2) {
-		                  return 0;
-		                }
-
-		                // Compare the name columns.
-		                if (o1 != null) {
-		                  return (o2 != null) ? o2.getStartedAt().compareTo(o1.getStartedAt()) : 1;
-		                }
-		                return -1;
-		              }
-		            });
-		        table.addColumnSortHandler(columnSortHandler);
-		        table.getColumnSortList().push(startedAtColumn);			
+				table.setVisible(true);			
 			}
 
 			@Override
