@@ -165,7 +165,7 @@ public class JobHistoryPanel extends RemoteComposite {
 
 		                // Compare the name columns.
 		                if (o1 != null) {
-		                  return (o2 != null) ? o1.getStartedAt().compareTo(o2.getStartedAt()) : 1;
+		                  return (o2 != null) ? o2.getStartedAt().compareTo(o1.getStartedAt()) : 1;
 		                }
 		                return -1;
 		              }
