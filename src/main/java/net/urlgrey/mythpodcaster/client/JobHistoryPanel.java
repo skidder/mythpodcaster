@@ -109,7 +109,7 @@ public class JobHistoryPanel extends RemoteComposite {
 			}
 		};
 		startedAtColumn.setSortable(true);
-		startedAtColumn.setDefaultSortAscending(false);
+		startedAtColumn.setDefaultSortAscending(true);
 		table.addColumn(startedAtColumn, "Start-Time");
 
 		TextColumn<JobHistoryItemDTO> finishedAtColumn = new TextColumn<JobHistoryItemDTO>() {
