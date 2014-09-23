@@ -80,7 +80,7 @@ public class JobHistoryPanel extends RemoteComposite {
 		TextColumn<JobHistoryItemDTO> programIDColumn = new TextColumn<JobHistoryItemDTO>() {
 			@Override
 			public String getValue(JobHistoryItemDTO object) {
-				return object.getTranscodingProgramEpisodeName();
+				return object.getTranscodingProgramKey();
 			}
 		};
 		programIDColumn.setSortable(false);

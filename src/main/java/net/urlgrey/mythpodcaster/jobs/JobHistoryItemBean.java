@@ -34,7 +34,7 @@ public class JobHistoryItemBean {
 	};
 
 	private String transcodingProfileName;
-	private String transcodingProgramEpisodeName;
+	private String transcodingProgramKey;
     private String transcodingProgramName;
     private String transcodingSeriesTitle;
 	private Calendar startedAt;
@@ -49,13 +49,13 @@ public class JobHistoryItemBean {
 		this.transcodingProfileName = transcodingProfileName;
 	}
 
-	public String getTranscodingProgramEpisodeName() {
-		return transcodingProgramEpisodeName;
+	public String getTranscodingProgramKey() {
+		return transcodingProgramKey;
 	}
 
-	public void setTranscodingProgramEpisodeName(
-			String transcodingProgramEpisodeName) {
-		this.transcodingProgramEpisodeName = transcodingProgramEpisodeName;
+	public void setTranscodingProgramKey(
+			String transcodingProgramKey) {
+		this.transcodingProgramKey = transcodingProgramKey;
 	}
 
 	public String getTranscodingProgramName() {
@@ -108,8 +108,8 @@ public class JobHistoryItemBean {
 						: transcodingProfileName.hashCode());
 		result = prime
 				* result
-				+ ((transcodingProgramEpisodeName == null) ? 0
-						: transcodingProgramEpisodeName.hashCode());
+				+ ((transcodingProgramKey == null) ? 0
+						: transcodingProgramKey.hashCode());
 		return result;
 	}
 
@@ -127,22 +127,23 @@ public class JobHistoryItemBean {
 				return false;
 		} else if (!transcodingProfileName.equals(other.transcodingProfileName))
 			return false;
-		if (transcodingProgramEpisodeName == null) {
-			if (other.transcodingProgramEpisodeName != null)
+		if (transcodingProgramKey == null) {
+			if (other.transcodingProgramKey != null)
 				return false;
-		} else if (!transcodingProgramEpisodeName
-				.equals(other.transcodingProgramEpisodeName))
+		} else if (!transcodingProgramKey
+				.equals(other.transcodingProgramKey))
 			return false;
 		return true;
 	}
 
 	@Override
-	public String toString() {
-		return "JobHistoryItemBean [transcodingProfileName="
-				+ transcodingProfileName + ", transcodingProgramEpisodeName="
-				+ transcodingProgramEpisodeName + ", transcodingProgramName="
-				+ transcodingProgramName + ", startedAt=" + startedAt
-				+ ", finishedAt=" + finishedAt + ", status=" + status + "]";
-	}
+    public String toString() {
+        return "JobHistoryItemBean [transcodingProfileName="
+                + transcodingProfileName + ", transcodingProgramKey="
+                + transcodingProgramKey + ", transcodingProgramName="
+                + transcodingProgramName + ", transcodingSeriesTitle="
+                + transcodingSeriesTitle + ", startedAt=" + startedAt
+                + ", finishedAt=" + finishedAt + ", status=" + status + "]";
+    }
 
 }

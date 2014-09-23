@@ -314,7 +314,7 @@ public class UIControllerImpl implements UIControllerService {
 				dto.setFinishedAt(historyItem.getFinishedAt().getTime());
 
 			dto.setTranscodingProfileName(historyItem.getTranscodingProfileName());
-			dto.setTranscodingProgramEpisodeName(historyItem.getTranscodingProgramEpisodeName());
+			dto.setTranscodingProgramKey(historyItem.getTranscodingProgramKey());
 			dto.setTranscodingProgramName(historyItem.getTranscodingProgramName());
 			dto.setTranscodingSeriesTitle(historyItem.getTranscodingSeriesTitle());
 			dto.setStatus(historyItem.getStatus().name());

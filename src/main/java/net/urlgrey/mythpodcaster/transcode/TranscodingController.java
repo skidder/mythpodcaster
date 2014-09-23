@@ -32,6 +32,6 @@ import net.urlgrey.mythpodcaster.xml.TranscodingProfile;
  */
 public interface TranscodingController {
 
-	void transcode(TranscodingProfile profile, String programEpisodeName, String programName, File inputFile, File outputFile) throws Exception;
+	void transcode(TranscodingProfile profile, String programEpisodeName, String seriesTitle, String programTitle, File inputFile, File outputFile) throws Exception;
 
 }
