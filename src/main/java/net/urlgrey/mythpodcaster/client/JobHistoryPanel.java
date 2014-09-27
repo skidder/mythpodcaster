@@ -22,6 +22,7 @@
  */
 package net.urlgrey.mythpodcaster.client;
 
+import java.util.Comparator;
 import java.util.List;
 
 import net.urlgrey.mythpodcaster.client.service.UIControllerService;
@@ -30,6 +31,7 @@ import net.urlgrey.mythpodcaster.client.service.UIControllerServiceAsync;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -42,6 +44,13 @@ public class JobHistoryPanel extends RemoteComposite {
 
 	private VerticalPanel panel = new VerticalPanel();
 	private CellTable<JobHistoryItemDTO> table = new CellTable<JobHistoryItemDTO>();
+    private TextColumn<JobHistoryItemDTO> startedAtColumn;
+    private TextColumn<JobHistoryItemDTO> statusColumn;
+    private TextColumn<JobHistoryItemDTO> seriesTitleColumn;
+    private TextColumn<JobHistoryItemDTO> programNameColumn;
+    private TextColumn<JobHistoryItemDTO> programIDColumn;
+    private TextColumn<JobHistoryItemDTO> transcodingProfileColumn;
+    private TextColumn<JobHistoryItemDTO> finishedAtColumn;
 
 	/**
 	 * 
@@ -49,8 +58,7 @@ public class JobHistoryPanel extends RemoteComposite {
 	public JobHistoryPanel() {
 		table.setStyleName("mythpodcaster-SubscriptionsTable");
 
-		// initialize the table columns
-		TextColumn<JobHistoryItemDTO> statusColumn = new TextColumn<JobHistoryItemDTO>() {
+		statusColumn = new TextColumn<JobHistoryItemDTO>() {
 			@Override
 			public String getValue(JobHistoryItemDTO object) {
 				return object.getStatus();
@@ -59,25 +67,34 @@ public class JobHistoryPanel extends RemoteComposite {
 		statusColumn.setSortable(false);
 		table.addColumn(statusColumn, "Status");
 
-		TextColumn<JobHistoryItemDTO> programNameColumn = new TextColumn<JobHistoryItemDTO>() {
-			@Override
-			public String getValue(JobHistoryItemDTO object) {
-				return object.getTranscodingProgramName();
-			}
-		};
-		programNameColumn.setSortable(false);
-		table.addColumn(programNameColumn, "Program Name");
+        seriesTitleColumn = new TextColumn<JobHistoryItemDTO>() {
+            @Override
+            public String getValue(JobHistoryItemDTO object) {
+                return object.getTranscodingSeriesTitle();
+            }
+        };
+        seriesTitleColumn.setSortable(false);
+        table.addColumn(seriesTitleColumn, "Series");
 
-		TextColumn<JobHistoryItemDTO> programIDColumn = new TextColumn<JobHistoryItemDTO>() {
+        programNameColumn = new TextColumn<JobHistoryItemDTO>() {
+            @Override
+            public String getValue(JobHistoryItemDTO object) {
+                return object.getTranscodingProgramName();
+            }
+        };
+        programNameColumn.setSortable(false);
+        table.addColumn(programNameColumn, "Program Name");
+
+		programIDColumn = new TextColumn<JobHistoryItemDTO>() {
 			@Override
 			public String getValue(JobHistoryItemDTO object) {
-				return object.getTranscodingProgramEpisodeName();
+				return object.getTranscodingProgramKey();
 			}
 		};
 		programIDColumn.setSortable(false);
 		table.addColumn(programIDColumn, "Program ID");
 
-		TextColumn<JobHistoryItemDTO> transcodingProfileColumn = new TextColumn<JobHistoryItemDTO>() {
+		transcodingProfileColumn = new TextColumn<JobHistoryItemDTO>() {
 			@Override
 			public String getValue(JobHistoryItemDTO object) {
 				return object.getTranscodingProfileName();
@@ -87,7 +104,7 @@ public class JobHistoryPanel extends RemoteComposite {
 		table.addColumn(transcodingProfileColumn,
 				"Transcoding Profile");
 
-		TextColumn<JobHistoryItemDTO> startedAtColumn = new TextColumn<JobHistoryItemDTO>() {
+		startedAtColumn = new TextColumn<JobHistoryItemDTO>() {
 			@Override
 			public String getValue(JobHistoryItemDTO object) {
 				if (object.getStartedAt() != null) {
@@ -99,11 +116,10 @@ public class JobHistoryPanel extends RemoteComposite {
 				}
 			}
 		};
-		startedAtColumn.setSortable(true);
-		startedAtColumn.setDefaultSortAscending(false);
+		startedAtColumn.setSortable(false);
 		table.addColumn(startedAtColumn, "Start-Time");
 
-		TextColumn<JobHistoryItemDTO> finishedAtColumn = new TextColumn<JobHistoryItemDTO>() {
+        finishedAtColumn = new TextColumn<JobHistoryItemDTO>() {
 			@Override
 			public String getValue(JobHistoryItemDTO object) {
 				if (object.getFinishedAt() != null) {
@@ -133,7 +149,7 @@ public class JobHistoryPanel extends RemoteComposite {
 			@Override
 			public void onSuccess(List<JobHistoryItemDTO> history) {
 				table.setRowData(history);
-				table.setVisible(true);
+				table.setVisible(true);			
 			}
 
 			@Override

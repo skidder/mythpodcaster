@@ -71,9 +71,7 @@ public class GlobalTranscodeAndCleanupTaskImpl implements ApplicationContextAwar
 		status.setMode(StatusMode.TRANSCODING);
 		status.setCurrentTriggerStart(new Date());
 		status.setCurrentTranscodeStart(null);
-		status.setTranscodingProfileName("");
-		status.setTranscodingProgramEpisodeName("");
-		status.setTranscodingProgramName("");
+		status.clearDisplayFields();
 
 		final List <FeedSubscriptionItem> purgeList = new ArrayList<FeedSubscriptionItem>();
 
@@ -146,9 +144,7 @@ public class GlobalTranscodeAndCleanupTaskImpl implements ApplicationContextAwar
 		status.setMode(StatusMode.IDLE);
 		status.setCurrentTriggerStart(null);
 		status.setCurrentTranscodeStart(null);
-		status.setTranscodingProfileName("");
-		status.setTranscodingProgramEpisodeName("");
-		status.setTranscodingProgramName("");
+        status.clearDisplayFields();
 	}
 
 	private class TranscodingCompletionTaskImpl implements Runnable {

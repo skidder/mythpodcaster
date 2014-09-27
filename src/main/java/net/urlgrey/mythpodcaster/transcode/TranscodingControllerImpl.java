@@ -52,7 +52,7 @@ public class TranscodingControllerImpl implements TranscodingController {
 	private JobHistoryCollectionBean jobHistory;
 
 	@Override
-	public void transcode(TranscodingProfile profile, String programEpisodeName, String programName, File inputFile,
+	public void transcode(TranscodingProfile profile, String programKey, String seriesTitle, String programTitle, File inputFile,
 			File outputFile) throws Exception {
 
 		// construct a new Job History Item bean to represent the active job
@@ -60,8 +60,9 @@ public class TranscodingControllerImpl implements TranscodingController {
 		jobHistoryItem.setStartedAt(Calendar.getInstance());
 		jobHistoryItem.setStatus(JobStatus.TRANSCODING);
 		jobHistoryItem.setTranscodingProfileName(profile.getDisplayName());
-		jobHistoryItem.setTranscodingProgramEpisodeName(programEpisodeName);
-		jobHistoryItem.setTranscodingProgramName(programName);
+		jobHistoryItem.setTranscodingProgramKey(programKey);
+        jobHistoryItem.setTranscodingSeriesTitle(seriesTitle);
+        jobHistoryItem.setTranscodingProgramName(programTitle);
 		this.jobHistory.addJobHistoryItemBean(jobHistoryItem);
 
 		try {

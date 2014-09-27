@@ -34,7 +34,8 @@ public class StatusBean {
 
 	private StatusMode mode = StatusMode.IDLE;
 	private String transcodingProfileName = "";
-	private String transcodingProgramName = "";
+    private String transcodingSeriesTitle = "";
+    private String transcodingProgramName = "";
 	private String transcodingProgramEpisodeName = "";
 	private Date currentTriggerStart = new Date();
 	private Date currentTranscodeStart = null;
@@ -51,7 +52,13 @@ public class StatusBean {
 	public void setTranscodingProfileName(String transcodingProfileName) {
 		this.transcodingProfileName = transcodingProfileName;
 	}
-	public String getTranscodingProgramName() {
+	public String getTranscodingSeriesTitle() {
+        return transcodingSeriesTitle;
+    }
+    public void setTranscodingSeriesTitle(String transcodingSeriesTitle) {
+        this.transcodingSeriesTitle = transcodingSeriesTitle;
+    }
+    public String getTranscodingProgramName() {
 		return transcodingProgramName;
 	}
 	public void setTranscodingProgramName(String transcodingProgramName) {
@@ -76,4 +83,14 @@ public class StatusBean {
 	public void setCurrentTranscodeStart(Date currentTranscodeStart) {
 		this.currentTranscodeStart = currentTranscodeStart;
 	}
+
+	/**
+     * Clear the values of all fields that are used in the web UI to display current status. 
+     */
+    public void clearDisplayFields() {
+        this.transcodingProfileName = "";
+        this.transcodingProgramEpisodeName = "";
+        this.transcodingProgramName = "";
+        this.transcodingSeriesTitle = "";
+    }
 }
