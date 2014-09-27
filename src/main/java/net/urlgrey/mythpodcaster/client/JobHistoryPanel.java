@@ -20,7 +20,6 @@
  */
 package net.urlgrey.mythpodcaster.client;
 
-import java.util.Comparator;
 import java.util.List;
 
 import net.urlgrey.mythpodcaster.client.service.UIControllerService;
@@ -29,7 +28,6 @@ import net.urlgrey.mythpodcaster.client.service.UIControllerServiceAsync;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
