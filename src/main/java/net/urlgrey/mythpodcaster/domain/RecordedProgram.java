@@ -1,24 +1,22 @@
 /*
  * RecordedProgram.java
- *
+ * 
  * Created: Oct 6, 2009 4:23:13 PM
- *
+ * 
  * Copyright (C) 2009 Scott Kidder
  * 
  * This file is part of MythPodcaster
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 package net.urlgrey.mythpodcaster.domain;
 
@@ -38,192 +36,194 @@ import javax.persistence.Transient;
 
 /**
  * @author scott
- *
+ * 
  */
 @Entity
 @Table(name = "recorded")
-@NamedQueries({
-	@NamedQuery(
-			name = "MYTH_RECORDINGS.findRecordedProgramsForSeries",
-			query = "SELECT recordedprogram FROM RecordedProgram AS recordedprogram WHERE seriesId = :seriesId ORDER BY startTime DESC",
-			hints = {@QueryHint(name="org.hibernate.comment", value="MythPodcaster: MYTH_RECORDINGS.findRecordedProgramsForSeries")}	)})
-			public class RecordedProgram implements Comparable<RecordedProgram>, Serializable {
+@NamedQueries({@NamedQuery(
+    name = "MYTH_RECORDINGS.findRecordedProgramsForSeries",
+    query = "SELECT recordedprogram FROM RecordedProgram AS recordedprogram WHERE seriesId = :seriesId ORDER BY startTime DESC",
+    hints = {@QueryHint(name = "org.hibernate.comment",
+        value = "MythPodcaster: MYTH_RECORDINGS.findRecordedProgramsForSeries")})})
+public class RecordedProgram implements Comparable<RecordedProgram>, Serializable {
 
-	private static final long serialVersionUID = 1972318377670024183L;
+  private static final long serialVersionUID = 1972318377670024183L;
 
-	@Transient
-	private String key;
+  @Transient
+  private String key;
 
-	@EmbeddedId
-	private RecordedProgramPK recordedProgramKey;
+  @EmbeddedId
+  private RecordedProgramPK recordedProgramKey;
 
-	@Column(name = "recordid")
-	private String seriesId;
+  @Column(name = "recordid")
+  private String seriesId;
 
-	@Column(name = "programid", updatable=false, unique=false, insertable=false)
-	private String programId;
+  @Column(name = "programid", updatable = false, unique = false, insertable = false)
+  private String programId;
 
-	@Column(name = "starttime", updatable=false, unique=false, insertable=false)
-	private Timestamp startTime;
+  @Column(name = "starttime", updatable = false, unique = false, insertable = false)
+  private Timestamp startTime;
 
-	@Column(name = "endtime", updatable=false, unique=false, insertable=false)
-	private Timestamp endTime;
+  @Column(name = "endtime", updatable = false, unique = false, insertable = false)
+  private Timestamp endTime;
 
-	@Column(name = "title", updatable=false, unique=false, insertable=false)
-	private String title;
+  @Column(name = "title", updatable = false, unique = false, insertable = false)
+  private String title;
 
-	@Column(name = "subtitle", updatable=false, unique=false, insertable=false)
-	private String subtitle;
+  @Column(name = "subtitle", updatable = false, unique = false, insertable = false)
+  private String subtitle;
 
-	@Column(name = "description", updatable=false, unique=false, insertable=false)
-	private String description;
+  @Column(name = "description", updatable = false, unique = false, insertable = false)
+  private String description;
 
-	@Column(name = "category", updatable=false, unique=false, insertable=false)
-	private String category;
+  @Column(name = "category", updatable = false, unique = false, insertable = false)
+  private String category;
 
-	@Column(name = "filesize", updatable=false, unique=false, insertable=false)
-	private long filesize;
+  @Column(name = "filesize", updatable = false, unique = false, insertable = false)
+  private long filesize;
 
-	@Column(name = "basename", updatable=false, unique=false, insertable=false)
-	private String filename;
+  @Column(name = "basename", updatable = false, unique = false, insertable = false)
+  private String filename;
 
-	public RecordedProgramPK getRecordedProgramKey() {
-		return recordedProgramKey;
-	}
+  public RecordedProgramPK getRecordedProgramKey() {
+    return recordedProgramKey;
+  }
 
-	public void setRecordedProgramKey(RecordedProgramPK recordedProgramKey) {
-		this.recordedProgramKey = recordedProgramKey;
-	}
+  public void setRecordedProgramKey(RecordedProgramPK recordedProgramKey) {
+    this.recordedProgramKey = recordedProgramKey;
+  }
 
-	public String getSeriesId() {
-		return seriesId;
-	}
+  public String getSeriesId() {
+    return seriesId;
+  }
 
-	public void setSeriesId(String seriesId) {
-		this.seriesId = seriesId;
-	}
+  public void setSeriesId(String seriesId) {
+    this.seriesId = seriesId;
+  }
 
-	public String getProgramId() {
-		return programId;
-	}
+  public String getProgramId() {
+    return programId;
+  }
 
-	public void setProgramId(String programId) {
-		this.programId = programId;
-	}
+  public void setProgramId(String programId) {
+    this.programId = programId;
+  }
 
-	public Timestamp getStartTime() {
-		return startTime;
-	}
+  public Timestamp getStartTime() {
+    return startTime;
+  }
 
-	public void setStartTime(Timestamp startTime) {
-		this.startTime = startTime;
-	}
+  public void setStartTime(Timestamp startTime) {
+    this.startTime = startTime;
+  }
 
-	public Timestamp getEndTime() {
-		return endTime;
-	}
+  public Timestamp getEndTime() {
+    return endTime;
+  }
 
-	public void setEndTime(Timestamp endTime) {
-		this.endTime = endTime;
-	}
+  public void setEndTime(Timestamp endTime) {
+    this.endTime = endTime;
+  }
 
-	public String getTitle() {
-		return title;
-	}
+  public String getTitle() {
+    return title;
+  }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-	public String getSubtitle() {
-		return subtitle;
-	}
+  public String getSubtitle() {
+    return subtitle;
+  }
 
-	public void setSubtitle(String subtitle) {
-		this.subtitle = subtitle;
-	}
+  public void setSubtitle(String subtitle) {
+    this.subtitle = subtitle;
+  }
 
-	public String getFilename() {
-		return filename;
-	}
+  public String getFilename() {
+    return filename;
+  }
 
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public long getFilesize() {
-		return filesize;
-	}
+  public long getFilesize() {
+    return filesize;
+  }
 
-	public void setFilesize(long filesize) {
-		this.filesize = filesize;
-	}
+  public void setFilesize(long filesize) {
+    this.filesize = filesize;
+  }
 
-	public String getCategory() {
-		return category;
-	}
+  public String getCategory() {
+    return category;
+  }
 
-	public void setCategory(String category) {
-		this.category = category;
-	}
+  public void setCategory(String category) {
+    this.category = category;
+  }
 
-	public String getKey() {
-		return key;
-	}
+  public String getKey() {
+    return key;
+  }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+  public void setKey(String key) {
+    this.key = key;
+  }
 
-	/**
-	 * Sometimes the subtitle field isn't populated, in which case we should 
-	 * use the program title.
-	 * 
-	 * @return
-	 */
-	public String getProgramTitle() {
-	    if (this.subtitle != null && this.subtitle.trim().length() > 0)
-	        return this.subtitle;
-	    else
-	        return this.title;
-	}
-	
-	@PostLoad
-	public void postQuery() {
-		if (recordedProgramKey.getChannelId() >= 0 && recordedProgramKey.getStartTime() != null) {
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHmmss");
-			key = Integer.toString(recordedProgramKey.getChannelId()) + "-" + formatter.format(recordedProgramKey.getStartTime());
-		}
-	}
+  /**
+   * Sometimes the subtitle field isn't populated, in which case we should use the program title.
+   * 
+   * @return
+   */
+  public String getProgramTitle() {
+    if (this.subtitle != null && this.subtitle.trim().length() > 0)
+      return this.subtitle;
+    else
+      return this.title;
+  }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	@Override
-	public int compareTo(RecordedProgram o) {
-		if (this.recordedProgramKey.getStartTime() == null) {
-			return 1;
-		}
+  @PostLoad
+  public void postQuery() {
+    if (recordedProgramKey.getChannelId() >= 0 && recordedProgramKey.getStartTime() != null) {
+      SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHmmss");
+      key =
+          Integer.toString(recordedProgramKey.getChannelId()) + "-"
+              + formatter.format(recordedProgramKey.getStartTime());
+    }
+  }
 
-		return (-1) * this.recordedProgramKey.getStartTime().compareTo(o.recordedProgramKey.getStartTime());
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
+  @Override
+  public int compareTo(RecordedProgram o) {
+    if (this.recordedProgramKey.getStartTime() == null) {
+      return 1;
+    }
 
-	@Override
-	public String toString() {
-		return "RecordedProgram [category=" + category + ", description="
-				+ description + ", endTime=" + endTime + ", filename="
-				+ filename + ", filesize=" + filesize + ", key=" + key
-				+ ", programId=" + programId + ", recordedProgramKey="
-				+ recordedProgramKey + ", seriesId=" + seriesId
-				+ ", startTime=" + startTime + ", subtitle=" + subtitle
-				+ ", title=" + title + "]";
-	}
+    return (-1)
+        * this.recordedProgramKey.getStartTime().compareTo(o.recordedProgramKey.getStartTime());
+  }
+
+  @Override
+  public String toString() {
+    return "RecordedProgram [category=" + category + ", description=" + description + ", endTime="
+        + endTime + ", filename=" + filename + ", filesize=" + filesize + ", key=" + key
+        + ", programId=" + programId + ", recordedProgramKey=" + recordedProgramKey + ", seriesId="
+        + seriesId + ", startTime=" + startTime + ", subtitle=" + subtitle + ", title=" + title
+        + "]";
+  }
 }

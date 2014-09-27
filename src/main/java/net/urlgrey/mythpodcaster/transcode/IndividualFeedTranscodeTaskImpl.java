@@ -1,24 +1,22 @@
 /*
  * IndividualFeedTranscodeTaskImpl.java
- *
+ * 
  * Created: May 21, 2010
- *
+ * 
  * Copyright (C) 2010 Scott Kidder
  * 
  * This file is part of mythpodcaster
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 package net.urlgrey.mythpodcaster.transcode;
 
@@ -54,246 +52,268 @@ import com.sun.syndication.io.SyndFeedOutput;
 
 /**
  * @author scottkidder
- *
+ * 
  */
 public class IndividualFeedTranscodeTaskImpl implements Runnable {
 
-	private static final Logger LOGGER = Logger.getLogger(IndividualFeedTranscodeTaskImpl.class);
-	private FeedSubscriptionItem subscription;
-	private SyndFeed feed;
+  private static final Logger LOGGER = Logger.getLogger(IndividualFeedTranscodeTaskImpl.class);
+  private FeedSubscriptionItem subscription;
+  private SyndFeed feed;
 
-	private Comparator<SyndEntry> entryComparator = new FeedEntryComparator();
-	private TranscodingProfilesDAO transcodingProfilesDao;
-	private MythRecordingsDAO recordingsDao;
-	private FeedFileAccessor feedFileAccessor;
-	private String feedFilePath;
-	private String feedFileExtension;
-	private StatusBean status;
+  private Comparator<SyndEntry> entryComparator = new FeedEntryComparator();
+  private TranscodingProfilesDAO transcodingProfilesDao;
+  private MythRecordingsDAO recordingsDao;
+  private FeedFileAccessor feedFileAccessor;
+  private String feedFilePath;
+  private String feedFileExtension;
+  private StatusBean status;
 
-	public IndividualFeedTranscodeTaskImpl(FeedSubscriptionItem subscription,
-			SyndFeed feed) {
-		this.subscription = subscription;
-		this.feed = feed;
-	}
+  public IndividualFeedTranscodeTaskImpl(FeedSubscriptionItem subscription, SyndFeed feed) {
+    this.subscription = subscription;
+    this.feed = feed;
+  }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public void run() {
-		if (subscription.isActive()) {
-			// identify series recordings not represented in the RSS Feed (transcode)
-			final List entries = feed.getEntries();
-			final RecordedSeries series;
-			if (ScopeEnum.MOST_RECENT.equals(subscription.getScope())) {
-				series = recordingsDao.findRecordedSeries(subscription.getSeriesId(), subscription.getNumberOfMostRecentToKeep());
-			} else {
-				series = recordingsDao.findRecordedSeries(subscription.getSeriesId());
-			}
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  @Override
+  public void run() {
+    if (subscription.isActive()) {
+      // identify series recordings not represented in the RSS Feed (transcode)
+      final List entries = feed.getEntries();
+      final RecordedSeries series;
+      if (ScopeEnum.MOST_RECENT.equals(subscription.getScope())) {
+        series =
+            recordingsDao.findRecordedSeries(subscription.getSeriesId(),
+                subscription.getNumberOfMostRecentToKeep());
+      } else {
+        series = recordingsDao.findRecordedSeries(subscription.getSeriesId());
+      }
 
-			if (series == null) {
-				// if not occurrences of the recorded series are found, then continue
-				LOGGER.debug("No recordings found for recordId[" + subscription.getSeriesId() + "]");
-			}
+      if (series == null) {
+        // if not occurrences of the recorded series are found, then continue
+        LOGGER.debug("No recordings found for recordId[" + subscription.getSeriesId() + "]");
+      }
 
-			if (series != null) {
-				for (RecordedProgram program : series.getRecordedPrograms()) {
-					if (program.getEndTime() == null) {
-						LOGGER.debug("Skipping program, end-time is not set (possibly still recording): programId[" + program.getProgramId() + "]");
-						continue;
-					}
+      if (series != null) {
+        for (RecordedProgram program : series.getRecordedPrograms()) {
+          if (program.getEndTime() == null) {
+            LOGGER
+                .debug("Skipping program, end-time is not set (possibly still recording): programId["
+                    + program.getProgramId() + "]");
+            continue;
+          }
 
-					// We should determine whether the program is finished.
-					// This can be determine by comparing the program end-time with the current time (the comparison must use the same timezone for both dates)
-					// See http://code.google.com/p/mythpodcaster/issues/detail?id=65
-					final GregorianCalendar programCal = new GregorianCalendar();
-					programCal.setTimeInMillis(program.getEndTime().getTime());
-					final GregorianCalendar localTimeCal = new GregorianCalendar();
-					if (programCal.after(localTimeCal)) {
-						LOGGER.debug("Skipping recorded program, end-time is in future (still recording): programId[" + program.getProgramId() + "]");
-						continue;
-					}
+          // We should determine whether the program is finished.
+          // This can be determine by comparing the program end-time with the current time (the
+          // comparison must use the same timezone for both dates)
+          // See http://code.google.com/p/mythpodcaster/issues/detail?id=65
+          final GregorianCalendar programCal = new GregorianCalendar();
+          programCal.setTimeInMillis(program.getEndTime().getTime());
+          final GregorianCalendar localTimeCal = new GregorianCalendar();
+          if (programCal.after(localTimeCal)) {
+            LOGGER
+                .debug("Skipping recorded program, end-time is in future (still recording): programId["
+                    + program.getProgramId() + "]");
+            continue;
+          }
 
-					if (ScopeEnum.SPECIFIC_RECORDINGS.equals(this.subscription.getScope()) && 
-							(false == this.subscription.getRecordedProgramKeys().contains(program.getKey())))
-					{
-						LOGGER.debug("Skipping recorded program, not specified as a recording to transcode for this subscription: key[" + program.getKey() + "]");
-						continue;
-					}
+          if (ScopeEnum.SPECIFIC_RECORDINGS.equals(this.subscription.getScope())
+              && (false == this.subscription.getRecordedProgramKeys().contains(program.getKey()))) {
+            LOGGER
+                .debug("Skipping recorded program, not specified as a recording to transcode for this subscription: key["
+                    + program.getKey() + "]");
+            continue;
+          }
 
-					boolean found = false;
-					LOGGER.debug("Locating program in existing feed entries: programId[" + program.getProgramId() + "], key[" + program.getKey() + "]");
-					if (entries != null && entries.size() > 0) {
-						final Iterator it = entries.iterator();
-						while (it.hasNext()) {
-							final SyndEntry entry = (SyndEntry) it.next();
-							if (entry.getUri() == null) {
-								continue;
-							}
+          boolean found = false;
+          LOGGER.debug("Locating program in existing feed entries: programId["
+              + program.getProgramId() + "], key[" + program.getKey() + "]");
+          if (entries != null && entries.size() > 0) {
+            final Iterator it = entries.iterator();
+            while (it.hasNext()) {
+              final SyndEntry entry = (SyndEntry) it.next();
+              if (entry.getUri() == null) {
+                continue;
+              }
 
-							String entryKey = entry.getUri();
-							if (program.getKey().equalsIgnoreCase(entryKey)) {
-								found = true;
-								break;
-							}
-						}
-					}
-
-					if (found) {
-						LOGGER.debug("Program was found in feed, continuing");
-					} else {
-						status.setTranscodingProfileName(transcodingProfilesDao.findAllProfiles().get(subscription.getTranscodeProfile()).getDisplayName());
-						status.setTranscodingProgramEpisodeName(program.getKey());
-                        status.setTranscodingSeriesTitle(series.getTitle());
-                        status.setTranscodingProgramName(program.getProgramTitle());
-						status.setCurrentTranscodeStart(new Date());
-
-						final Channel channel = this.recordingsDao.findChannel(program.getRecordedProgramKey().getChannelId());
-						feedFileAccessor.addProgramToFeed(series, program, channel, feed, subscription.getTranscodeProfile());
-						writeFeedFile(entries);
-						status.setCurrentTranscodeStart(null);
-					}
-				}	
-			}
-
-			// identify RSS Feed entries no longer in the database (delete)
-			if (entries != null && entries.size() > 0) {
-				LOGGER.debug("Identifying series recordings no longer in database but still in feed, recordId[" + subscription.getSeriesId() + "]");
-				final Map<String, TranscodingProfile> transcodingProfiles = transcodingProfilesDao.findAllProfiles();
-				Set <SyndEntry> entryRemovalSet = new HashSet<SyndEntry>();
-				final Iterator it = entries.iterator();
-				while (it.hasNext()) {
-					final SyndEntry entry = (SyndEntry) it.next();
-					if (entry.getUri() == null) {
-						entryRemovalSet.add(entry);
-						LOGGER.debug("Feed entry has null URI (GUID), removing because it cannot be identified");
-						continue;
-					}
-
-					// locate the feed entry in the list of recorded programs 
-					String episodeKey = entry.getUri();
-					boolean found = false;
-					if (series != null) {
-						for (RecordedProgram program : series.getRecordedPrograms()) {
-							if (program.getKey().equalsIgnoreCase(episodeKey)) {
-								found = true;
-								break;
-							}
-						}
-					}
-					
-					// for a feed using specific recordings, delete those entries that are no longer required
-					if (ScopeEnum.SPECIFIC_RECORDINGS.equals(subscription.getScope()) && 
-							false == subscription.getRecordedProgramKeys().contains(episodeKey)) 
-					{
-						found = false;
-					}
-
-					// if the feed entry is no longer in the list of recorded programs, then remove
-					if (found) {
-						LOGGER.debug("Feed entry is current, continuing: uid[" + entry.getUri() + "]");
-					} else {
-						LOGGER.debug("Feed entry will be deleted: uid[" + entry.getUri() + "]");
-						entryRemovalSet.add(entry);
-
-						final List enclosures = entry.getEnclosures();
-						if (enclosures.size() > 0) {
-							final SyndEnclosure enclosure = (SyndEnclosure) enclosures.get(0);
-
-							final TranscodingProfile transcodingProfile = transcodingProfiles.get(subscription.getTranscodeProfile());
-							transcodingProfile.deleteEncoding(this.feedFilePath, enclosure.getUrl(), entry.getUri());
-						} else {
-							LOGGER.info("No enclosures specified in the entry, removing from feed and continuing");
-						}
-					}
-				}
-
-				// remove all of the entries flagged for removal
-				entries.removeAll(entryRemovalSet);
-                writeFeedFile(entries);
-			}			
-		}
-	}
-
-	/**
-	 * Write the syndication feed entries to the file.
-	 * 
-	 * @param entries Entry list 
-     * 
-     */
-    private void writeFeedFile(List<SyndEntry> entries) {
-        // write the updated RSS feed for the series
-        final File encodingDirectory = new File(feedFilePath, subscription.getTranscodeProfile());
-        final File feedFile = new File(encodingDirectory, subscription.getSeriesId() + feedFileExtension);
-        LOGGER.debug("Changes made to feed, updating feed file: path[" + feedFile.getAbsolutePath() + "]");
-
-        // sort the feed entries by published-date
-        Collections.sort(entries, entryComparator);
-
-        File transformedFeedFile = null;
-        try {
-            FileWriter writer = new FileWriter(feedFile);
-            SyndFeedOutput output = new SyndFeedOutput();
-            output.output(feed, writer);
-
-            transformedFeedFile = feedFileAccessor.generateTransformationFromFeed(feedFile, feed, subscription.getSeriesId());
-        } catch (Exception e) {
-            LOGGER.error("Error rendering feed", e);
-            if (feedFile.canWrite()) {
-                feedFile.delete();
+              String entryKey = entry.getUri();
+              if (program.getKey().equalsIgnoreCase(entryKey)) {
+                found = true;
+                break;
+              }
             }
+          }
 
-            if (transformedFeedFile != null && transformedFeedFile.canWrite()) {
-                transformedFeedFile.delete();
-            }
+          if (found) {
+            LOGGER.debug("Program was found in feed, continuing");
+          } else {
+            status.setTranscodingProfileName(transcodingProfilesDao.findAllProfiles()
+                .get(subscription.getTranscodeProfile()).getDisplayName());
+            status.setTranscodingProgramEpisodeName(program.getKey());
+            status.setTranscodingSeriesTitle(series.getTitle());
+            status.setTranscodingProgramName(program.getProgramTitle());
+            status.setCurrentTranscodeStart(new Date());
+
+            final Channel channel =
+                this.recordingsDao.findChannel(program.getRecordedProgramKey().getChannelId());
+            feedFileAccessor.addProgramToFeed(series, program, channel, feed,
+                subscription.getTranscodeProfile());
+            writeFeedFile(entries);
+            status.setCurrentTranscodeStart(null);
+          }
         }
+      }
+
+      // identify RSS Feed entries no longer in the database (delete)
+      if (entries != null && entries.size() > 0) {
+        LOGGER
+            .debug("Identifying series recordings no longer in database but still in feed, recordId["
+                + subscription.getSeriesId() + "]");
+        final Map<String, TranscodingProfile> transcodingProfiles =
+            transcodingProfilesDao.findAllProfiles();
+        Set<SyndEntry> entryRemovalSet = new HashSet<SyndEntry>();
+        final Iterator it = entries.iterator();
+        while (it.hasNext()) {
+          final SyndEntry entry = (SyndEntry) it.next();
+          if (entry.getUri() == null) {
+            entryRemovalSet.add(entry);
+            LOGGER
+                .debug("Feed entry has null URI (GUID), removing because it cannot be identified");
+            continue;
+          }
+
+          // locate the feed entry in the list of recorded programs
+          String episodeKey = entry.getUri();
+          boolean found = false;
+          if (series != null) {
+            for (RecordedProgram program : series.getRecordedPrograms()) {
+              if (program.getKey().equalsIgnoreCase(episodeKey)) {
+                found = true;
+                break;
+              }
+            }
+          }
+
+          // for a feed using specific recordings, delete those entries that are no longer required
+          if (ScopeEnum.SPECIFIC_RECORDINGS.equals(subscription.getScope())
+              && false == subscription.getRecordedProgramKeys().contains(episodeKey)) {
+            found = false;
+          }
+
+          // if the feed entry is no longer in the list of recorded programs, then remove
+          if (found) {
+            LOGGER.debug("Feed entry is current, continuing: uid[" + entry.getUri() + "]");
+          } else {
+            LOGGER.debug("Feed entry will be deleted: uid[" + entry.getUri() + "]");
+            entryRemovalSet.add(entry);
+
+            final List enclosures = entry.getEnclosures();
+            if (enclosures.size() > 0) {
+              final SyndEnclosure enclosure = (SyndEnclosure) enclosures.get(0);
+
+              final TranscodingProfile transcodingProfile =
+                  transcodingProfiles.get(subscription.getTranscodeProfile());
+              transcodingProfile.deleteEncoding(this.feedFilePath, enclosure.getUrl(),
+                  entry.getUri());
+            } else {
+              LOGGER
+                  .info("No enclosures specified in the entry, removing from feed and continuing");
+            }
+          }
+        }
+
+        // remove all of the entries flagged for removal
+        entries.removeAll(entryRemovalSet);
+        writeFeedFile(entries);
+      }
     }
+  }
 
-    private class FeedEntryComparator implements Comparator<SyndEntry> {
+  /**
+   * Write the syndication feed entries to the file.
+   * 
+   * @param entries Entry list
+   * 
+   */
+  private void writeFeedFile(List<SyndEntry> entries) {
+    // write the updated RSS feed for the series
+    final File encodingDirectory = new File(feedFilePath, subscription.getTranscodeProfile());
+    final File feedFile =
+        new File(encodingDirectory, subscription.getSeriesId() + feedFileExtension);
+    LOGGER.debug("Changes made to feed, updating feed file: path[" + feedFile.getAbsolutePath()
+        + "]");
 
-		/* (non-Javadoc)
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
-		@Override
-		public int compare(SyndEntry entry1, SyndEntry entry2) {
-			if (entry1 == null || entry1.getPublishedDate() == null) {
-				return 1;
-			}
+    // sort the feed entries by published-date
+    Collections.sort(entries, entryComparator);
 
-			if (entry2 == null) {
-				return -1;
-			}
-			return ((-1) * entry1.getPublishedDate().compareTo(entry2.getPublishedDate()));
-		}
-	}
+    File transformedFeedFile = null;
+    try {
+      FileWriter writer = new FileWriter(feedFile);
+      SyndFeedOutput output = new SyndFeedOutput();
+      output.output(feed, writer);
 
-	@Required
-	public void setStatus(StatusBean status) {
-		this.status = status;
-	}
+      transformedFeedFile =
+          feedFileAccessor.generateTransformationFromFeed(feedFile, feed,
+              subscription.getSeriesId());
+    } catch (Exception e) {
+      LOGGER.error("Error rendering feed", e);
+      if (feedFile.canWrite()) {
+        feedFile.delete();
+      }
 
-	@Required
-	public void setRecordingsDao(MythRecordingsDAO recordingsDao) {
-		this.recordingsDao = recordingsDao;
-	}
+      if (transformedFeedFile != null && transformedFeedFile.canWrite()) {
+        transformedFeedFile.delete();
+      }
+    }
+  }
 
-	@Required
-	public void setTranscodingProfilesDao(
-			TranscodingProfilesDAO transcodingProfilesDao) {
-		this.transcodingProfilesDao = transcodingProfilesDao;
-	}
+  private class FeedEntryComparator implements Comparator<SyndEntry> {
 
-	@Required
-	public void setFeedFileAccessor(FeedFileAccessor feedFileAccessor) {
-		this.feedFileAccessor = feedFileAccessor;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     */
+    @Override
+    public int compare(SyndEntry entry1, SyndEntry entry2) {
+      if (entry1 == null || entry1.getPublishedDate() == null) {
+        return 1;
+      }
 
-	@Required
-	public void setFeedFilePath(String feedFilePath) {
-		this.feedFilePath = feedFilePath;
-	}
+      if (entry2 == null) {
+        return -1;
+      }
+      return ((-1) * entry1.getPublishedDate().compareTo(entry2.getPublishedDate()));
+    }
+  }
 
-	@Required
-	public void setFeedFileExtension(String feedFileExtension) {
-		this.feedFileExtension = feedFileExtension;
-	}
+  @Required
+  public void setStatus(StatusBean status) {
+    this.status = status;
+  }
+
+  @Required
+  public void setRecordingsDao(MythRecordingsDAO recordingsDao) {
+    this.recordingsDao = recordingsDao;
+  }
+
+  @Required
+  public void setTranscodingProfilesDao(TranscodingProfilesDAO transcodingProfilesDao) {
+    this.transcodingProfilesDao = transcodingProfilesDao;
+  }
+
+  @Required
+  public void setFeedFileAccessor(FeedFileAccessor feedFileAccessor) {
+    this.feedFileAccessor = feedFileAccessor;
+  }
+
+  @Required
+  public void setFeedFilePath(String feedFilePath) {
+    this.feedFilePath = feedFilePath;
+  }
+
+  @Required
+  public void setFeedFileExtension(String feedFileExtension) {
+    this.feedFileExtension = feedFileExtension;
+  }
 
 }
