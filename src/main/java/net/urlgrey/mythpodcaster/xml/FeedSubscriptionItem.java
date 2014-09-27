@@ -1,24 +1,22 @@
 /*
  * FeedSubscriptionItem.java
- *
+ * 
  * Created: Oct 7, 2009 7:19:15 PM
- *
+ * 
  * Copyright (C) 2009 Scott Kidder
  * 
  * This file is part of MythPodcaster
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 package net.urlgrey.mythpodcaster.xml;
 
@@ -32,115 +30,129 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author scott
- *
+ * 
  */
-@XmlRootElement(name="feed-subscription-item")
+@XmlRootElement(name = "feed-subscription-item")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FeedSubscriptionItem implements Comparable<FeedSubscriptionItem> {
 
-	private String title;
-	private String seriesId;
-	private Date dateAdded;
-	private boolean active = true;
-	private String transcodeProfile;
-	private ScopeEnum scope = ScopeEnum.ALL;
-	private int numberOfMostRecentToKeep = 0;
-	private Set<String> recordedProgramKeys = new HashSet<String>();
+  private String title;
+  private String seriesId;
+  private Date dateAdded;
+  private boolean active = true;
+  private String transcodeProfile;
+  private ScopeEnum scope = ScopeEnum.ALL;
+  private int numberOfMostRecentToKeep = 0;
+  private Set<String> recordedProgramKeys = new HashSet<String>();
 
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	public String getSeriesId() {
-		return seriesId;
-	}
-	public void setSeriesId(String seriesId) {
-		this.seriesId = seriesId;
-	}
-	public Date getDateAdded() {
-		return dateAdded;
-	}
-	public void setDateAdded(Date dateAdded) {
-		this.dateAdded = dateAdded;
-	}
-	public boolean isActive() {
-		return active;
-	}
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-	public String getTranscodeProfile() {
-		return transcodeProfile;
-	}
-	public void setTranscodeProfile(String transcodeProfile) {
-		this.transcodeProfile = transcodeProfile;
-	}
-	public ScopeEnum getScope() {
-		return scope;
-	}
-	public void setScope(ScopeEnum scope) {
-		this.scope = scope;
-	}
-	public int getNumberOfMostRecentToKeep() {
-		return numberOfMostRecentToKeep;
-	}
-	public void setNumberOfMostRecentToKeep(int numberOfMostRecentToKeep) {
-		this.numberOfMostRecentToKeep = numberOfMostRecentToKeep;
-	}
-	public Set<String> getRecordedProgramKeys() {
-		return recordedProgramKeys;
-	}
-	public void setRecordedProgramKeys(Set<String> recordedProgramKeys) {
-		this.recordedProgramKeys = recordedProgramKeys;
-	}
+  public String getTitle() {
+    return title;
+  }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-		+ ((seriesId == null) ? 0 : seriesId.hashCode());
-		result = prime
-		* result
-		+ ((transcodeProfile == null) ? 0 : transcodeProfile.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		FeedSubscriptionItem other = (FeedSubscriptionItem) obj;
-		if (seriesId == null) {
-			if (other.seriesId != null)
-				return false;
-		} else if (!seriesId.equals(other.seriesId))
-			return false;
-		if (transcodeProfile == null) {
-			if (other.transcodeProfile != null)
-				return false;
-		} else if (!transcodeProfile.equals(other.transcodeProfile))
-			return false;
-		return true;
-	}
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-	@Override
-	public int compareTo(FeedSubscriptionItem o) {
-		int titleComparison = this.getTitle().compareTo(o.getTitle());
-		if (titleComparison != 0)
-			return titleComparison;
+  public String getSeriesId() {
+    return seriesId;
+  }
 
-		int transcodingProfileComparison = this.getTranscodeProfile().compareTo(o.getTranscodeProfile());
-		if (transcodingProfileComparison != 0)
-			return transcodingProfileComparison;
+  public void setSeriesId(String seriesId) {
+    this.seriesId = seriesId;
+  }
 
-		return 0;
-	}
+  public Date getDateAdded() {
+    return dateAdded;
+  }
+
+  public void setDateAdded(Date dateAdded) {
+    this.dateAdded = dateAdded;
+  }
+
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
+  }
+
+  public String getTranscodeProfile() {
+    return transcodeProfile;
+  }
+
+  public void setTranscodeProfile(String transcodeProfile) {
+    this.transcodeProfile = transcodeProfile;
+  }
+
+  public ScopeEnum getScope() {
+    return scope;
+  }
+
+  public void setScope(ScopeEnum scope) {
+    this.scope = scope;
+  }
+
+  public int getNumberOfMostRecentToKeep() {
+    return numberOfMostRecentToKeep;
+  }
+
+  public void setNumberOfMostRecentToKeep(int numberOfMostRecentToKeep) {
+    this.numberOfMostRecentToKeep = numberOfMostRecentToKeep;
+  }
+
+  public Set<String> getRecordedProgramKeys() {
+    return recordedProgramKeys;
+  }
+
+  public void setRecordedProgramKeys(Set<String> recordedProgramKeys) {
+    this.recordedProgramKeys = recordedProgramKeys;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((seriesId == null) ? 0 : seriesId.hashCode());
+    result = prime * result + ((transcodeProfile == null) ? 0 : transcodeProfile.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    FeedSubscriptionItem other = (FeedSubscriptionItem) obj;
+    if (seriesId == null) {
+      if (other.seriesId != null)
+        return false;
+    } else if (!seriesId.equals(other.seriesId))
+      return false;
+    if (transcodeProfile == null) {
+      if (other.transcodeProfile != null)
+        return false;
+    } else if (!transcodeProfile.equals(other.transcodeProfile))
+      return false;
+    return true;
+  }
+
+  @Override
+  public int compareTo(FeedSubscriptionItem o) {
+    int titleComparison = this.getTitle().compareTo(o.getTitle());
+    if (titleComparison != 0)
+      return titleComparison;
+
+    int transcodingProfileComparison =
+        this.getTranscodeProfile().compareTo(o.getTranscodeProfile());
+    if (transcodingProfileComparison != 0)
+      return transcodingProfileComparison;
+
+    return 0;
+  }
 
 
 }
