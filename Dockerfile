@@ -1,4 +1,4 @@
-FROM urlgrey:docker-tomcat-ffmpeg
+FROM urlgrey/docker-tomcat-ffmpeg:latest
 
 # install application and symbolic links into Tomcat
 ADD target/mythpodcaster-0.0.16 /data/mythpodcaster/mythpodcaster-0.0.16
