@@ -3,8 +3,6 @@ machine:
     version: oraclejdk8
   services:
     - docker
-  pre:
-    - 'sudo pip install awscli'
 test:
   post:
     - docker info
