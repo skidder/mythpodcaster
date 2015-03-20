@@ -1,11 +1,8 @@
-FROM tomcat:7-jre8
+FROM urlgrey:docker-tomcat-ffmpeg
 
-ADD target/mythpodcaster-0.0.16.war /data/mythpodcaster.war
+# install application and symbolic links into Tomcat
+ADD target/mythpodcaster-0.0.16 /data/mythpodcaster/mythpodcaster-0.0.16
+RUN ln -s /data/mythpodcaster/mythpodcaster-0.0.16 /usr/local/tomcat/webapp/mythpodcaster
+
+# create directories
 RUN mkdir -p /var/log/mythpodcaster
-
-# Enable Universe and Multiverse and install dependencies.
-RUN echo deb http://archive.ubuntu.com/ubuntu precise universe multiverse >> /etc/apt/sources.list; apt-get update; apt-get -y install autoconf automake build-essential git mercurial cmake libass-dev libgpac-dev libtheora-dev libtool libvdpau-dev libvorbis-dev pkg-config texi2html zlib1g-dev libmp3lame-dev wget yasm; apt-get clean
-
-# Run build script
-ADD scripts/build_ffmpeg.sh /build_ffmpeg.sh
-RUN ["/bin/bash", "/build_ffmpeg.sh"]
