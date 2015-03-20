@@ -1,24 +1,22 @@
 /*
  * TranscodingProfilesDAOImpl.java
- *
+ * 
  * Created: Feb 17, 2010
- *
+ * 
  * Copyright (C) 2010 Scott Kidder
  * 
  * This file is part of MythPodcaster
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 package net.urlgrey.mythpodcaster.dao;
 
@@ -46,105 +44,103 @@ import net.urlgrey.mythpodcaster.xml.UserDefinedTranscoderConfigurationItem;
 
 /**
  * @author scottkidder
- *
+ * 
  */
-public class TranscodingProfilesDAOImpl extends AbstractFileBasedDAO implements TranscodingProfilesDAO {
+public class TranscodingProfilesDAOImpl extends AbstractFileBasedDAO implements
+    TranscodingProfilesDAO {
 
-	static final Logger LOGGER = Logger.getLogger(TranscodingProfilesDAOImpl.class);
-	private String transcodingProfilesFilePath;
-	private JAXBContext jaxbContext;
+  static final Logger LOGGER = Logger.getLogger(TranscodingProfilesDAOImpl.class);
+  private String transcodingProfilesFilePath;
+  private JAXBContext jaxbContext;
 
-	@SuppressWarnings("rawtypes")
-	public TranscodingProfilesDAOImpl() {
-		try {
-			final Class[] jaxbClasses = new Class[] {TranscodingProfile.class, 
-					TranscodingProfileGroup.class, 
-					FFMpegTranscoderConfigurationItem.class, 
-					UserDefinedTranscoderConfigurationItem.class, 
-					GenericTranscoderConfigurationItem.class, 
-					SegmenterTranscoderConfigurationItem.class, 
-					FastStartTranscoderConfigurationItem.class};
+  @SuppressWarnings("rawtypes")
+  public TranscodingProfilesDAOImpl() {
+    try {
+      final Class[] jaxbClasses =
+          new Class[] {TranscodingProfile.class, TranscodingProfileGroup.class,
+              FFMpegTranscoderConfigurationItem.class,
+              UserDefinedTranscoderConfigurationItem.class,
+              GenericTranscoderConfigurationItem.class, SegmenterTranscoderConfigurationItem.class,
+              FastStartTranscoderConfigurationItem.class};
 
-			jaxbContext = JAXBContext.newInstance(jaxbClasses);
-		} catch (JAXBException e) {
-			LOGGER.fatal("Unable to create JAXB Context", e);
-			throw new IllegalStateException(e);
-		}
-	}
+      jaxbContext = JAXBContext.newInstance(jaxbClasses);
+    } catch (JAXBException e) {
+      LOGGER.fatal("Unable to create JAXB Context", e);
+      throw new IllegalStateException(e);
+    }
+  }
 
-	@Override
-	public void addTranscodingProfile(TranscodingProfile profile)
-	throws IOException {
-		final String profileId = profile.getId();
-		LOGGER.debug("Adding encoding profile: profileId [" + profileId + "]");
-		TranscodingProfileGroup profileGroup = loadTranscodingProfilesDocument();
+  @Override
+  public void addTranscodingProfile(TranscodingProfile profile) throws IOException {
+    final String profileId = profile.getId();
+    LOGGER.debug("Adding encoding profile: profileId [" + profileId + "]");
+    TranscodingProfileGroup profileGroup = loadTranscodingProfilesDocument();
 
-		final List<TranscodingProfile> profiles = profileGroup.getProfiles();
-		if (!profiles.contains(profile)) {
-			profiles.add(profile);
-		}
+    final List<TranscodingProfile> profiles = profileGroup.getProfiles();
+    if (!profiles.contains(profile)) {
+      profiles.add(profile);
+    }
 
-		storeTranscodingProfilesDocument(profileGroup);
-	}
+    storeTranscodingProfilesDocument(profileGroup);
+  }
 
-	@Override
-	public Map<String, TranscodingProfile> findAllProfiles() {
-		Map<String, TranscodingProfile> profiles = new HashMap<String, TranscodingProfile>();
-		for (TranscodingProfile profile : loadTranscodingProfilesDocument().getProfiles()) {
-			profiles.put(profile.getId(), profile);
-		}
+  @Override
+  public Map<String, TranscodingProfile> findAllProfiles() {
+    Map<String, TranscodingProfile> profiles = new HashMap<String, TranscodingProfile>();
+    for (TranscodingProfile profile : loadTranscodingProfilesDocument().getProfiles()) {
+      profiles.put(profile.getId(), profile);
+    }
 
-		return profiles;
-	}
+    return profiles;
+  }
 
-	@Override
-	public void removeTranscodingProfile(String profileId) {
-		LOGGER.debug("Removing encoding profile: profileId [" + profileId + "]");
-		TranscodingProfileGroup profileGroup = loadTranscodingProfilesDocument();
+  @Override
+  public void removeTranscodingProfile(String profileId) {
+    LOGGER.debug("Removing encoding profile: profileId [" + profileId + "]");
+    TranscodingProfileGroup profileGroup = loadTranscodingProfilesDocument();
 
-		final List<TranscodingProfile> profiles = profileGroup.getProfiles();
-		TranscodingProfile targetedProfile = null;
-		for (TranscodingProfile profile : profiles) {
-			if (profile.getId().equals(profileId)) {
-				targetedProfile  = profile;
-			}
-		}
+    final List<TranscodingProfile> profiles = profileGroup.getProfiles();
+    TranscodingProfile targetedProfile = null;
+    for (TranscodingProfile profile : profiles) {
+      if (profile.getId().equals(profileId)) {
+        targetedProfile = profile;
+      }
+    }
 
-		if (targetedProfile != null ) {
-			profiles.remove(targetedProfile);
-			storeTranscodingProfilesDocument(profileGroup);
-		}
-	}
+    if (targetedProfile != null) {
+      profiles.remove(targetedProfile);
+      storeTranscodingProfilesDocument(profileGroup);
+    }
+  }
 
-	private void storeTranscodingProfilesDocument(
-			TranscodingProfileGroup profileGroup) {
-		Collections.sort(profileGroup.getProfiles());
-		storeDocument(transcodingProfilesFilePath, jaxbContext, profileGroup);
-	}
+  private void storeTranscodingProfilesDocument(TranscodingProfileGroup profileGroup) {
+    Collections.sort(profileGroup.getProfiles());
+    storeDocument(transcodingProfilesFilePath, jaxbContext, profileGroup);
+  }
 
-	private TranscodingProfileGroup loadTranscodingProfilesDocument() {
-		final File encodingProfilesFile = new File(transcodingProfilesFilePath);
-		TranscodingProfileGroup encodingProfiles = null;
-		if (encodingProfilesFile.exists()) {
-			try {
-				final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-				encodingProfiles = (TranscodingProfileGroup) unmarshaller.unmarshal(encodingProfilesFile);
-			} catch (JAXBException e) {
-				LOGGER.error("Unable to unmarshal transcoding profiles document from XML", e);
-			}
+  private TranscodingProfileGroup loadTranscodingProfilesDocument() {
+    final File encodingProfilesFile = new File(transcodingProfilesFilePath);
+    TranscodingProfileGroup encodingProfiles = null;
+    if (encodingProfilesFile.exists()) {
+      try {
+        final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        encodingProfiles = (TranscodingProfileGroup) unmarshaller.unmarshal(encodingProfilesFile);
+      } catch (JAXBException e) {
+        LOGGER.error("Unable to unmarshal transcoding profiles document from XML", e);
+      }
 
-			if (encodingProfiles == null) {
-				encodingProfiles = new TranscodingProfileGroup();
-			}
-		} else {
-			encodingProfiles = new TranscodingProfileGroup();
-		}
-		return encodingProfiles;
-	}
+      if (encodingProfiles == null) {
+        encodingProfiles = new TranscodingProfileGroup();
+      }
+    } else {
+      encodingProfiles = new TranscodingProfileGroup();
+    }
+    return encodingProfiles;
+  }
 
-	@Required
-	public void setTranscodingProfilesFilePath(String transcodingProfilesFilePath) {
-		this.transcodingProfilesFilePath = transcodingProfilesFilePath;
-	}
+  @Required
+  public void setTranscodingProfilesFilePath(String transcodingProfilesFilePath) {
+    this.transcodingProfilesFilePath = transcodingProfilesFilePath;
+  }
 
 }

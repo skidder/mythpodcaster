@@ -30,7 +30,7 @@
 	</developers>
 
 	<properties>
-		<gwt.version>2.5.1</gwt.version>
+		<gwt.version>2.6.1</gwt.version>
 		<mysql.version>5.1.21</mysql.version>
 		<spring.version>2.5.6.SEC03</spring.version>
 	</properties>
