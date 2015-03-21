@@ -44,7 +44,7 @@ public class UserDefinedTranscoderImpl extends AbstractTranscoderImpl implements
   private String niceLocation = "nice";
 
   static final ExecutorService pool = Executors.newCachedThreadPool();
-  private static final Logger LOG = Logger.getLogger(FastStartVodTranscoderImpl.class);
+  private static final Logger LOG = Logger.getLogger(UserDefinedTranscoderImpl.class);
 
   public void transcode(File workingDirectory, GenericTranscoderConfigurationItem genericConfig,
       File inputFile, File outputFile) throws Exception {

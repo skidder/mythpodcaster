@@ -32,17 +32,12 @@
 
 	<bean id="ffmpegTranscoder"
 		class="net.urlgrey.mythpodcaster.transcode.FFMpegTranscoderImpl">
-		<property name="ffmpegLocation" value="${ffmpeg.location}"></property>
+		<property name="ffmpegLocation" value="/usr/local/bin/ffmpeg"></property>
 	</bean>
 
 	<bean id="segmentedVodTranscoder"
 		class="net.urlgrey.mythpodcaster.transcode.SegmentedVodTranscoderImpl">
-		<property name="segmenterLocation" value="${segmenter.location}"></property>
-	</bean>
-
-	<bean id="fastStartVodTranscoder"
-		class="net.urlgrey.mythpodcaster.transcode.FastStartVodTranscoderImpl">
-		<property name="fastStartLocation" value="${faststart.location}"></property>
+		<property name="segmenterLocation" value="/usr/local/bin/segmenter"></property>
 	</bean>
 
 	<bean id="userDefinedTranscoder"
@@ -61,7 +56,6 @@
 		class="net.urlgrey.mythpodcaster.transcode.TranscodingControllerImpl">
 		<property name="ffmpegTranscoder" ref="ffmpegTranscoder" />
 		<property name="segmentedVodTranscoder" ref="segmentedVodTranscoder" />
-		<property name="fastStartVodTranscoder" ref="fastStartVodTranscoder" />
 		<property name="userDefinedTranscoder" ref="userDefinedTranscoder" />
 		<property name="symbolicLinkTranscoder" ref="symbolicLinkTranscoder" />
 		<property name="jobHistory" ref="jobHistory" />

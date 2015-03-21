@@ -43,7 +43,6 @@ public class TranscodingControllerImpl implements TranscodingController {
   private static final Logger LOGGER = Logger.getLogger(TranscodingControllerImpl.class);
   private Transcoder ffmpegTranscoder;
   private Transcoder segmentedVodTranscoder;
-  private Transcoder fastStartVodTranscoder;
   private Transcoder userDefinedTranscoder;
   private Transcoder symbolicLinkTranscoder;
   private JobHistoryCollectionBean jobHistory;
@@ -67,16 +66,8 @@ public class TranscodingControllerImpl implements TranscodingController {
         case ONE_PASS:
           encodeOnePass(profile, inputFile, outputFile);
           break;
-        case ONE_PASS_FAST_START:
-          encodeOnePass(profile, inputFile, outputFile);
-          encodeFastStart(profile, outputFile);
-          break;
         case TWO_PASS:
           encodeTwoPass(profile, inputFile, outputFile);
-          break;
-        case TWO_PASS_FAST_START:
-          encodeTwoPass(profile, inputFile, outputFile);
-          encodeFastStart(profile, outputFile);
           break;
         case HTTP_SEGMENTED_VOD:
         case ONE_PASS_HTTP_SEGMENTED_VOD:
@@ -157,31 +148,6 @@ public class TranscodingControllerImpl implements TranscodingController {
       FileOperations.copy(tempOutputFile, outputFile);
     } finally {
       FileOperations.deleteDir(workingDirectory);
-    }
-  }
-
-  private void encodeFastStart(TranscodingProfile profile, File inputFile) throws Exception {
-    LOGGER.info("Starting fast-start optimization of clip: inputFile["
-        + inputFile.getAbsolutePath() + "]");
-    File workingDirectory = FileOperations.createTempDir();
-    File tempOutputFile = File.createTempFile(new UID().toString(), "tmp");
-    try {
-      final GenericTranscoderConfigurationItem config =
-          profile.getTranscoderConfigurationItems().get(
-              profile.getTranscoderConfigurationItems().size() - 1);
-      fastStartVodTranscoder.transcode(workingDirectory, config, inputFile, tempOutputFile);
-
-      // replace the input-file with the fast-start optimized version
-      FileOperations.copy(tempOutputFile, inputFile);
-    } catch (Exception e) {
-      FileOperations.deleteDir(inputFile.getParentFile());
-      throw e;
-    } finally {
-      FileOperations.deleteDir(workingDirectory);
-
-      if (tempOutputFile.exists()) {
-        tempOutputFile.delete();
-      }
     }
   }
 
@@ -287,11 +253,6 @@ public class TranscodingControllerImpl implements TranscodingController {
   @Required
   public void setSegmentedVodTranscoder(Transcoder segmentedVodTranscoder) {
     this.segmentedVodTranscoder = segmentedVodTranscoder;
-  }
-
-  @Required
-  public void setFastStartVodTranscoder(Transcoder fastStartTranscoder) {
-    this.fastStartVodTranscoder = fastStartTranscoder;
   }
 
   @Required
