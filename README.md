@@ -10,20 +10,38 @@ MythPodcaster is a Java application that runs in a Docker container.  Do you use
 ## Installation
 
 1. [Install Docker](https://docs.docker.com/installation/ubuntulinux/)
-2. Download the latest MythPodcaster Docker image: ```sudo docker pull urlgrey/mythpodcaster:latest```
+2. Download the latest MythPodcaster Docker image: ```sudo docker pull urlgrey/mythpodcaster:c48306734b4f36f7ee17d41292c9bce467311ab3```
 3. Create local directories for MythPodcaster settings:
-```shell
-sudo mkdir /var/mythpodcaster
-sudo mkdir /var/mythpodcaster/rss
-sudo mkdir /var/mythpodcaster/config
-sudo mkdir /var/mythpodcaster/log
-```
-1. Add the following configuration files:
-```shell
-cd /var/mythpodcaster/config
-sudo wget https://raw.githubusercontent.com/urlgrey/mythpodcaster/master/src/main/conf/mythpodcaster.properties
-sudo wget https://raw.githubusercontent.com/urlgrey/mythpodcaster/master/src/main/conf/transcoding_profiles.xml
-sudo wget https://raw.githubusercontent.com/urlgrey/mythpodcaster/master/src/main/conf/log4j.xml
-sudo wget https://raw.githubusercontent.com/urlgrey/mythpodcaster/master/src/main/conf/feed_file_transformation.xslt
-sudo wget https://raw.githubusercontent.com/urlgrey/mythpodcaster/master/src/main/conf/subscriptions.xml
-```
+
+    ```shell
+    sudo mkdir /var/mythpodcaster
+    sudo mkdir /var/mythpodcaster/rss
+    sudo mkdir /var/mythpodcaster/config
+    sudo mkdir /var/mythpodcaster/log
+    ```
+4. Add the following configuration files:
+
+    ```shell
+    cd /var/mythpodcaster/config
+    sudo wget https://raw.githubusercontent.com/urlgrey/mythpodcaster/master/src/main/conf/mythpodcaster.properties
+    sudo wget https://raw.githubusercontent.com/urlgrey/mythpodcaster/master/src/main/conf/transcoding_profiles.xml
+    sudo wget https://raw.githubusercontent.com/urlgrey/mythpodcaster/master/src/main/conf/log4j.xml
+    sudo wget https://raw.githubusercontent.com/urlgrey/mythpodcaster/master/src/main/conf/feed_file_transformation.xslt
+    sudo wget https://raw.githubusercontent.com/urlgrey/mythpodcaster/master/src/main/conf/subscriptions.xml
+    ```
+5. Edit the ```/var/mythpodcaster/config/mythpodcaster.properties``` file to include the database connection information.  Example:
+
+    ```properties
+    hibernate.connection.driver_class=com.mysql.jdbc.Driver
+    hibernate.connection.url=jdbc:mysql://192.168.1.100/mythconverg
+    hibernate.connection.username=mythtv
+    hibernate.connection.password=mythtv
+    hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+    ```
+6. Run the Docker image with mapped volumes pointing to the directories created earlier, as well as the directories containing your MythTV recording (e.g. /mnt/media, /mnt/media2, ...).  
+
+    ```shell
+    sudo docker run -d -P -v /var/mythpodcaster/config:/etc/mythpodcaster -v /var/mythpodcaster/log:/var/log/mythpodcaster -v /var/mythpodcaster/rss:/var/mythpodcaster/rss -v /mnt/media:/mnt/media -v /mnt/media2:/mnt/media2 -v /mnt/media3:/mnt/media3 -v /mnt/media4:/mnt/media4 -p 8080:8080 urlgrey/mythpodcaster:c48306734b4f36f7ee17d41292c9bce467311ab3
+    ```
+7. Tail the MythPodcaster log to verify that it starts up without errors: ```tail -f /var/mythpodcaster/log/mythpodcaster.log```
+8. Access the web interface to configure your recording rules: http://<IP or hostname of MythTV machine running Docker>:8080/
