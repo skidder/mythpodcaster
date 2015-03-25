@@ -5,7 +5,7 @@ The MythTV Digital Video Recorder (DVR) is a great platform for recording and wa
 
 The MythPodcaster application allows you to transcode (convert) your MythTV recordings into any number of audio and video formats automatically. The recordings are published in standard RSS feeds that can be imported into most media players, such as iTunes. Recordings are also published in customizable HTML5 web pages that you can access with any browser.
 
-MythPodcaster is a Java application that runs in a Docker container.  Do you use Myhtbuntu?  A custom Fedora installation?  Unfamiliar with installing and running Java applications?  No problem!  The magic of Docker makes it easy to install MythPodcaster.  The Docker image includes the MythPodcaster application and all of the tools (FFmpeg, etc) needed to transcode your recordings.
+MythPodcaster is a Java application that runs in a Docker container.  Do you use Mythbuntu?  A custom Fedora installation?  Unfamiliar with installing and running Java applications?  No problem!  The magic of Docker makes it easy to install MythPodcaster.  The Docker image includes the MythPodcaster application and all of the tools (FFmpeg, etc) needed to transcode your recordings.
 
 ## Installation
 
