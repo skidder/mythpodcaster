@@ -12,7 +12,7 @@ MythPodcaster is a Java application that runs in a Docker container.  Do you use
 1. [Install Docker](https://docs.docker.com/installation/ubuntulinux/)
 2. Download the latest MythPodcaster Docker image:
 
-    ```sudo docker pull urlgrey/mythpodcaster:c48306734b4f36f7ee17d41292c9bce467311ab3```
+    ```sudo docker pull urlgrey/mythpodcaster:1af14b593c05732c12d2d9de23f695a4a8cf20c6```
 3. Create local directories for MythPodcaster settings:
 
     ```shell
@@ -43,7 +43,7 @@ MythPodcaster is a Java application that runs in a Docker container.  Do you use
 6. Run the Docker image with mapped volumes pointing to the directories created earlier, as well as the directories containing your MythTV recording (e.g. /mnt/media, /mnt/media2, ...).  
 
     ```shell
-    sudo docker run -d -P -v /var/mythpodcaster/config:/etc/mythpodcaster -v /var/mythpodcaster/log:/var/log/mythpodcaster -v /var/mythpodcaster/rss:/var/mythpodcaster/rss -v /mnt/media:/mnt/media -v /mnt/media2:/mnt/media2 -v /mnt/media3:/mnt/media3 -v /mnt/media4:/mnt/media4 -p 8080:8080 urlgrey/mythpodcaster:c48306734b4f36f7ee17d41292c9bce467311ab3
+    sudo docker run -d -P -v /var/mythpodcaster/config:/etc/mythpodcaster -v /var/mythpodcaster/log:/var/log/mythpodcaster -v /var/mythpodcaster/rss:/var/mythpodcaster/rss -v /mnt/media:/mnt/media -v /mnt/media2:/mnt/media2 -v /mnt/media3:/mnt/media3 -v /mnt/media4:/mnt/media4 -p 8080:8080 urlgrey/mythpodcaster:1af14b593c05732c12d2d9de23f695a4a8cf20c6
     ```
 7. Tail the MythPodcaster log to verify that it starts up without errors:
 
