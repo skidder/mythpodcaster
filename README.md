@@ -10,7 +10,9 @@ MythPodcaster is a Java application that runs in a Docker container.  Do you use
 ## Installation
 
 1. [Install Docker](https://docs.docker.com/installation/ubuntulinux/)
-2. Download the latest MythPodcaster Docker image: ```sudo docker pull urlgrey/mythpodcaster:c48306734b4f36f7ee17d41292c9bce467311ab3```
+2. Download the latest MythPodcaster Docker image:
+
+    ```sudo docker pull urlgrey/mythpodcaster:c48306734b4f36f7ee17d41292c9bce467311ab3```
 3. Create local directories for MythPodcaster settings:
 
     ```shell
@@ -43,5 +45,9 @@ MythPodcaster is a Java application that runs in a Docker container.  Do you use
     ```shell
     sudo docker run -d -P -v /var/mythpodcaster/config:/etc/mythpodcaster -v /var/mythpodcaster/log:/var/log/mythpodcaster -v /var/mythpodcaster/rss:/var/mythpodcaster/rss -v /mnt/media:/mnt/media -v /mnt/media2:/mnt/media2 -v /mnt/media3:/mnt/media3 -v /mnt/media4:/mnt/media4 -p 8080:8080 urlgrey/mythpodcaster:c48306734b4f36f7ee17d41292c9bce467311ab3
     ```
-7. Tail the MythPodcaster log to verify that it starts up without errors: ```tail -f /var/mythpodcaster/log/mythpodcaster.log```
-8. Access the web interface to configure your recording rules: ```http://<IP or hostname of MythTV machine running Docker>:8080/```
+7. Tail the MythPodcaster log to verify that it starts up without errors:
+
+    ```tail -f /var/mythpodcaster/log/mythpodcaster.log```
+8. Access the web interface to configure your recording rules:
+
+    ```http://<IP or hostname of MythTV machine running Docker>:8080/mythpodcaster```
