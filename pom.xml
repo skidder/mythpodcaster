@@ -30,7 +30,7 @@
 	</developers>
 
 	<properties>
-		<gwt.version>2.6.1</gwt.version>
+		<gwt.version>2.7.0</gwt.version>
 		<mysql.version>5.1.21</mysql.version>
 		<spring.version>3.2.13.RELEASE</spring.version>
 	</properties>
@@ -107,11 +107,6 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
-		</dependency>
-		<dependency>
-			<groupId>asm</groupId>
-			<artifactId>asm-all</artifactId>
-			<version>3.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
