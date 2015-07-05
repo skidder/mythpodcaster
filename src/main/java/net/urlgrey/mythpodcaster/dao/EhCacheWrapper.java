@@ -21,33 +21,37 @@
 
 package net.urlgrey.mythpodcaster.dao;
 
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
 
 /**
  * @author scottkidder
  * 
  */
 public class EhCacheWrapper<K, V> implements CacheWrapper<K, V> {
-	private final String cacheName;
-	private final CacheManager cacheManager;
+  private final String cacheName;
+  private final CacheManager cacheManager;
 
-	public EhCacheWrapper(final String cacheName,
-			final CacheManager cacheManager) {
-		this.cacheName = cacheName;
-		this.cacheManager = cacheManager;
-	}
+  public EhCacheWrapper(final String cacheName, final CacheManager cacheManager) {
+    this.cacheName = cacheName;
+    this.cacheManager = cacheManager;
+  }
 
-	public void put(final K key, final V value) {
-		getCache().put(key, value);
-	}
+  public void put(final K key, final V value) {
+    getCache().put(new Element(key, value));
+  }
 
-	@SuppressWarnings("unchecked")
-	public V get(final K key) {
-		return (V) getCache().get(key);
-	}
+  @SuppressWarnings("unchecked")
+  public V get(final K key) {
+    Element element = getCache().get(key);
+    if (element != null) {
+      return (V) element.getObjectValue();
+    }
+    return null;
+  }
 
-	public Cache getCache() {
-		return cacheManager.getCache(cacheName);
-	}
+  public Ehcache getCache() {
+    return cacheManager.getEhcache(cacheName);
+  }
 }
