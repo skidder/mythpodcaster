@@ -3,6 +3,9 @@ machine:
     version: oraclejdk8
   services:
     - docker
+dependencies:
+  override:
+    - mvn --fail-never dependency:go-offline || true
 test:
   post:
     - docker info
