@@ -9,12 +9,12 @@ dependencies:
 test:
   post:
     - docker info
-    - docker build -t urlgrey/mythpodcaster:$CIRCLE_SHA1 .
-    - docker run -d -e "CLOUD=aws" -e "REGION=test" -p 8080:8080 urlgrey/mythpodcaster:$CIRCLE_SHA1; sleep 10
+    - docker build -t urlgrey/mythpodcaster:latest .
+    - docker run -d -e "CLOUD=aws" -e "REGION=test" -p 8080:8080 urlgrey/mythpodcaster:latest; sleep 10
     - curl --retry 10 --retry-delay 5 -v http://localhost:8080/mythpodcaster
 deployment:
   automerge:
     branch: [master]
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - docker push urlgrey/mythpodcaster:$CIRCLE_SHA1
+      - docker push urlgrey/mythpodcaster:latest
