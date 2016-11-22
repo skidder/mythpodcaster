@@ -12,7 +12,7 @@ MythPodcaster is a Java application that runs in a Docker container.  Do you use
 1. [Install Docker](https://docs.docker.com/installation/ubuntulinux/)
 2. Download the latest MythPodcaster Docker image:
 
-    ```sudo docker pull urlgrey/mythpodcaster:v1.0.2```
+    ```sudo docker pull urlgrey/mythpodcaster:v1.0.3```
 3. Create local directories for MythPodcaster settings:
 
     ```shell
